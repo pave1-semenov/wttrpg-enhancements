@@ -23,8 +23,7 @@
         "id": "TheWitcherTRPG",
         "type": "system",
         "compatibility": {
-          "minumum": "v12.27.0",
-          "maximum": "v12.27.0"
+          "minumum": "v13.11.10"
         }
       }
     ],
