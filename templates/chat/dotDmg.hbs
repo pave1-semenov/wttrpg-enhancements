@@ -1,0 +1,8 @@
+<div class="damage-message">
+    <h1><img src="{{ img }}" class="item-img" />{{ name }} (DOT)</h1>
+    {{#if damage.properties.spDamage}}
+    <p>SP Damage: {{ damage.properties.spDamage }}</p>
+    {{/if}}
+    <p>Damage Type: {{ damage.damageType }}</p>
+    <p>Location: {{ damage.location.alias }}</p>
+</div>

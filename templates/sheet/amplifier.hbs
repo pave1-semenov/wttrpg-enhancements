@@ -1,0 +1,27 @@
+<section class="tab {{tab.cssClass}} scrollable" data-group="primary" data-tab="amplifier">
+    <h1>Amplifier settings</h1>
+    <table class="table table-striped">
+        <tbody>
+            <tr class="item-header-tablerow">
+                <td>Enabled</td>
+                <td><input name="amp.enabled" type="checkbox" {{checked data.enabled}}></td>
+            </tr>
+            <tr class="item-header-tablerow">
+                <td>Damage type</td>
+                <td><select name="amp.damageType">
+                        {{selectOptions data.damageTypes selected=data.damageType localize=true}}
+                    </select></td>
+            </tr>
+            <tr class="item-header-tablerow">
+                <td>Multiplicative amplifier</td>
+                <td><input name="amp.multiplier" type="number" value="{{data.multiplier}}">
+                </td>
+            </tr>
+            <tr class="item-header-tablerow">
+                <td>Variable amplifier formula</td>
+                <td><input name="amp.variableFormula" type="text" value="{{data.variableFormula}}">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>

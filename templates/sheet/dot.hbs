@@ -1,0 +1,32 @@
+<section class="tab {{tab.cssClass}} scrollable" data-group="primary" data-tab="dot">
+    <h1>Dot settings</h1>
+    <table class="table table-striped">
+        <tbody>
+            <tr class="item-header-tablerow">
+                <td>Enabled</td>
+                <td><input name="dot.enabled" type="checkbox" {{checked data.enabled}}></td>
+            </tr>
+            <tr class="item-header-tablerow">
+                <td>Formula</td>
+                <td><input type="text" name="dot.formula" value="{{ data.formula }}"></td>
+            </tr>
+            <tr class="item-header-tablerow">
+                <td>Damage Type</td>
+                <td><select name="dot.damageType">
+                        {{selectOptions data.damageTypes selected=data.damageType localize=true}}
+                    </select></td>
+            </tr>
+            <tr class="item-header-tablerow">
+                <td>Location</td>
+                <td> <select name="dot.location">
+                        {{selectOptions data.locations selected=data.location localize=true}}
+                    </select></td>
+            </tr>
+            <tr class="item-header-tablerow">
+                <td>Auto apply</td>
+                <td><input name="dot.autoApply" type="checkbox" {{checked data.autoApply}}></td>
+            </tr>
+        </tbody>
+    </table>
+    {{> "modules/wttrpg-enhancements/templates/sheet/damageProperties.hbs" data=data.damageProperties }}
+</section>

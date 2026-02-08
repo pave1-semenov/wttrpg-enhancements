@@ -1,0 +1,63 @@
+<div class="apply-damage-dialog">
+    <h1>Apply damage</h1>
+    <table class="apply-damage-table">
+        <tr>
+            <td>
+                <label>{{localize "WITCHER.Damage.damageType" }}</label>
+            </td>
+            <td>
+                <b>{{localize damageType }}</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>{{localize "WITCHER.Context.applyNonLethal" }}</label>
+            </td>
+            <td>
+                <input type="checkbox" name="nonLethal" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>{{localize "WITCHER.Damage.CurrentLocation" }}</label>
+            </td>
+            <td><select name="location">
+                    {{selectOptions locations selected=location localize=true}}
+                </select></td>
+        </tr>
+        <tr>
+            <td>
+                <label>{{localize "WITCHER.Damage.isVulnerable" }}</label>
+            </td>
+            <td>
+                <input type="checkbox" name="vulnerable" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>{{localize "WITCHER.Damage.oilDmg" }}</label>
+            </td>
+            <td>
+                <input type="checkbox" name="oilDmg" />
+            </td>
+        </tr>
+        {{#if isMonster}}
+        <tr>
+            <td>
+                <label>{{localize "WITCHER.Damage.resistNonSilver" }}</label>
+            </td>
+            <td>
+                <input type="checkbox" name="resistNonSilver" {{checked resistNonSilver}} />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>{{localize "WITCHER.Damage.resistNonMeteorite" }}</label>
+            </td>
+            <td>
+                <input type="checkbox" name="resistNonMeteorite" {{checked resistNonMeteorite}} />
+            </td>
+        </tr>
+        {{/if}}
+    </table>
+</div>

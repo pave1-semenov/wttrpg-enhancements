@@ -1,0 +1,78 @@
+<H1>Damage properties</H1>
+<table>
+    <tbody>
+        <tr class="item-header-tablerow">
+            <td colspan="2">Inherit damage properties</td>
+            <td colspan="2"><input name="damageProperties.inherit" type="checkbox" {{checked data.inherit}}>
+            </td>
+        </tr>
+        <tr class="item-header-tablerow">
+            <td>
+                Armor Piercing
+            </td>
+            <td>
+                <input type="checkbox" name="damageProperties.armorPiercing" {{checked data.armorPiercing}} />
+            </td>
+            <td>
+                Improved Armor Piercing
+            </td>
+            <td>
+                <input type="checkbox" name="damageProperties.improvedArmorPiercing" {{checked
+                    data.improvedArmorPiercing}} />
+            </td>
+        </tr>
+        <tr class="item-header-tablerow">
+            <td>
+                Damage to all locations
+            </td>
+            <td>
+                <input type="checkbox" name="damageProperties.damageToAllLocations" {{checked
+                    data.damageToAllLocations}} />
+            </td>
+            <td>
+                Bypasses worn armor
+            </td>
+            <td>
+                <input type="checkbox" name="damageProperties.bypassesWornArmor" {{checked data.bypassesWornArmor}} />
+            </td>
+        </tr>
+        <tr class="item-header-tablerow">
+            <td>
+                Bypasses natural armor
+            </td>
+            <td>
+                <input type="checkbox" name="damageProperties.bypassesNaturalArmor" {{checked
+                    data.bypassesNaturalArmor}} />
+            </td>
+            <td>
+                Non-lethal damage
+            </td>
+            <td>
+                <input type="checkbox" name="damageProperties.isNonLethal" {{checked data.isNonLethal}} />
+            </td>
+        </tr>
+        <tr class="item-header-tablerow">
+            <td>
+                Meteorite damage
+            </td>
+            <td>
+                <input type="checkbox" name="damageProperties.isMeteorite" {{checked data.isMeteorite}} />
+            </td>
+
+            <td>
+                Silver damage
+            </td>
+            <td>
+                <input name="damageProperties.silverDamage" value="{{data.silverDamage}}" />
+            </td>
+        </tr>
+        <tr class="item-header-tablerow">
+            <td>
+                SP damage
+            </td>
+            <td>
+                <input name="damageProperties.spDamage" value="{{data.spDamage}}" />
+            </td>
+        </tr>
+    </tbody>
+</table>

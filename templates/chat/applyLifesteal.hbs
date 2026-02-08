@@ -1,0 +1,7 @@
+<div class="lifesteal-message">
+    <h1><img src="{{ source.img }}" class="item-img" />{{ source.name }} (DOT)</h1>
+    <p>{{attacker.name}} stolen {{lifesteal}} {{attribute}} from {{actor.name}}</p>
+    {{#if overheal}}
+    <p>{{overheal}} went to the shield: {{shieldValue}}</p>
+    {{/if}}
+</div>
