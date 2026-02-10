@@ -1,92 +1,63 @@
 import ActiveEffectsEnhancementsSheet from '../sheet/activeEffectsEnhancements.js';
-import ActorReactionsSheet from '../sheet/actorReactionsSheet.js';
 import ItemEnhancementSheet from '../sheet/itemEnhancements.js';
 import { getInteractActor } from '/systems/TheWitcherTRPG/module/scripts/helper.js';
-import applyEnhancedDamage from './damageHooks.js';
+import { applyEnhancedDamage } from './damageHooks.js';
 
-export function addActiveEffectEnhanceOption(wrapped) {
-    const buttons = wrapped();
+export function addActiveEffectEnhanceOption(sheet, buttons) {
+    const isActiveEffectSheet = sheet.document?.documentName === "ActiveEffect"
 
-    if (game.user.isGM) {
-        const index = findCloseButtonIndex(buttons);
-
-        buttons.splice(index, 0, {
+    if (isActiveEffectSheet && game.user.isGM) {
+        buttons.push({
             class: 'enhancement',
             icon: 'fas fa-circle-up',
-            label: '',
-            onclick: async (event) => {
+            label: 'WTTRPGEnhancements.Buttons.Title',
+            onClick: async () => {
                 await new ActiveEffectsEnhancementsSheet({
-                    document: this.object,
+                    document: sheet.document,
                 }).render(true)
             }
         });
     }
 
-    return buttons;
+    return buttons
 }
 
-function findCloseButtonIndex(buttons) {
-    const closeButton = buttons.find(button => button.class === 'close')
+export function addItemButton(sheet, buttons) {
+    const isWeapon = sheet.document?.type === "weapon"
 
-    return buttons.indexOf(closeButton)
-}
-
-export function addItemButton(wrapped) {
-    const buttons = wrapped();
-
-    if (game.user.isGM) {
-        const index = findCloseButtonIndex(buttons);
-
-        buttons.splice(index, 0, {
+    if (isWeapon && game.user.isGM) {
+        buttons.splice(0, -1, {
             class: 'enhancement',
             icon: 'fas fa-circle-up',
             label: '',
             onclick: async (event) => {
                 await new ItemEnhancementSheet({
-                    document: this.object,
+                    document: sheet.document,
                 }).render(true)
             }
         });
     }
 
-    return buttons;
-}
-
-export function addReactionsList(wrapped) {
-    const buttons = wrapped();
-
-    buttons.push({
-        class: 'enhancement',
-        icon: 'fas fa-plus',
-        label: 'R',
-        onclick: async (event) => {
-            await new ActorReactionsSheet({
-                document: this.actor,
-            }).render(true)
-        }
-    })
-
-
-    return buttons;
+    return buttons
 }
 
 export async function wrapApplyDamageHooks(html, options) {
-    let canApplyDamage = li => li.find('.damage-message').length
+    let canApplyDamage = li => li.querySelector('.damage-message')
 
     options.push(
         {
-            name: `${game.i18n.localize('WITCHER.Context.applyDmg')} (${game.i18n.localize('WTRPGEnhancements.Misc.Enhanced')})`,
+            name: `${game.i18n.localize('WITCHER.Context.applyDmg')} (${game.i18n.localize('WTTRPGEnhancements.Misc.Enhanced')})`,
             icon: '<i class="fas fa-user-minus"></i>',
             condition: canApplyDamage,
             callback: async li => {
                 await applyEnhancedDamage(
                     await getInteractActor(),
-                    parseInt(li.find('.dice-total')[0].innerText),
-                    li[0].dataset.messageId
+                    parseInt(li.querySelector('.dice-total').innerText),
+                    li.dataset.messageId
                 );
             }
         }
     )
 
-    return options;
+    return options
 }

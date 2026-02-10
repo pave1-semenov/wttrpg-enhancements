@@ -1,8 +1,8 @@
 import { LifeStealMixin } from "../mixin/lifestealMixin.js"
 import { getAllLocationOptions } from "../util/location.js";
-import DefaultTabbedDocumentSheet from "./defaultTabbedSheet.js"
+import DefauldDocumentSheet from "./defaultSheet.js"
 
-export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((DefaultTabbedDocumentSheet)) {
+export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((DefauldDocumentSheet)) {
     static DEFAULT_OPTIONS = {
         position: {
             width: 700,
@@ -20,31 +20,31 @@ export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((Defa
             template: "templates/generic/tab-navigation.hbs",
         },
         dot: {
-            container: { classes: ["tab-body"], id: "tabs" },
             template: "modules/wttrpg-enhancements/templates/sheet/dot.hbs",
             scrollable: [""]
         },
         lifesteal: {
-            container: { classes: ["tab-body"], id: "tabs" },
             template: "modules/wttrpg-enhancements/templates/sheet/lifesteal.hbs",
             scrollable: [""]
         },
         amplifier: {
-            container: { classes: ["tab-body"], id: "tabs" },
             template: "modules/wttrpg-enhancements/templates/sheet/amplifier.hbs",
             scrollable: [""]
         }
     }
 
-    /** @override */
-    static TABS = [
-        { tab: "dot", label: "DOT", icon: "fas fa-heart-pulse", "active": true },
-        { tab: "lifesteal", label: "lifesteal", icon: "fas fa-people-robbery" },
-        { tab: "amplifier", label: "amplifiers", icon: "fas fa-hand-fist" }
-    ];
 
-    tabGroups = {
-        primary: "dot"
+    /** @override */
+    static TABS = {
+        primary: {
+            tabs: [
+                { id: "dot", icon: "fas fa-heart-pulse" },
+                { id: "lifesteal", icon: "fas fa-people-robbery" },
+                { id: "amplifier", icon: "fas fa-hand-fist" }
+            ],
+            initial: 'dot',
+            labelPrefix: 'WTTRPGEnhancements.Enhancements'
+        }
     }
 
     /**
@@ -74,27 +74,22 @@ export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((Defa
             { prefix: 'dot.', target: updateData.dot },
             { prefix: 'damageProperties.', target: updateData.dot.damageProperties },
             { prefix: 'lifesteal.', target: updateData.lifesteal },
-            { prefix: 'amp.', target: updateData.amp}
+            { prefix: 'amp.', target: updateData.amp }
         ]
 
         return this._fillUpdateData(formData, updateData, prefixesConfig)
     }
 
-    async _preparePartContext(partId, context) {
-        context = await super._preparePartContext(partId, context)
+    async _prepareContext(options) {
+        let context = await super._prepareContext(options)
 
-        context.tab = context.tabs[partId]
+        this._prepareLifestealtContext(context)
+        this._prepareDotContext(context)    
+        this._prepareAmplifiersContext(context)
 
-        switch (partId) {
-            case "dot":
-                return this._prepareDotContext(context)
-            case "lifesteal":
-                return this._prepareLifestealtContext(context)
-            case "amplifier":
-                return this._prepareAmplifiersContext(context)
-        }
+        context.tabs = this._prepareTabs("primary")
 
-        return context;
+        return context
     }
 
     async _prepareDotContext(context) {
@@ -123,7 +118,8 @@ export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((Defa
         data.damageTypes = CONFIG.WITCHER.damageTypes
         data.locations = getAllLocationOptions()
 
-        context.data = data
+        if (!context.data) context.data = {}
+        context.data.dot = data
 
         return context
     }
@@ -136,24 +132,12 @@ export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((Defa
             multiplier: 0,
             variableFormula: ''
         }
-        data.damageTypes = [{label: 'All', value: 'all'}, ...CONFIG.WITCHER.damageTypes]
+        data.damageTypes = [{ label: 'All', value: 'all' }, ...CONFIG.WITCHER.damageTypes]
+        if (!context.data) context.data = {}
 
-        context.data = data
+        context.data.amp = data
 
         return context
-    }
-
-    _getTabs() {
-        return this.constructor.TABS.reduce((tabs, { tab, condition, ...config }) => {
-            if (!condition || condition(this.document)) tabs[tab] = {
-                ...config,
-                id: tab,
-                group: "primary",
-                active: this.tabGroups.primary === tab,
-                cssClass: this.tabGroups.primary === tab ? "active" : ""
-            };
-            return tabs;
-        }, {});
     }
 
 }

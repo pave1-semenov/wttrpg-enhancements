@@ -1,32 +1,32 @@
-<section class="tab {{tab.cssClass}} scrollable" data-group="primary" data-tab="dot">
-    <h1>Dot settings</h1>
+<section class="tab {{tabs.dot.cssClass}} scrollable" data-group="primary" data-tab="dot">
+    <h1>{{localize "WTTRPGEnhancements.Sheet.Dot.Title"}}</h1>
     <table class="table table-striped">
         <tbody>
             <tr class="item-header-tablerow">
-                <td>Enabled</td>
-                <td><input name="dot.enabled" type="checkbox" {{checked data.enabled}}></td>
+                <td>{{localize "WTTRPGEnhancements.Sheet.Dot.Enabled"}}</td>
+                <td><input name="dot.enabled" type="checkbox" {{checked data.dot.enabled}}></td>
             </tr>
             <tr class="item-header-tablerow">
-                <td>Formula</td>
-                <td><input type="text" name="dot.formula" value="{{ data.formula }}"></td>
+                <td>{{localize "WTTRPGEnhancements.Sheet.Dot.Formula"}}</td>
+                <td><input type="text" name="dot.formula" value="{{ data.dot.formula }}"></td>
             </tr>
             <tr class="item-header-tablerow">
-                <td>Damage Type</td>
+                <td>{{localize "WTTRPGEnhancements.Sheet.Dot.DamageType"}}</td>
                 <td><select name="dot.damageType">
-                        {{selectOptions data.damageTypes selected=data.damageType localize=true}}
+                        {{selectOptions data.dot.damageTypes selected=data.dot.damageType localize=true}}
                     </select></td>
             </tr>
             <tr class="item-header-tablerow">
-                <td>Location</td>
+                <td>{{localize "WTTRPGEnhancements.Sheet.Dot.Location"}}</td>
                 <td> <select name="dot.location">
-                        {{selectOptions data.locations selected=data.location localize=true}}
+                        {{selectOptions data.dot.locations selected=data.dot.location localize=true}}
                     </select></td>
             </tr>
             <tr class="item-header-tablerow">
-                <td>Auto apply</td>
-                <td><input name="dot.autoApply" type="checkbox" {{checked data.autoApply}}></td>
+                <td>{{localize "WTTRPGEnhancements.Sheet.Dot.AutoApply"}}</td>
+                <td><input name="dot.autoApply" type="checkbox" {{checked data.dot.autoApply}}></td>
             </tr>
         </tbody>
     </table>
-    {{> "modules/wttrpg-enhancements/templates/sheet/damageProperties.hbs" data=data.damageProperties }}
+    {{> "modules/wttrpg-enhancements/templates/sheet/damageProperties.hbs" data=data.dot.damageProperties }}
 </section>

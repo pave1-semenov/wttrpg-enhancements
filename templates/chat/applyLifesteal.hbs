@@ -1,7 +1,58 @@
-<div class="lifesteal-message">
-    <h1><img src="{{ source.img }}" class="item-img" />{{ source.name }} (DOT)</h1>
-    <p>{{attacker.name}} stolen {{lifesteal}} {{attribute}} from {{actor.name}}</p>
+<article class="chat-card lifesteal-card">
+  <header class="chat-card__header">
+    <div class="chat-card__icon">
+      <img src="{{ source.img }}" alt="{{ source.name }}" />
+    </div>
+    <div class="chat-card__title">
+      <div class="chat-card__name">{{ source.name }}</div>
+      <div class="chat-card__subtitle">{{localize "WTTRPGEnhancements.Chat.Lifesteal.Title"}}</div>
+    </div>
+    <div class="chat-card__tag chat-card__tag--lifesteal">{{localize "WTTRPGEnhancements.Chat.Lifesteal.Tag"}}</div>
+  </header>
+
+  <div class="chat-card__body">
+    <div class="chat-card__row">
+      <span class="chat-card__label">
+        <i class="chat-card__label-icon fas fa-hand-fist" aria-hidden="true"></i>
+        {{localize "WTTRPGEnhancements.Chat.Lifesteal.Attacker"}}
+      </span>
+      <span class="chat-card__value">{{ attacker.name }}</span>
+    </div>
+    <div class="chat-card__row">
+      <span class="chat-card__label">
+        <i class="chat-card__label-icon fas fa-crosshairs" aria-hidden="true"></i>
+        {{localize "WTTRPGEnhancements.Chat.Lifesteal.Target"}}
+      </span>
+      <span class="chat-card__value">{{ actor.name }}</span>
+    </div>
+    <div class="chat-card__row">
+      <span class="chat-card__label">
+        <i class="chat-card__label-icon fas fa-burst" aria-hidden="true"></i>
+        {{localize "WTTRPGEnhancements.Chat.Lifesteal.DamageDealt"}}
+      </span>
+      <span class="chat-card__value">{{ totalDamageDealt }} {{ attributeLabel }}</span>
+    </div>
+    <div class="chat-card__row">
+      <span class="chat-card__label">
+        <i class="chat-card__label-icon fas fa-droplet" aria-hidden="true"></i>
+        {{localize "WTTRPGEnhancements.Chat.Lifesteal.Lifesteal"}}
+      </span>
+      <span class="chat-card__value">
+        {{ lifesteal }} {{ attributeLabel }}
+        <span class="chat-card__subvalue">{{localize "WTTRPGEnhancements.Chat.Lifesteal.Percent" percent=lifestealPercent}}</span>
+      </span>
+    </div>
     {{#if overheal}}
-    <p>{{overheal}} went to the shield: {{shieldValue}}</p>
+      <div class="chat-card__row">
+        <span class="chat-card__label">
+          <i class="chat-card__label-icon fas fa-shield" aria-hidden="true"></i>
+          {{localize "WTTRPGEnhancements.Chat.Lifesteal.OverhealToShield"}}
+        </span>
+        <span class="chat-card__value">
+          {{ overheal }} {{ attributeLabel }}
+          <span class="chat-card__subvalue">{{localize "WTTRPGEnhancements.Chat.Lifesteal.ShieldValue" value=shieldValue}}</span>
+        </span>
+      </div>
     {{/if}}
-</div>
+  </div>
+</article>
