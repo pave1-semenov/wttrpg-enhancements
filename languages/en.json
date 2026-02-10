@@ -1,9 +1,77 @@
 {
-    "WTRPGEnhancements": {
+    "WTTRPGEnhancements": {
         "Enhancements": {
-            "Lifesteal": "Lifesteal",
-            "DOT": "DOT",
-            "Amplifiers": "Amplifiers"
+            "lifesteal": "Lifesteal",
+            "dot": "DOT",
+            "amplifier": "Amplifier"
+        },
+        "Buttons": {
+            "Title": "WTTRPG enhancements"
+        },
+        "Chat": {
+            "Dot": {
+                "Title": "Damage Over Time",
+                "Tag": "DOT",
+                "SpDamage": "SP damage",
+                "Type": "Type",
+                "Location": "Location"
+            },
+            "Lifesteal": {
+                "Title": "Lifesteal Trigger",
+                "Tag": "Steal",
+                "Attacker": "Attacker",
+                "Target": "Target",
+                "DamageDealt": "Damage dealt",
+                "Lifesteal": "Lifesteal",
+                "OverhealToShield": "Overheal to shield",
+                "ShieldValue": "Shield: {value}",
+                "Percent": "({percent}%)",
+                "RollFlavor": "Lifesteal {percent}% of damage done"
+            }
+        },
+        "Sheet": {
+            "Lifesteal": {
+                "Title": "Lifesteal settings",
+                "Enabled": "Enabled",
+                "FlatPercentage": "Flat lifesteal percentage",
+                "StoreOverheal": "Store overheal",
+                "OverhealPercentage": "Overheal percentage",
+                "OverhealThreshold": "Overheal shield threshold"
+            },
+            "Dot": {
+                "Title": "Dot settings",
+                "Enabled": "Enabled",
+                "Formula": "Formula",
+                "DamageType": "Damage Type",
+                "Location": "Location",
+                "AutoApply": "Auto apply"
+            },
+            "Amplifier": {
+                "Title": "Amplifier settings",
+                "Enabled": "Enabled",
+                "DamageType": "Damage type",
+                "Multiplier": "Multiplicative amplifier",
+                "VariableFormula": "Variable amplifier formula"
+            },
+            "DamageProperties": {
+                "Title": "Damage properties",
+                "Inherit": "Inherit damage properties",
+                "ArmorPiercing": "Armor Piercing",
+                "ImprovedArmorPiercing": "Improved Armor Piercing",
+                "DamageToAllLocations": "Damage to all locations",
+                "BypassesWornArmor": "Bypasses worn armor",
+                "BypassesNaturalArmor": "Bypasses natural armor",
+                "NonLethal": "Non-lethal damage",
+                "Meteorite": "Meteorite damage",
+                "Silver": "Silver damage",
+                "SpDamage": "SP damage"
+            }
+        },
+        "Stats": {
+            "hp": "HP",
+            "sta": "Stamina",
+            "shield": "Shield",
+            "default": "STAT"
         },
         "Misc": {
             "Enhanced": "enhanced"

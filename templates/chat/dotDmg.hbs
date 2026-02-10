@@ -1,8 +1,40 @@
-<div class="damage-message">
-    <h1><img src="{{ img }}" class="item-img" />{{ name }} (DOT)</h1>
-    {{#if damage.properties.spDamage}}
-    <p>SP Damage: {{ damage.properties.spDamage }}</p>
+<article class="damage-message chat-card">
+  <header class="chat-card__header">
+    <div class="chat-card__icon">
+      <img src="{{ img }}" alt="{{ name }}" />
+    </div>
+    <div class="chat-card__title">
+      <div class="chat-card__name">{{ name }}</div>
+      <div class="chat-card__subtitle">{{localize "WTTRPGEnhancements.Chat.Dot.Title"}}</div>
+    </div>
+    <div class="chat-card__tag">{{localize "WTTRPGEnhancements.Chat.Dot.Tag"}}</div>
+  </header>
+
+  <div class="chat-card__body">
+    {{#if spRollInline}}
+      <div class="chat-card__row">
+        <span class="chat-card__label">
+          <i class="chat-card__label-icon fas fa-helmet-battle" aria-hidden="true"></i>
+          {{localize "WTTRPGEnhancements.Chat.Dot.SpDamage"}}
+        </span>
+        <span class="chat-card__value">{{{ spRollInline }}}</span>
+      </div>
     {{/if}}
-    <p>Damage Type: {{ damage.damageType }}</p>
-    <p>Location: {{ damage.location.alias }}</p>
-</div>
+    <div class="chat-card__row">
+      <span class="chat-card__label">
+        <i class="chat-card__label-icon {{ damageTypePresentation.icon }}" aria-hidden="true"></i>
+        {{localize "WTTRPGEnhancements.Chat.Dot.Type"}}
+      </span>
+      <span class="chat-card__value chat-card__value--type" style="--chat-type-color: {{ damageTypePresentation.color }};">
+        {{ damageTypeLabel }}
+      </span>
+    </div>
+    <div class="chat-card__row">
+      <span class="chat-card__label">
+        <i class="chat-card__label-icon {{ locationPresentation.icon }}" aria-hidden="true"></i>
+        {{localize "WTTRPGEnhancements.Chat.Dot.Location"}}
+      </span>
+      <span class="chat-card__value">{{ damage.location.alias }}</span>
+    </div>
+  </div>
+</article>

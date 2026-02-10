@@ -1,25 +1,25 @@
-<section class="tab {{tab.cssClass}} scrollable" data-group="primary" data-tab="amplifier">
-    <h1>Amplifier settings</h1>
+<section class="tab {{tabs.amplifier.cssClass}} scrollable" data-group="primary" data-tab="amplifier">
+    <h1>{{localize "WTTRPGEnhancements.Sheet.Amplifier.Title"}}</h1>
     <table class="table table-striped">
         <tbody>
             <tr class="item-header-tablerow">
-                <td>Enabled</td>
-                <td><input name="amp.enabled" type="checkbox" {{checked data.enabled}}></td>
+                <td>{{localize "WTTRPGEnhancements.Sheet.Amplifier.Enabled"}}</td>
+                <td><input name="amp.enabled" type="checkbox" {{checked data.amp.enabled}}></td>
             </tr>
             <tr class="item-header-tablerow">
-                <td>Damage type</td>
+                <td>{{localize "WTTRPGEnhancements.Sheet.Amplifier.DamageType"}}</td>
                 <td><select name="amp.damageType">
-                        {{selectOptions data.damageTypes selected=data.damageType localize=true}}
+                        {{selectOptions data.amp.damageTypes selected=data.amp.damageType localize=true}}
                     </select></td>
             </tr>
             <tr class="item-header-tablerow">
-                <td>Multiplicative amplifier</td>
-                <td><input name="amp.multiplier" type="number" value="{{data.multiplier}}">
+                <td>{{localize "WTTRPGEnhancements.Sheet.Amplifier.Multiplier"}}</td>
+                <td><input name="amp.multiplier" type="number" value="{{data.amp.multiplier}}">
                 </td>
             </tr>
             <tr class="item-header-tablerow">
-                <td>Variable amplifier formula</td>
-                <td><input name="amp.variableFormula" type="text" value="{{data.variableFormula}}">
+                <td>{{localize "WTTRPGEnhancements.Sheet.Amplifier.VariableFormula"}}</td>
+                <td><input name="amp.variableFormula" type="text" value="{{data.amp.variableFormula}}">
                 </td>
             </tr>
         </tbody>

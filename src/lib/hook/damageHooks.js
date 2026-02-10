@@ -1,5 +1,4 @@
 import { applyLifesteal, initLifestealContext } from '../core/lifesteal.js';
-import { applyDamage } from '/systems/TheWitcherTRPG/module/scripts/combat/applyDamage.js';
 import { getAttackLocationOptions } from '../util/location.js';
 
 const DialogV2 = foundry.applications.api.DialogV2;
@@ -19,7 +18,7 @@ export async function applyEnhancedDamage(actor, totalDamage, messageId) {
     const flags = source?.flags['wttrpg-enhancements']
     const lifestealContext = initLifestealContext(source, actor, attribute, flags?.lifesteal)
 
-    await applyDamage(actor, dialogData, totalDamage, damage, attribute, totalDamage)
+    await actor.applyDamage(dialogData, totalDamage, damage, attribute)
 
     if (flags?.lifesteal.enabled) {
         await applyLifesteal(lifestealContext)

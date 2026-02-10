@@ -1,36 +1,27 @@
-<section class="tab {{tab.cssClass}} scrollable" data-group="primary" data-tab="lifesteal">
-    <h1>Lifesteal settings</h1>
+<section class="tab {{tabs.lifesteal.cssClass}} scrollable" data-group="primary" data-tab="lifesteal">
+    {{ log data.lifesteal }}
+    <h1>{{localize "WTTRPGEnhancements.Sheet.Lifesteal.Title"}}</h1>
     <table class="table table-striped">
         <tbody>
             <tr class="item-header-tablerow">
-                <td colspan="2">Enabled</td>
-                <td colspan="2"><input name="lifesteal.enabled" type="checkbox" {{checked data.enabled}}></td>
+                <td colspan="2">{{localize "WTTRPGEnhancements.Sheet.Lifesteal.Enabled"}}</td>
+                <td colspan="2"><input name="lifesteal.enabled" type="checkbox" {{checked data.lifesteal.enabled}}></td>
             </tr>
             <tr class="item-header-tablerow">
-                <td colspan="2">Stat</td>
-                <td colspan="2"><select name="lifesteal.stat">
-                        {{selectOptions data.lifeStealStats selected=lifestealStat localize=true}}
-                    </select></td>
+                <td colspan="2">{{localize "WTTRPGEnhancements.Sheet.Lifesteal.FlatPercentage"}}</td>
+                <td colspan="2"><input name="lifesteal.flatPercentage" type="number" value="{{data.lifesteal.flatPercentage}}"></td>
             </tr>
             <tr class="item-header-tablerow">
-                <td colspan="2">Flat lifesteal percentage</td>
-                <td colspan="2"><input name="lifesteal.flatPercentage" type="number" value="{{data.flatPercentage}}"></td>
+                <td colspan="2">{{localize "WTTRPGEnhancements.Sheet.Lifesteal.StoreOverheal"}}</td>
+                <td colspan="2"><input name="lifesteal.storeOverheal" type="checkbox" {{checked data.lifesteal.storeOverheal}}></td>
             </tr>
             <tr class="item-header-tablerow">
-                <td colspan="2">Variable lifesteal formula</td>
-                <td colspan="2"><input name="lifesteal.variableFormula" type="text" value="{{data.variableFormula}}"></td>
+                <td colspan="2">{{localize "WTTRPGEnhancements.Sheet.Lifesteal.OverhealPercentage"}}</td>
+                <td colspan="2"><input name="lifesteal.overhealPercentage" type="number" value="{{data.lifesteal.overhealPercentage}}"></td>
             </tr>
             <tr class="item-header-tablerow">
-                <td colspan="2">Store overheal</td>
-                <td colspan="2"><input name="lifesteal.storeOverheal" type="checkbox" {{checked data.storeOverheal}}></td>
-            </tr>
-            <tr class="item-header-tablerow">
-                <td colspan="2">Overheal percentage</td>
-                <td colspan="2"><input name="lifesteal.overhealPercentage" type="number" value="{{data.overhealPercentage}}"></td>
-            </tr>
-            <tr class="item-header-tablerow">
-                <td colspan="2">Overheal shield threshold</td>
-                <td colspan="2"><input name="lifesteal.overhealThreshold" type="number" value="{{data.overhealThreshold}}"></td>
+                <td colspan="2">{{localize "WTTRPGEnhancements.Sheet.Lifesteal.OverhealThreshold"}}</td>
+                <td colspan="2"><input name="lifesteal.overhealThreshold" type="number" value="{{data.lifesteal.overhealThreshold}}"></td>
             </tr>
         </tbody>
     </table>

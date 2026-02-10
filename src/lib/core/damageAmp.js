@@ -1,9 +1,20 @@
 export async function wrapDamageRoll(wrapped, damage) {
     const source = await fromUuid(damage.itemUuid)
-    const effects = source.actor.appliedEffects
+
     const originalFormula = damage.formula
-    let formula = originalFormula
+
+    damage.formula = getAmplifiedDamageFormula(source.actor, damage)
+    
+    await wrapped(damage)
+
+    damage.formula = originalFormula
+}
+
+export function getAmplifiedDamageFormula(actor, damage) {
+    const effects = actor.appliedEffects
     const displayRollDetails = game.settings.get('TheWitcherTRPG', 'displayRollsDetails')
+
+    let formula = damage.formula
 
     const amplifiers = effects.filter(e => {
         const flags = e.flags['wttrpg-enhancements']?.amp
@@ -19,8 +30,5 @@ export async function wrapDamageRoll(wrapped, damage) {
         formula = `(${formula}) * ${modifier}`
     })
 
-    damage.formula = formula
-    await wrapped(damage)
-
-    damage.formula = originalFormula
+    return formula
 }

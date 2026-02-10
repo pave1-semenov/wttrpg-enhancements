@@ -1,7 +1,7 @@
 import { LifeStealMixin } from "../mixin/lifestealMixin.js"
-import DefaultTabbedDocumentSheet from "./defaultTabbedSheet.js"
+import DefauldDocumentSheet from "./defaultSheet.js"
 
-export default class ItemEnhancementSheet extends LifeStealMixin((DefaultTabbedDocumentSheet)) {
+export default class ItemEnhancementSheet extends LifeStealMixin((DefauldDocumentSheet)) {
     static DEFAULT_OPTIONS = {
         position: {
             width: 700,
@@ -19,18 +19,19 @@ export default class ItemEnhancementSheet extends LifeStealMixin((DefaultTabbedD
             template: "templates/generic/tab-navigation.hbs",
         },
         lifesteal: {
-            container: { classes: ["tab-body"], id: "tabs" },
             template: "modules/wttrpg-enhancements/templates/sheet/lifesteal.hbs",
             scrollable: [""]
         }
     }
 
-    static TABS = [
-        { tab: "lifesteal", label: game.i18n.localize('WTRPGEnhancements.Enhancements.Lifesteal'), icon: "fas fa-people-robbery" }
-    ];
-
-    tabGroups = {
-        primary: "lifesteal"
+    static TABS = {
+        primary: {
+            tabs: [
+                { id: "lifesteal", icon: "fas fa-people-robbery" }
+            ],
+            initial: 'lifesteal',
+            labelPrefix: 'WTTRPGEnhancements.Enhancements'
+        }
     }
 
     /**
@@ -59,16 +60,13 @@ export default class ItemEnhancementSheet extends LifeStealMixin((DefaultTabbedD
         return this._fillUpdateData(formData, updateData, prefixesConfig)
     }
 
-    async _preparePartContext(partId, context) {
-        context = await super._preparePartContext(partId, context)
+    async _prepareContext(options) {
+        let context = await super._prepareContext(options)
 
-        context.tab = context.tabs[partId]
+        this._prepareLifestealtContext(context)
 
-        switch (partId) {
-            case "lifesteal":
-                return this._prepareLifestealtContext(context)
-        }
+        context.tabs = this._prepareTabs("primary")
 
-        return context;
+        return context
     }
 }
