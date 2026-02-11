@@ -3,7 +3,8 @@
         "Enhancements": {
             "lifesteal": "Lifesteal",
             "dot": "DOT",
-            "amplifier": "Amplifier"
+            "hot": "HOT",
+            "amp": "Amplifier"
         },
         "Buttons": {
             "Title": "WTTRPG enhancements"
@@ -16,6 +17,17 @@
                 "Type": "Type",
                 "Location": "Location"
             },
+            "Hot": {
+                "Title": "Heal Over Time",
+                "Tag": "HOT",
+                "Formula": "Formula",
+                "Healer": "Healer",
+                "Target": "Target",
+                "HealApplied": "Heal applied",
+                "HpChange": "HP change",
+                "Status": "Status",
+                "NoBenefit": "No healing applied (target is already at full HP)"
+            },
             "Lifesteal": {
                 "Title": "Lifesteal Trigger",
                 "Tag": "Steal",
@@ -24,9 +36,16 @@
                 "DamageDealt": "Damage dealt",
                 "Lifesteal": "Lifesteal",
                 "OverhealToShield": "Overheal to shield",
+                "HpChange": "HP change",
+                "AttributeChange": "{attribute} change",
                 "ShieldValue": "Shield: {value}",
                 "Percent": "({percent}%)",
-                "RollFlavor": "Lifesteal {percent}% of damage done"
+                "RollFlavor": "Lifesteal {percent}% of damage done",
+                "Status": "Status",
+                "NoBenefitHpAndShieldCapped": "No benefit: HP is full and shield is at its threshold",
+                "NoBenefitHpCapped": "No benefit: HP is already full",
+                "NoBenefitStatCapped": "No benefit: attribute is already full",
+                "NoBenefitGeneric": "No benefit from this lifesteal tick"
             }
         },
         "Sheet": {
@@ -45,6 +64,11 @@
                 "DamageType": "Damage Type",
                 "Location": "Location",
                 "AutoApply": "Auto apply"
+            },
+            "Hot": {
+                "Title": "Hot settings",
+                "Enabled": "Enabled",
+                "Formula": "Formula"
             },
             "Amplifier": {
                 "Title": "Amplifier settings",

@@ -1,14 +1,4 @@
-export async function wrapDamageRoll(wrapped, damage) {
-    const source = await fromUuid(damage.itemUuid)
-
-    const originalFormula = damage.formula
-
-    damage.formula = getAmplifiedDamageFormula(source.actor, damage)
-    
-    await wrapped(damage)
-
-    damage.formula = originalFormula
-}
+import { FLAG_KEYS, MODULE } from '../util/constants.js';
 
 export function getAmplifiedDamageFormula(actor, damage) {
     const effects = actor.appliedEffects
@@ -17,10 +7,10 @@ export function getAmplifiedDamageFormula(actor, damage) {
     let formula = damage.formula
 
     const amplifiers = effects.filter(e => {
-        const flags = e.flags['wttrpg-enhancements']?.amp
+        const flags = e.flags[MODULE.FLAGS_KEY]?.[FLAG_KEYS.AMP]
         const damageType = flags?.damageType
         return flags?.enabled && (damageType === damage.type || damageType === 'all')
-    }).map(e => [e.name, e.flags['wttrpg-enhancements'].amp])
+    }).map(e => [e.name, e.flags[MODULE.FLAGS_KEY][FLAG_KEYS.AMP]])
 
     amplifiers.filter(([name, amp]) => amp.variableFormula).forEach(([name, amp]) => {
         formula += displayRollDetails ? `+${amp.variableFormula}[${name}]` : `+${amp.variableFormula}`

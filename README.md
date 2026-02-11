@@ -1,71 +1,154 @@
-![](https://img.shields.io/badge/Foundry-v10-informational)
-<!--- Downloads @ Latest Badge -->
-<!--- replace <user>/<repo> with your username/repository -->
-<!--- ![Latest Release Download Count](https://img.shields.io/github/downloads/<user>/<repo>/latest/module.zip) -->
+# WTTRPG Enhancements
+## TBA, Readme is AI-generated
 
-<!--- Forge Bazaar Install % Badge -->
-<!--- replace <your-module-name> with the `name` in your manifest -->
-<!--- ![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2F<your-module-name>&colorB=4aa94a) -->
+Enhancements for the **The Witcher TRPG** Foundry system focused on:
+- Active Effect over-time mechanics (DOT/HOT)
+- Lifesteal automation and chat feedback
+- Damage amplification from active effects
 
+## Compatibility
 
-# How to use this Template to create a versioned Release
+- Foundry VTT: v12-v13 (module manifest verifies v13)
+- System: `TheWitcherTRPG`
+- Dependency: `lib-wrapper`
 
-1. Open your repository's releases page.
+## What This Module Adds
 
-![Where to click to open repository releases.](https://user-images.githubusercontent.com/7644614/93409301-9fd25080-f864-11ea-9e0c-bdd09e4418e4.png)
+### 1. Active Effect Enhancement Sheet
 
-2. Click "Draft a new release"
+On any Active Effect sheet (GM), a header button opens an enhancement sheet with tabs:
+- `DOT`
+- `HOT`
+- `Lifesteal`
+- `Amplifier`
 
-![Draft a new release button.](https://user-images.githubusercontent.com/7644614/93409364-c1333c80-f864-11ea-89f1-abfcb18a8d9f.png)
+### 2. Weapon Lifesteal Sheet
 
-3. Fill out the release version as the tag name.
+On weapon item sheets (GM), a header button opens a Lifesteal configuration tab.
 
-If you want to add details at this stage you can, or you can always come back later and edit them.
+### 3. Combat Turn Processing (DOT + HOT)
 
-![Release Creation Form](https://user-images.githubusercontent.com/7644614/93409543-225b1000-f865-11ea-9a19-f1906a724421.png)
+On combat updates, the module checks the current combatant's effects and processes enabled timed effects:
+- DOT effects 
+- HOT effects 
 
-4. Hit submit.
+Only GM executes these flows.
 
-5. Wait a few minutes.
+### 4. Enhanced Damage Apply from Chat
 
-A Github Action will run to populate the `module.json` and `module.zip` with the correct urls that you can then use to distribute this release. You can check on its status in the "Actions" tab.
+Adds a context option on damage chat cards to apply damage which respects the lifesteal flow
 
-![Actions Tab](https://user-images.githubusercontent.com/7644614/93409820-c1800780-f865-11ea-8c6b-c3792e35e0c8.png)
+### 5. Damage Amplifier
 
-6. Grab the module.json url from the release's details page.
+Modifies the damage formula per damage type using different amplification mechanisms:
+- additive variable formula
+- multiplicative modifier
 
-![image](https://user-images.githubusercontent.com/7644614/93409960-10c63800-f866-11ea-83f6-270cc5d10b71.png)
+## Settings and Behavior
 
-This `module.json` will only ever point at this release's `module.zip`, making it useful for sharing a specific version for compatibility purposes.
+## DOT Tab (Active Effect)
 
-7. You can use the url `https://github.com/<user>/<repo>/releases/latest/download/module.json` to refer to the manifest.
+| Setting | What it does |
+|---|---|
+| `enabled` | Enables DOT processing for this effect on turn updates. |
+| `formula` | Damage roll formula used each tick. |
+| `damageType` | Damage type sent to system damage application. |
+| `location` | Hit location used for applied damage logic. |
+| `autoApply` | If enabled, damage is auto-applied to current actor; otherwise only chat roll/card is posted. |
+| `damageProperties.*` | Overrides or inherits damage properties used by Witcher damage application. Includes SP damage support. |
 
-This is the url you want to use to install the module typically, as it will get updated automatically.
+### DOT runtime flow
+1. Build damage object (formula/type/location/properties).
+2. Apply amplifier modifications to formula.
+3. Roll and post styled chat card.
+4. Store damage payload on message flag for later chat-based apply flow.
+5. If `autoApply`, call `actor.applyDamage(...)`.
+6. If effect/item lifesteal is enabled, lifesteal triggers after damage application.
 
-# How to List Your Releases on Package Admin
+## HOT Tab (Active Effect)
 
-To request a package listing for your first release, go to the [Package Submission Form](https://foundryvtt.com/packages/submit) (accessible via a link at the bottom of the "[Systems and Modules](https://foundryvtt.com/packages/)" page on the Foundry website).
+| Setting | What it does |
+|---|---|
+| `enabled` | Enables HOT processing for this effect on turn updates. |
+| `formula` | Healing roll formula used each tick. |
 
-Fill in the form. "Package Name" must match the name in the module manifest.  Package Title will be the display name for the package.  Package URL should be your repo URL.
-![image](https://user-images.githubusercontent.com/36359784/120664263-b49e5500-c482-11eb-9126-af7006389903.png)
+### HOT runtime flow
+1. Roll formula.
+2. Call `actor.calculateHealValue(roll.total)`.
+3. Update actor HP using returned healing amount.
+4. Always post styled chat card with:
+   - healer
+   - target
+   - heal applied (shown only if > 0)
+   - HP change row (or clear no-benefit text when nothing was healed)
 
+## Lifesteal Tab (Active Effect or Weapon)
 
-One of the Foundry staff will typically get back to you with an approval or any further questions within a few days, and give you access to the package admin pages.
+| Setting | What it does |
+|---|---|
+| `enabled` | Enables lifesteal processing after successful damage application. |
+| `flatPercentage` | Percent of damage dealt converted into lifesteal. |
+| `storeOverheal` | If enabled and stealing HP, overflow can be converted to shield. |
+| `overhealPercentage` | Percent of overflow HP converted into shield. |
+| `overhealThreshold` | Optional shield cap for overheal storage (0 means no cap). |
 
-Once you have access to the [module admin page](https://foundryvtt.com/admin/packages/package/), you can release a new version by going into the page for your module, scrolling to the bottom, and filling in a new Package Version.
+### Lifesteal runtime flow
+1. Compute total damage dealt from target attribute delta.
+2. Compute lifesteal amount.
+3. Heal attacker's affected attribute (`hp` or `sta` based on context).
+4. If enabled and stat is HP, convert overflow to shield.
+5. Post styled chat card including:
+   - attacker and target
+   - damage dealt
+   - lifesteal result
+   - attribute change row (only when that attribute changed)
+   - shield gain row (only when shield actually increased)
+   - clear no-benefit reason when capped/full conditions block gains
 
-When listing a new version, Version should be the version number you set above, and the Manifest URL should be the manifest __for that specific version__ (do not use /latest/ here).
-![image](https://user-images.githubusercontent.com/36359784/120664346-c4b63480-c482-11eb-9d8b-731b50d70939.png)
+## Amplifier Tab (Active Effect)
 
-> ### :warning: Important :warning:
-> 
-> It is very important that you use the specific release manifest url, and not the `/latest` url here. For more details about why this is important and how Foundry Installs/Updates packages, read [this wiki article](https://foundryvtt.wiki/en/development/guides/releases-and-history).
+| Setting | What it does |
+|---|---|
+| `enabled` | Enables this amplifier effect. |
+| `damageType` | Applies only to matching type, or `all`. |
+| `multiplier` | Multiplicative factor applied to final formula. |
+| `variableFormula` | Additive formula fragment appended before multiplication. |
 
-Clicking "Save" in the bottom right will save the new version, which means that anyone installing your module from within Foundry will get that version, and a post will be generated in the #release-announcements channel on the official Foundry VTT Discord.
+### Amplifier details
+- Pulls all enabled amplifier effects from actor applied effects.
+- Applies variable formulas first, then multipliers.
+- Honors system setting `displayRollsDetails` for labeled roll fragments.
 
+## Chat UX
 
-# FoundryVTT Module
+Enhancement rolls use a custom roll class and custom roll/tooltip templates:
+- unified visual style for card + roll + tooltip
+- dark-theme-friendly tooltip text
+- wrapper styling on matching chat message container
 
-Does something, probably
+Applies to DOT, HOT, and Lifesteal messages.
 
-## Changelog
+## Data Model (Flags)
+
+Stored under `flags.wttrpg-enhancements`:
+- `dot`
+- `hot`
+- `lifesteal`
+- `amp`
+
+Message payloads:
+- Damage payload stored on chat messages under `flags.TheWitcherTRPG.damage` for enhanced apply flow.
+
+## Typical In-Game Setup
+
+1. Create or open an Active Effect.
+2. Open enhancement sheet via header button.
+3. Configure `DOT` and/or `HOT`.
+4. Optionally configure `Lifesteal`.
+5. (Optional) Add `Amplifier` effects for formula scaling.
+6. Start combat; module processes timed effects on active combatant updates.
+
+## Notes
+
+- Most automation is GM-side by design.
+- Existing system mechanics remain authoritative (`applyDamage`, `calculateHealValue`, etc); this module orchestrates and enriches those flows.

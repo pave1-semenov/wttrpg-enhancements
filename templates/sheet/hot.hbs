@@ -1,0 +1,15 @@
+<section class="tab {{tabs.hot.cssClass}} scrollable" data-group="primary" data-tab="hot">
+    <h1>{{localize "WTTRPGEnhancements.Sheet.Hot.Title"}}</h1>
+    <table class="table table-striped">
+        <tbody>
+            <tr class="item-header-tablerow">
+                <td>{{localize "WTTRPGEnhancements.Sheet.Hot.Enabled"}}</td>
+                <td><input name="hot.enabled" type="checkbox" {{checked data.hot.enabled}}></td>
+            </tr>
+            <tr class="item-header-tablerow">
+                <td>{{localize "WTTRPGEnhancements.Sheet.Hot.Formula"}}</td>
+                <td><input type="text" name="hot.formula" value="{{ data.hot.formula }}"></td>
+            </tr>
+        </tbody>
+    </table>
+</section>

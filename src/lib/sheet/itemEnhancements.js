@@ -1,4 +1,5 @@
 import { LifeStealMixin } from "../mixin/lifestealMixin.js"
+import { FORM_PREFIXES, ENHANCEMENT_KEYS, TEMPLATE_PATHS } from "../util/constants.js";
 import DefauldDocumentSheet from "./defaultSheet.js"
 
 export default class ItemEnhancementSheet extends LifeStealMixin((DefauldDocumentSheet)) {
@@ -16,10 +17,10 @@ export default class ItemEnhancementSheet extends LifeStealMixin((DefauldDocumen
 
     static PARTS = {
         tabs: {
-            template: "templates/generic/tab-navigation.hbs",
+            template: TEMPLATE_PATHS.NAVIGATION,
         },
-        lifesteal: {
-            template: "modules/wttrpg-enhancements/templates/sheet/lifesteal.hbs",
+        [ENHANCEMENT_KEYS.LIFESTEAL]: {
+            template: TEMPLATE_PATHS.SHEET_LIFESTEAL,
             scrollable: [""]
         }
     }
@@ -27,9 +28,9 @@ export default class ItemEnhancementSheet extends LifeStealMixin((DefauldDocumen
     static TABS = {
         primary: {
             tabs: [
-                { id: "lifesteal", icon: "fas fa-people-robbery" }
+                { id: ENHANCEMENT_KEYS.LIFESTEAL, icon: "fas fa-people-robbery" }
             ],
-            initial: 'lifesteal',
+            initial: ENHANCEMENT_KEYS.LIFESTEAL,
             labelPrefix: 'WTTRPGEnhancements.Enhancements'
         }
     }
@@ -50,11 +51,11 @@ export default class ItemEnhancementSheet extends LifeStealMixin((DefauldDocumen
 
     async _prepareUpdateData(formData) {
         let updateData = {
-            lifesteal: {}
+            [ENHANCEMENT_KEYS.LIFESTEAL]: {}
         }
 
         const prefixesConfig = [
-            { prefix: 'lifesteal.', target: updateData.lifesteal },
+            { prefix: FORM_PREFIXES.LIFESTEAL, target: updateData[ENHANCEMENT_KEYS.LIFESTEAL] },
         ]
 
         return this._fillUpdateData(formData, updateData, prefixesConfig)
