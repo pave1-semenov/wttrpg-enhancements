@@ -3,6 +3,9 @@
   "title": "Some Witcher TRPG Enhancements",
   "description": "Various enhancements for the Witcher TRPG system",
   "version": "0.0.1",
+  "download": "https://github.com/pave1-semenov/wttrpg-enhancements/releases/download/0.0.1/module.zip",
+  "url": "https://github.com/pave1-semenov/wttrpg-enhancements",
+  "manifest": "https://github.com/pave1-semenov/wttrpg-enhancements/releases/latest/download/module.json",
   "library": "false",
   "manifestPlusVersion": "1.2.0",
   "compatibility": {
