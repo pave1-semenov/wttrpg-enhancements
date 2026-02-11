@@ -38,21 +38,36 @@
         {{localize "WTTRPGEnhancements.Chat.Lifesteal.Lifesteal"}}
       </span>
       <span class="chat-card__value">
-        {{ lifesteal }} {{ attributeLabel }}
-        <span class="chat-card__subvalue">{{localize "WTTRPGEnhancements.Chat.Lifesteal.Percent" percent=lifestealPercent}}</span>
+        {{#if hadBenefit}}
+          {{ lifesteal }} {{ attributeLabel }}
+          <span class="chat-card__subvalue">{{localize "WTTRPGEnhancements.Chat.Lifesteal.Percent" percent=lifestealPercent}}</span>
+        {{else}}
+          {{localize noBenefitReasonKey}}
+        {{/if}}
       </span>
     </div>
-    {{#if overheal}}
+    {{#if showAttributeChange}}
+      <div class="chat-card__row">
+        <span class="chat-card__label">
+          <i class="chat-card__label-icon fas fa-chart-line" aria-hidden="true"></i>
+          {{localize "WTTRPGEnhancements.Chat.Lifesteal.AttributeChange" attribute=attributeLabel}}
+        </span>
+        <span class="chat-card__value">{{ attributeBefore }} -> {{ attributeAfter }}</span>
+      </div>
+    {{/if}}
+    {{#if storeOverheal}}
+    {{#if shieldGain}}
       <div class="chat-card__row">
         <span class="chat-card__label">
           <i class="chat-card__label-icon fas fa-shield" aria-hidden="true"></i>
           {{localize "WTTRPGEnhancements.Chat.Lifesteal.OverhealToShield"}}
         </span>
         <span class="chat-card__value">
-          {{ overheal }} {{ attributeLabel }}
+          {{ shieldGain }} {{localize "WTTRPGEnhancements.Stats.shield"}}
           <span class="chat-card__subvalue">{{localize "WTTRPGEnhancements.Chat.Lifesteal.ShieldValue" value=shieldValue}}</span>
         </span>
       </div>
+    {{/if}}
     {{/if}}
   </div>
 </article>

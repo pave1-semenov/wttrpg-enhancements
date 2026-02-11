@@ -99,6 +99,21 @@
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 4px 10px rgba(22, 163, 74, 0.35);
 }
 
+.hot-card {
+  border-color: #1a4b3f;
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(20, 184, 166, 0.2), transparent 55%),
+    radial-gradient(120% 140% at 100% 0%, rgba(110, 231, 183, 0.18), transparent 60%),
+    linear-gradient(150deg, #071510 0%, #0f211a 55%, #163328 100%);
+}
+
+.chat-card__tag--hot {
+  border: 1px solid rgba(13, 148, 136, 0.65);
+  color: #052018;
+  background: linear-gradient(135deg, #2dd4bf, #6ee7b7);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25), 0 4px 10px rgba(13, 148, 136, 0.35);
+}
+
 .chat-card__body {
   display: grid;
   gap: 6px;
@@ -164,4 +179,104 @@
 .chat-card__value .inline-roll:hover,
 .chat-card__value .inline-roll a:hover {
   background: rgba(77, 182, 255, 0.2);
+}
+
+.wttrpg-enhancement-roll {
+  margin-top: 0;
+  padding: 10px 12px;
+  border: 1px solid #2a3642;
+  border-radius: 10px;
+  background: linear-gradient(150deg, #0a0f14 0%, #121b23 55%, #192832 100%);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.wttrpg-enhancement-roll .dice-result {
+  display: grid;
+  gap: 8px;
+}
+
+.wttrpg-enhancement-roll .dice-formula {
+  color: #dbe8f3;
+  border: 1px solid #2c3a45;
+  border-radius: 8px;
+  background: rgba(8, 12, 16, 0.45);
+  font-weight: 600;
+}
+
+.wttrpg-enhancement-roll .dice-total {
+  border: 1px solid #1e6b8f;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #0f3f5a 0%, #1f6f8f 45%, #27b3a2 100%);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 4px 10px rgba(20, 112, 146, 0.35);
+}
+
+.wttrpg-enhancement-tooltip .tooltip-part {
+  border: 1px solid #22303b;
+  border-radius: 8px;
+  background: rgba(8, 12, 16, 0.45);
+}
+
+.chat-message:has(.wttrpg-enhancement-roll) .message-header {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.chat-message:has(.wttrpg-enhancement-roll) .message-content {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.chat-message:has(.wttrpg-enhancement-roll) .message-header .flavor-text {
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.chat-message:has(.wttrpg-enhancement-roll) .message-header .flavor-text .chat-card {
+  margin-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.chat-message:has(.wttrpg-enhancement-roll) .message-content .wttrpg-enhancement-roll {
+  border-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.wttrpg-enhancement-tooltip,
+.wttrpg-enhancement-tooltip .part-header,
+.wttrpg-enhancement-tooltip .part-formula,
+.wttrpg-enhancement-tooltip .part-flavor,
+.wttrpg-enhancement-tooltip .part-total,
+.wttrpg-enhancement-tooltip .dice-rolls .roll {
+  color: #dbe8f3;
+}
+
+.chat-message:has(.wttrpg-enhancement-roll) {
+  background: linear-gradient(160deg, #0a0f14 0%, #121b23 55%, #1a2832 100%);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+.chat-message:has(.wttrpg-enhancement-roll) .message-header {
+  border-bottom: 0;
+  background: transparent;
+}
+
+.chat-message:has(.wttrpg-enhancement-roll) .message-sender {
+  color: #e6edf3;
+  font-weight: 700;
+}
+
+.chat-message:has(.wttrpg-enhancement-roll) .message-metadata,
+.chat-message:has(.wttrpg-enhancement-roll) .message-metadata time,
+.chat-message:has(.wttrpg-enhancement-roll) .message-delete {
+  color: #9fb0bf;
+}
+
+.chat-message:has(.wttrpg-enhancement-roll) .message-content {
+  background: transparent;
 }

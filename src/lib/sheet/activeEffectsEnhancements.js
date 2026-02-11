@@ -1,5 +1,6 @@
 import { LifeStealMixin } from "../mixin/lifestealMixin.js"
 import { getAllLocationOptions } from "../util/location.js";
+import { ENHANCEMENT_KEYS, FLAG_PATHS, FORM_PREFIXES, TEMPLATE_PATHS } from "../util/constants.js";
 import DefauldDocumentSheet from "./defaultSheet.js"
 
 export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((DefauldDocumentSheet)) {
@@ -17,18 +18,22 @@ export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((Defa
 
     static PARTS = {
         tabs: {
-            template: "templates/generic/tab-navigation.hbs",
+            template: TEMPLATE_PATHS.NAVIGATION,
         },
-        dot: {
-            template: "modules/wttrpg-enhancements/templates/sheet/dot.hbs",
+        [ENHANCEMENT_KEYS.DOT]: {
+            template: TEMPLATE_PATHS.SHEET_DOT,
             scrollable: [""]
         },
-        lifesteal: {
-            template: "modules/wttrpg-enhancements/templates/sheet/lifesteal.hbs",
+        [ENHANCEMENT_KEYS.HOT]: {
+            template: TEMPLATE_PATHS.SHEET_HOT,
             scrollable: [""]
         },
-        amplifier: {
-            template: "modules/wttrpg-enhancements/templates/sheet/amplifier.hbs",
+        [ENHANCEMENT_KEYS.LIFESTEAL]: {
+            template: TEMPLATE_PATHS.SHEET_LIFESTEAL,
+            scrollable: [""]
+        },
+        [ENHANCEMENT_KEYS.AMP]: {
+            template: TEMPLATE_PATHS.SHEET_AMPLIFIER,
             scrollable: [""]
         }
     }
@@ -38,11 +43,12 @@ export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((Defa
     static TABS = {
         primary: {
             tabs: [
-                { id: "dot", icon: "fas fa-heart-pulse" },
-                { id: "lifesteal", icon: "fas fa-people-robbery" },
-                { id: "amplifier", icon: "fas fa-hand-fist" }
+                { id: ENHANCEMENT_KEYS.DOT, icon: "fas fa-heart-pulse" },
+                { id: ENHANCEMENT_KEYS.HOT, icon: "fas fa-hand-holding-medical" },
+                { id: ENHANCEMENT_KEYS.LIFESTEAL, icon: "fas fa-people-robbery" },
+                { id: ENHANCEMENT_KEYS.AMP, icon: "fas fa-hand-fist" }
             ],
-            initial: 'dot',
+            initial: ENHANCEMENT_KEYS.DOT,
             labelPrefix: 'WTTRPGEnhancements.Enhancements'
         }
     }
@@ -63,18 +69,20 @@ export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((Defa
 
     async _prepareUpdateData(formData) {
         let updateData = {
-            dot: {
+            [ENHANCEMENT_KEYS.DOT]: {
                 damageProperties: {}
             },
-            lifesteal: {},
-            amp: {}
+            [ENHANCEMENT_KEYS.HOT]: {},
+            [ENHANCEMENT_KEYS.LIFESTEAL]: {},
+            [ENHANCEMENT_KEYS.AMP]: {}
         }
 
         const prefixesConfig = [
-            { prefix: 'dot.', target: updateData.dot },
-            { prefix: 'damageProperties.', target: updateData.dot.damageProperties },
-            { prefix: 'lifesteal.', target: updateData.lifesteal },
-            { prefix: 'amp.', target: updateData.amp }
+            { prefix: FORM_PREFIXES.DOT, target: updateData[ENHANCEMENT_KEYS.DOT] },
+            { prefix: FORM_PREFIXES.DAMAGE_PROPERTIES, target: updateData[ENHANCEMENT_KEYS.DOT].damageProperties },
+            { prefix: FORM_PREFIXES.HOT, target: updateData[ENHANCEMENT_KEYS.HOT] },
+            { prefix: FORM_PREFIXES.LIFESTEAL, target: updateData[ENHANCEMENT_KEYS.LIFESTEAL] },
+            { prefix: FORM_PREFIXES.AMP, target: updateData[ENHANCEMENT_KEYS.AMP] }
         ]
 
         return this._fillUpdateData(formData, updateData, prefixesConfig)
@@ -84,7 +92,8 @@ export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((Defa
         let context = await super._prepareContext(options)
 
         this._prepareLifestealtContext(context)
-        this._prepareDotContext(context)    
+        this._prepareDotContext(context)
+        this._prepareHotContext(context)
         this._prepareAmplifiersContext(context)
 
         context.tabs = this._prepareTabs("primary")
@@ -93,7 +102,7 @@ export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((Defa
     }
 
     async _prepareDotContext(context) {
-        const dotData = foundry.utils.getProperty(this.document, 'flags.wttrpg-enhancements.dot')
+        const dotData = foundry.utils.getProperty(this.document, FLAG_PATHS.DOT)
         const data = dotData ? dotData : {
             enabled: false,
             formula: '',
@@ -119,13 +128,26 @@ export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((Defa
         data.locations = getAllLocationOptions()
 
         if (!context.data) context.data = {}
-        context.data.dot = data
+        context.data[ENHANCEMENT_KEYS.DOT] = data
+
+        return context
+    }
+
+    async _prepareHotContext(context) {
+        const hotData = foundry.utils.getProperty(this.document, FLAG_PATHS.HOT)
+        const data = hotData ? hotData : {
+            enabled: false,
+            formula: ''
+        }
+
+        if (!context.data) context.data = {}
+        context.data[ENHANCEMENT_KEYS.HOT] = data
 
         return context
     }
 
     async _prepareAmplifiersContext(context) {
-        const ampData = foundry.utils.getProperty(this.document, 'flags.wttrpg-enhancements.amp')
+        const ampData = foundry.utils.getProperty(this.document, FLAG_PATHS.AMP)
         const data = ampData ? ampData : {
             enabled: false,
             damageType: '',
@@ -135,7 +157,7 @@ export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((Defa
         data.damageTypes = [{ label: 'All', value: 'all' }, ...CONFIG.WITCHER.damageTypes]
         if (!context.data) context.data = {}
 
-        context.data.amp = data
+        context.data[ENHANCEMENT_KEYS.AMP] = data
 
         return context
     }

@@ -1,0 +1,51 @@
+<article class="damage-message chat-card hot-card">
+  <header class="chat-card__header">
+    <div class="chat-card__icon">
+      <img src="{{ img }}" alt="{{ hot.name }}" />
+    </div>
+    <div class="chat-card__title">
+      <div class="chat-card__name">{{ hot.name }}</div>
+      <div class="chat-card__subtitle">{{localize "WTTRPGEnhancements.Chat.Hot.Title"}}</div>
+    </div>
+    <div class="chat-card__tag chat-card__tag--hot">{{localize "WTTRPGEnhancements.Chat.Hot.Tag"}}</div>
+  </header>
+
+  <div class="chat-card__body">
+    <div class="chat-card__row">
+      <span class="chat-card__label">
+        <i class="chat-card__label-icon fas fa-hand-holding-medical" aria-hidden="true"></i>
+        {{localize "WTTRPGEnhancements.Chat.Hot.Healer"}}
+      </span>
+      <span class="chat-card__value">{{ healer.name }}</span>
+    </div>
+    <div class="chat-card__row">
+      <span class="chat-card__label">
+        <i class="chat-card__label-icon fas fa-crosshairs" aria-hidden="true"></i>
+        {{localize "WTTRPGEnhancements.Chat.Hot.Target"}}
+      </span>
+      <span class="chat-card__value">{{ target.name }}</span>
+    </div>
+    {{#if hadBenefit}}
+    <div class="chat-card__row">
+      <span class="chat-card__label">
+        <i class="chat-card__label-icon fas fa-heart-pulse" aria-hidden="true"></i>
+        {{localize "WTTRPGEnhancements.Chat.Hot.HealApplied"}}
+      </span>
+      <span class="chat-card__value">{{ healingAmount }} HP</span>
+    </div>
+    {{/if}}
+    <div class="chat-card__row">
+      <span class="chat-card__label">
+        <i class="chat-card__label-icon fas fa-chart-line" aria-hidden="true"></i>
+        {{localize "WTTRPGEnhancements.Chat.Hot.HpChange"}}
+      </span>
+      <span class="chat-card__value">
+        {{#if hadBenefit}}
+          {{ hpBefore }} -> {{ hpAfter }}
+        {{else}}
+          {{localize "WTTRPGEnhancements.Chat.Hot.NoBenefit"}}
+        {{/if}}
+      </span>
+    </div>
+  </div>
+</article>

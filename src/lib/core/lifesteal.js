@@ -1,4 +1,6 @@
 import ChatMessageData from '/systems/TheWitcherTRPG/module/chatMessage/ChatMessageData.js';
+import { ATTRIBUTES, TEMPLATE_PATHS } from '../util/constants.js';
+import { EnhancementRoll } from '../roll/enhancementRoll.js';
 
 export function initLifestealContext(source, actor, stat, flags) {
     return {
@@ -20,48 +22,57 @@ export async function applyLifesteal(context) {
     const totalDamageDealt = statBeforeDmg - attributeAfter;
 
     if (totalDamageDealt > 0) {
+        const attributeBefore = attacker.system.derivedStats[stat].value;
         const lifestealAttribute = attacker.system.derivedStats[stat].value;
         const maxAttribute = attacker.system.derivedStats[stat].max;
 
-        const flatLifesteal = Math.round(totalDamageDealt * (flags.flatPercentage / 100))
+        const currentShield = attacker.system.derivedStats[ATTRIBUTES.SHIELD].value || 0;
+        const lifestealResult = computeLifestealResult({
+            totalDamageDealt,
+            lifestealPercent: flags.flatPercentage,
+            lifestealAttribute,
+            maxAttribute,
+            storeOverheal: flags.storeOverheal,
+            overhealPercent: flags.overhealPercentage,
+            overhealThreshold: flags.overhealThreshold,
+            currentShield,
+            stat
+        })
+
         const rollFlavor = game.i18n.format('WTTRPGEnhancements.Chat.Lifesteal.RollFlavor', {
             percent: flags.flatPercentage
         })
-        let rollFormula = `${flatLifesteal}[${rollFlavor}]`;
-
-        const roll = await new Roll(rollFormula).evaluate();
-
-        const toHeal = roll.total;
-        const afterLifesteal = lifestealAttribute + toHeal;
+        let rollFormula = `${lifestealResult.flatLifesteal}[${rollFlavor}]`;
+        const roll = await new EnhancementRoll(rollFormula).evaluate();
 
         await attacker.update({
-            [`system.derivedStats.${stat}.value`]: Math.min(afterLifesteal, maxAttribute),
+            [`system.derivedStats.${stat}.value`]: lifestealResult.updatedAttribute,
         });
 
-        let overheal, newShield = 0
-
-        if (flags.storeOverheal && stat === 'hp') {
-            overheal = Math.round(Math.max(0, afterLifesteal - maxAttribute) * (flags.overhealPercentage / 100));
-            const currentShield = attacker.system.derivedStats.shield.value || 0;
-            const maxShield = currentShield + overheal
-            newShield = flags.overhealThreshold ? Math.min(maxShield, flags.overhealThreshold) : maxShield;
-
+        if (flags.storeOverheal && stat === ATTRIBUTES.HP) {
             await attacker.update({
-                'system.derivedStats.shield.value': newShield
+                [`system.derivedStats.${ATTRIBUTES.SHIELD}.value`]: lifestealResult.newShield
             });
-
         }
 
 
         const attributeLabel = getAttributeLabel(stat)
 
-        const content = await renderTemplate('modules/wttrpg-enhancements/templates/chat/applyLifesteal.hbs', {
+        const content = await renderTemplate(TEMPLATE_PATHS.CHAT_APPLY_LIFESTEAL, {
             source: source,
             actor: actor,
             attacker: attacker,
-            lifesteal: toHeal,
-            overheal: overheal,
-            shieldValue: newShield,
+            lifesteal: lifestealResult.toHeal,
+            overheal: lifestealResult.overheal,
+            shieldValue: lifestealResult.newShield,
+            effectiveHeal: lifestealResult.effectiveHeal,
+            shieldGain: lifestealResult.shieldGain,
+            hadBenefit: lifestealResult.hadBenefit,
+            noBenefitReasonKey: lifestealResult.noBenefitReasonKey,
+            storeOverheal: flags.storeOverheal,
+            attributeBefore: attributeBefore,
+            attributeAfter: lifestealResult.updatedAttribute,
+            showAttributeChange: lifestealResult.effectiveHeal > 0,
             attribute: stat,
             attributeLabel: attributeLabel,
             totalDamageDealt: totalDamageDealt,
@@ -73,7 +84,6 @@ export async function applyLifesteal(context) {
 
         let messageData = new ChatMessageData(attacker)
         messageData.flavor = content
-        ChatMessage.applyRollMode(messageData, game.settings.get('core', 'rollMode'));
 
         await roll.toMessage(messageData);
     }
@@ -81,14 +91,89 @@ export async function applyLifesteal(context) {
 
 function getAttributeLabel(stat) {
     switch (stat) {
-        case 'hp':
+        case ATTRIBUTES.HP:
             return game.i18n.localize('WTTRPGEnhancements.Stats.hp');
-        case 'sta':
+        case ATTRIBUTES.STA:
             return game.i18n.localize('WTTRPGEnhancements.Stats.sta');
-        case 'shield':
+        case ATTRIBUTES.SHIELD:
             return game.i18n.localize('WTTRPGEnhancements.Stats.shield');
         default:
             return game.i18n.localize('WTTRPGEnhancements.Stats.default');
     }
 }
 
+function computeLifestealResult({
+    totalDamageDealt,
+    lifestealPercent,
+    lifestealAttribute,
+    maxAttribute,
+    storeOverheal,
+    overhealPercent,
+    overhealThreshold,
+    currentShield,
+    stat
+}) {
+    const flatLifesteal = Math.round(totalDamageDealt * (lifestealPercent / 100))
+    const toHeal = flatLifesteal
+    const afterLifesteal = lifestealAttribute + toHeal
+    const updatedAttribute = Math.min(afterLifesteal, maxAttribute)
+    const effectiveHeal = Math.max(0, updatedAttribute - lifestealAttribute)
+
+    let overheal
+    let newShield = 0
+    let shieldGain = 0
+
+    if (storeOverheal && stat === ATTRIBUTES.HP) {
+        overheal = Math.round(Math.max(0, afterLifesteal - maxAttribute) * (overhealPercent / 100))
+        const maxShield = currentShield + overheal
+        newShield = overhealThreshold ? Math.min(maxShield, overhealThreshold) : maxShield
+        shieldGain = Math.max(0, newShield - currentShield)
+    }
+
+    const hadBenefit = (effectiveHeal > 0) || (shieldGain > 0)
+    const noBenefitReasonKey = hadBenefit ? null : getNoBenefitReasonKey({
+        stat,
+        lifestealAttribute,
+        maxAttribute,
+        storeOverheal,
+        overhealThreshold,
+        currentShield
+    })
+
+    return {
+        flatLifesteal,
+        toHeal,
+        afterLifesteal,
+        updatedAttribute,
+        effectiveHeal,
+        overheal,
+        newShield,
+        shieldGain,
+        hadBenefit,
+        noBenefitReasonKey
+    }
+}
+
+function getNoBenefitReasonKey({
+    stat,
+    lifestealAttribute,
+    maxAttribute,
+    storeOverheal,
+    overhealThreshold,
+    currentShield
+}) {
+    const isAtAttributeCap = lifestealAttribute >= maxAttribute
+    const isHp = stat === ATTRIBUTES.HP
+
+    if (isHp && isAtAttributeCap && storeOverheal && overhealThreshold && currentShield >= overhealThreshold) {
+        return 'WTTRPGEnhancements.Chat.Lifesteal.NoBenefitHpAndShieldCapped'
+    }
+    if (isHp && isAtAttributeCap && !storeOverheal) {
+        return 'WTTRPGEnhancements.Chat.Lifesteal.NoBenefitHpCapped'
+    }
+    if (!isHp && isAtAttributeCap) {
+        return 'WTTRPGEnhancements.Chat.Lifesteal.NoBenefitStatCapped'
+    }
+
+    return 'WTTRPGEnhancements.Chat.Lifesteal.NoBenefitGeneric'
+}
