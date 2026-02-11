@@ -2,10 +2,10 @@
   "id": "wttrpg-enhancements",
   "title": "Some Witcher TRPG Enhancements",
   "description": "Various enhancements for the Witcher TRPG system",
-  "version": "0.0.1",
-  "download": "https://github.com/pave1-semenov/wttrpg-enhancements/releases/download/0.0.1/module.zip",
+  "version": "#{VERSION}#",
+  "manifest": "#{MANIFEST}#",
+  "download": "#{DOWNLOAD}#",
   "url": "https://github.com/pave1-semenov/wttrpg-enhancements",
-  "manifest": "https://github.com/pave1-semenov/wttrpg-enhancements/releases/latest/download/module.json",
   "library": "false",
   "manifestPlusVersion": "1.2.0",
   "compatibility": {
@@ -60,11 +60,5 @@
       "type": "icon",
       "url": "https://avatars2.githubusercontent.com/u/71292812?s=400&u=ccdb4eeb7abf551ca8f314e5a9bfd0479a4d3d41&v=4"
     }
-  ],
-  "documentTypes": {
-    "Item": {
-      "reaction": {
-      }
-    }
-  }
+  ]
 }
