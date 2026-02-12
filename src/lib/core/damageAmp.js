@@ -15,10 +15,15 @@ export function getAmplifiedDamageFormula(actor, damage) {
     amplifiers.filter(([name, amp]) => amp.variableFormula).forEach(([name, amp]) => {
         formula += displayRollDetails ? `+${amp.variableFormula}[${name}]` : `+${amp.variableFormula}`
     })
+    let variableAmplifiersApplied = false
     amplifiers.filter(([name, amp]) => amp.multiplier).forEach(([name, amp]) => {
         const modifier = displayRollDetails ? `${amp.multiplier}[${name}]` : `${amp.multiplier}`
         formula = `(${formula}) * ${modifier}`
+        variableAmplifiersApplied = true
     })
+    if (variableAmplifiersApplied) {
+        formula = `round(${formula})`
+    }
 
     return formula
 }
