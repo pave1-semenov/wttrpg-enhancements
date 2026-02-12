@@ -1,9 +1,9 @@
 import { ATTRIBUTES, FLAG_PATHS, TEMPLATE_PATHS } from '../util/constants.js';
-import { importSystemModule } from '../util/systemImport.js';
+import { ChatMessageData } from '../roll/chatMessageData.js';
 import { EnhancementRoll } from '../roll/enhancementRoll.js';
 
 export async function handleHot(actor, hot) {
-    const { default: ChatMessageData } = await importSystemModule('module/chatMessage/ChatMessageData.js');
+
     const hotFlags = foundry.utils.getProperty(hot, FLAG_PATHS.HOT);
     if (!hotFlags?.formula || !Roll.validate(hotFlags.formula)) return;
 

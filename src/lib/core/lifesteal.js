@@ -1,4 +1,4 @@
-import { importSystemModule } from '../util/systemImport.js';
+import { ChatMessageData } from '../roll/chatMessageData.js';
 import { ATTRIBUTES, TEMPLATE_PATHS } from '../util/constants.js';
 import { EnhancementRoll } from '../roll/enhancementRoll.js';
 
@@ -15,7 +15,7 @@ export function initLifestealContext(source, actor, stat, flags) {
 
 export async function applyLifesteal(context) {
     const { actor, source, attacker, stat, statBeforeDmg, flags } = context;
-    const { default: ChatMessageData } = await importSystemModule('module/chatMessage/ChatMessageData.js');
+
 
     if (!flags?.enabled) return;
 
