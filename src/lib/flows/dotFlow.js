@@ -10,6 +10,10 @@ export async function handleDot(actor, dot) {
     const flags = dot.flags[MODULE.FLAGS_KEY]
     const dotFlags = flags[FLAG_KEYS.DOT]
 
+    if (!source || !dotFlags || !acotor) { 
+        console.error("Failed to process DoT damage: missing source, target or flags", { source, actor, flags })
+    }
+
     const damage = await prepareDamageObject(source, actor, dotFlags)
     const spRoll = await handleSpDamage(dotFlags.damageProperties)
     damage.properties.spDamage = spRoll?.total
@@ -91,7 +95,7 @@ async function applyDotDamage(source, actor, dotFlags, flags, roll, damage) {
 
     await actor.applyDamage(enemyData, Math.round(roll.total), damage, damageAttribute)
 
-    if (flags[FLAG_KEYS.LIFESTEAL]?.enabled) {
+    if (flags[FLAG_KEYS.LIFESTEAL]?.enabled && source.actor) {
         await applyLifesteal(lifestealContext)
     }
 }

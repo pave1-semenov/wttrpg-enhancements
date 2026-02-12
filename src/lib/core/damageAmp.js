@@ -1,7 +1,7 @@
 import { FLAG_KEYS, MODULE } from '../util/constants.js';
 
 export function getAmplifiedDamageFormula(actor, damage) {
-    const effects = actor.appliedEffects
+    const effects = actor?.appliedEffects ?? []
     const displayRollDetails = game.settings.get('TheWitcherTRPG', 'displayRollsDetails')
 
     let formula = damage.formula
