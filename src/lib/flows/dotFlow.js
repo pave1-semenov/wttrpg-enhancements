@@ -1,11 +1,12 @@
 import { applyLifesteal, initLifestealContext } from '../core/lifesteal.js';
-import ChatMessageData from '/systems/TheWitcherTRPG/module/chatMessage/ChatMessageData.js';
 import { getAmplifiedDamageFormula } from '../core/damageAmp.js';
 import { getDamageTypePresentation, getLocationPresentation } from '../util/presentation.js';
 import { ATTRIBUTES, CHAT_FLAGS, FLAG_KEYS, FLAG_PATHS, MODULE, SYSTEM, TEMPLATE_PATHS } from '../util/constants.js';
+import { importSystemModule } from '../util/systemImport.js';
 import { EnhancementRoll } from '../roll/enhancementRoll.js';
 
 export async function handleDot(actor, dot) {
+    const { default: ChatMessageData } = await importSystemModule('module/chatMessage/ChatMessageData.js');
     const source = fromUuidSync(dot.origin)
     const flags = dot.flags[MODULE.FLAGS_KEY]
     const dotFlags = flags[FLAG_KEYS.DOT]

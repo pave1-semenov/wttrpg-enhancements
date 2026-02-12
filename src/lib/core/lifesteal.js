@@ -1,4 +1,4 @@
-import ChatMessageData from '/systems/TheWitcherTRPG/module/chatMessage/ChatMessageData.js';
+import { importSystemModule } from '../util/systemImport.js';
 import { ATTRIBUTES, TEMPLATE_PATHS } from '../util/constants.js';
 import { EnhancementRoll } from '../roll/enhancementRoll.js';
 
@@ -15,6 +15,7 @@ export function initLifestealContext(source, actor, stat, flags) {
 
 export async function applyLifesteal(context) {
     const { actor, source, attacker, stat, statBeforeDmg, flags } = context;
+    const { default: ChatMessageData } = await importSystemModule('module/chatMessage/ChatMessageData.js');
 
     if (!flags?.enabled) return;
 

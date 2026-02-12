@@ -1,8 +1,9 @@
 import ActiveEffectsEnhancementsSheet from '../sheet/activeEffectsEnhancements.js';
 import ItemEnhancementSheet from '../sheet/itemEnhancements.js';
 
-export function addItemButton(sheet, buttons) {
+export function addItemButtonAppV1(sheet, buttons) {
     const isWeapon = sheet.document?.type === "weapon"
+    console.log(sheet.document, isWeapon)
 
     if (isWeapon && game.user.isGM) {
         buttons.splice(0, -1, {
