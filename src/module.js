@@ -1,5 +1,5 @@
 import { registerCombatHooks } from "./lib/hooks/combat.js";
-import { addActiveEffectEnhanceOption, addItemButton } from "./lib/hooks/buttons.js";
+import { addActiveEffectEnhanceOption, addItemButton, addItemButtonAppV2 } from "./lib/hooks/buttons.js";
 import { addEnhancedDamageContextOption } from "./lib/hooks/chat.js";
 import { wrapDamageRoll } from "./lib/flows/damageRollFlow.js";
 import { EnhancementRoll } from "./lib/roll/enhancementRoll.js";
@@ -22,7 +22,8 @@ Hooks.once('ready', async function () {
 })
 
 Hooks.on('getHeaderControlsApplicationV2', addActiveEffectEnhanceOption)
-Hooks.on('getItemSheetHeaderButtons', addItemButton)
+Hooks.on('getHeaderControlsApplicationV2', addItemButtonAppV2)
+Hooks.on('getApplicationHeaderButtons', addItemButton)
 
 Hooks.on('getChatMessageContextOptions', addEnhancedDamageContextOption)
 
