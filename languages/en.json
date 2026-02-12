@@ -30,7 +30,7 @@
             },
             "Lifesteal": {
                 "Title": "Lifesteal Trigger",
-                "Tag": "Steal",
+                "Tag": "Leech",
                 "Attacker": "Attacker",
                 "Target": "Target",
                 "DamageDealt": "Damage dealt",
