@@ -10,7 +10,7 @@ export async function handleDot(actor, dot) {
     const flags = dot.flags[MODULE.FLAGS_KEY]
     const dotFlags = flags[FLAG_KEYS.DOT]
 
-    if (!source || !dotFlags || !acotor) { 
+    if (!source || !dotFlags || !actor) { 
         console.error("Failed to process DoT damage: missing source, target or flags", { source, actor, flags })
     }
 
