@@ -1,0 +1,9 @@
+<div class="form-group">
+    <label>{{localize "WTTRPGEnhancements.WeaponSkillManager.AttachmentMode"}}</label>
+    <select name="attachMode">
+        {{#each options}}
+        <option value="{{this.value}}">{{this.label}}</option>
+        {{/each}}
+    </select>
+    <p class="hint">{{localize "WTTRPGEnhancements.WeaponSkillManager.AttachHint"}}</p>
+</div>

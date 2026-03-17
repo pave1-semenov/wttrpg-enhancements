@@ -1,13 +1,20 @@
 import { getAmplifiedDamageFormula } from "../core/damageAmp.js";
 
 export async function wrapDamageRoll(wrapped, damage) {
-    const source = await fromUuid(damage.itemUuid)
+    const resolvedSource = this ?? await fromUuid(damage.itemUuid);
 
-    const originalFormula = damage.formula
+    if (resolvedSource?.uuid) {
+        damage.itemUuid = resolvedSource.uuid;
+        damage.item = resolvedSource;
+    }
 
-    damage.formula = getAmplifiedDamageFormula(source.actor, damage)
-    
-    await wrapped(damage)
+    const originalFormula = damage.formula;
 
-    damage.formula = originalFormula
+    if (resolvedSource?.actor) {
+        damage.formula = getAmplifiedDamageFormula(resolvedSource.actor, damage);
+    }
+
+    await wrapped.call(resolvedSource ?? this, damage);
+
+    damage.formula = originalFormula;
 }

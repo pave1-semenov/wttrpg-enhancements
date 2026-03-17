@@ -1,0 +1,31 @@
+<div class="weapon-skill-info-dialog__shell">
+    <section class="weapon-skill-info-dialog">
+        <div class="weapon-skill-info-dialog__left">
+            <div class="weapon-skill-info-dialog__art-frame">
+                <img class="weapon-skill-info-dialog__image" src="{{img}}" alt="{{name}}">
+            </div>
+
+            <div class="weapon-skill-info-dialog__stats-card">
+                <h3 class="weapon-skill-info-dialog__stats-title">{{localize "WTTRPGEnhancements.WeaponSkillAttack.InfoStats"}}</h3>
+                <dl class="weapon-skill-info-dialog__stats-list">
+                    {{#each stats}}
+                    <div class="weapon-skill-info-dialog__stat-row">
+                        <dt>{{this.label}}</dt>
+                        <dd>{{this.value}}</dd>
+                    </div>
+                    {{/each}}
+                </dl>
+            </div>
+        </div>
+
+        <div class="weapon-skill-info-dialog__right">
+            <h2 class="weapon-skill-info-dialog__title">{{name}}</h2>
+            {{#if parentWeapon}}
+            <div class="weapon-skill-info-dialog__parent">{{parentWeapon}}</div>
+            {{/if}}
+            <section class="weapon-skill-info-dialog__description prose">
+                {{{description}}}
+            </section>
+        </div>
+    </section>
+</div>

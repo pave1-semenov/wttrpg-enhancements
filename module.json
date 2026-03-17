@@ -54,6 +54,11 @@
       "path": "languages/en.json"
     }
   ],
+  "documentTypes": {
+    "Item": {
+      "weapon-skill": {}
+    }
+  },
   "readme": "README.md",
   "media": [
     {

@@ -1,0 +1,115 @@
+<section class="tab {{tabs.general.cssClass}} scrollable standard-form" data-group="primary" data-tab="general">
+    <div class="weapon-skill-sheet__hero">
+        <div class="weapon-skill-sheet__image-shell">
+            <span class="weapon-skill-sheet__image-frame">
+                <img class="weapon-skill-sheet__image" src="{{item.img}}" alt="{{item.name}}" data-action="editImage" data-edit="img" title="{{item.name}}">
+            </span>
+        </div>
+
+        <div class="weapon-skill-sheet__title-block">
+            <label class="weapon-skill-sheet__title-label">{{localize "Name"}}</label>
+            <input class="weapon-skill-sheet__title-input" name="name" type="text" value="{{item.name}}" placeholder="Weapon Skill Name">
+
+            {{#if parentWeapon}}
+            <div class="weapon-skill-sheet__parent hint">
+                <img src="{{parentWeapon.img}}" alt="{{parentWeapon.name}}" width="20" height="20">
+                <span>{{parentWeapon.name}}</span>
+            </div>
+            {{/if}}
+        </div>
+
+        <input name="system.parentWeaponUuid" type="hidden" value="{{item.system.parentWeaponUuid}}">
+    </div>
+
+    <fieldset>
+        <legend>{{localize "WITCHER.Item.Description"}}</legend>
+        {{formInput enrichedText.description.systemField value=enrichedText.description.value enriched=enrichedText.description.enriched toggled=true}}
+    </fieldset>
+
+    <fieldset>
+        <legend>{{localize "WTTRPGEnhancements.WeaponSkill.DamageSettings"}}</legend>
+        {{formGroup systemFields.damage value=item.system.damage localize=true}}
+        <div class="form-group">
+            <label>{{localize "WITCHER.Dialog.damageType"}}</label>
+            <select name="system.damageType" multiple size="{{damageTypeSelectSize}}">
+                {{selectOptions damageTypes selected=selectedDamageTypes valueAttr="value" labelAttr="label" localize=true}}
+            </select>
+            <p class="hint">Hold Ctrl or Cmd to select multiple damage types.</p>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>{{localize "WITCHER.Attack.attackOptions.label"}}</legend>
+        <div class="form-group stacked">
+            <label>{{localize "WITCHER.Attack.attackOptions.label"}}</label>
+            <div class="checkbox-group">
+                {{#each attackOptions}}
+                <label class="checkbox">
+                    <input type="radio" name="system.attackMode" value="{{this.value}}" {{checked this.checked}}>
+                    <span>{{localize this.label}}</span>
+                </label>
+                {{/each}}
+            </div>
+            <p class="hint">Choose whether this skill is used for melee or ranged attacks.</p>
+        </div>
+
+        {{#if hasMeleeAttack}}
+        <h3>{{localize "WITCHER.Attack.attackOptions.melee"}}</h3>
+        <div class="form-group">
+            <label>{{localize "WITCHER.Attack.meleeAttackSkill.label"}}</label>
+            <select name="system.meleeAttackSkill">
+                {{selectOptions meleeAttackSkills selected=item.system.meleeAttackSkill valueAttr="name" labelAttr="label" localize=true}}
+            </select>
+        </div>
+        {{formGroup systemFields.applyMeleeBonus value=item.system.applyMeleeBonus localize=true}}
+        {{/if}}
+
+        {{#if hasRangedAttack}}
+        <h3>{{localize "WITCHER.Attack.attackOptions.ranged"}}</h3>
+        <div class="form-group">
+            <label>{{localize "WITCHER.Attack.rangedAttackSkill.label"}}</label>
+            <select name="system.rangedAttackSkill">
+                {{selectOptions rangedAttackSkills selected=item.system.rangedAttackSkill valueAttr="name" labelAttr="label" localize=true}}
+            </select>
+        </div>
+        {{/if}}
+
+        <div class="form-group">
+            <label>{{localize "WTTRPGEnhancements.WeaponSkill.AttackSkillOverrideLabel"}}</label>
+            <select name="system.attackSkillOverride">
+                {{#each attackSkillOverrideOptions}}
+                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                {{/each}}
+            </select>
+            <p class="hint">{{localize "WTTRPGEnhancements.WeaponSkill.AttackSkillOverrideHint"}}</p>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>{{localize "WITCHER.Attack.name"}}</legend>
+        {{#if hasRangedAttack}}
+        <div class="form-group">
+            <label>{{localize systemFields.accuracy.label}}</label>
+            <input name="system.accuracy" type="number" value="{{item.system.accuracy}}" data-dtype="Number">
+        </div>
+        {{formGroup systemFields.usingAmmo value=item.system.usingAmmo localize=true}}
+        {{/if}}
+        <div class="form-group">
+            <label>{{localize systemFields.range.label}}</label>
+            <input name="system.range" type="text" value="{{item.system.range}}" placeholder="0m">
+        </div>
+        {{formGroup systemFields.rollOnlyDmg value=item.system.rollOnlyDmg localize=true}}
+        <p class="hint">Enhancement items are inherited from the parent weapon when the skill is attached and are not edited here.</p>
+    </fieldset>
+
+    <fieldset>
+        <legend>{{localize "WITCHER.Item.Settings.attacks.defendWith.label"}}</legend>
+        <div class="form-group">
+            <label>{{localize "WITCHER.Item.Settings.attacks.defendWith.label"}}</label>
+            <select name="system.defenseOptions" multiple size="{{defenseOptionsSelectSize}}">
+                {{selectOptions config.defenseOptions selected=item.system.defenseOptions valueAttr="value" labelAttr="label" localize=true}}
+            </select>
+            <p class="hint">Hold Ctrl or Cmd to select multiple defense actions.</p>
+        </div>
+    </fieldset>
+</section>

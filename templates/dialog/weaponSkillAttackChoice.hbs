@@ -1,0 +1,32 @@
+<form class="weapon-skill-attack-dialog">
+    <section class="weapon-skill-attack-dialog__top-row">
+        <div class="weapon-skills-cards weapon-skills-cards--attack-choice">
+            {{#each attachedSkills}}
+            <article class="weapon-skills-card weapon-skills-card--choice">
+                <input
+                    class="weapon-skills-card__radio"
+                    type="radio"
+                    name="selectedSkill"
+                    id="weapon-skill-choice-{{this.id}}"
+                    value="{{this.id}}"
+                    {{checked this.checked}}
+                >
+                <label class="weapon-skills-card__open" for="weapon-skill-choice-{{this.id}}" title="{{this.name}}">
+                    <span class="weapon-skills-card__art">
+                        <img class="weapon-skills-card__image" src="{{this.img}}" alt="{{this.name}}">
+                    </span>
+                    <span class="weapon-skills-card__name">{{this.name}}</span>
+                </label>
+                <button
+                    type="button"
+                    class="weapon-skills-card__info"
+                    data-skill-uuid="{{this.uuid}}"
+                    title="{{localize 'WTTRPGEnhancements.WeaponSkillAttack.MoreInfo'}}"
+                >
+                    <i class="fas fa-circle-info"></i>
+                </button>
+            </article>
+            {{/each}}
+        </div>
+    </section>
+</form>

@@ -11,7 +11,8 @@ export const ENHANCEMENT_KEYS = {
     DOT: 'dot',
     HOT: 'hot',
     LIFESTEAL: 'lifesteal',
-    AMP: 'amp'
+    AMP: 'amp',
+    WEAPON_SKILL: 'weaponSkill'
 }
 
 export const FLAG_KEYS = ENHANCEMENT_KEYS
@@ -41,6 +42,14 @@ export const TEMPLATE_PATHS = {
     SHEET_DOT: `modules/${MODULE.ID}/templates/sheet/dot.hbs`,
     SHEET_HOT: `modules/${MODULE.ID}/templates/sheet/hot.hbs`,
     SHEET_DAMAGE_PROPERTIES: `modules/${MODULE.ID}/templates/sheet/damageProperties.hbs`,
+    SHEET_WEAPON_SKILL: `modules/${MODULE.ID}/templates/sheet/weaponSkill.hbs`,
+    SHEET_WEAPON_SKILL_MANAGER: `modules/${MODULE.ID}/templates/sheet/weaponSkillManager.hbs`,
+    DIALOG_WEAPON_SKILL_ATTACH_MODE: `modules/${MODULE.ID}/templates/dialog/weaponSkillAttachMode.hbs`,
+    DIALOG_WEAPON_SKILL_ATTACK_CHOICE: `modules/${MODULE.ID}/templates/dialog/weaponSkillAttackChoice.hbs`,
+    DIALOG_WEAPON_SKILL_INFO: `modules/${MODULE.ID}/templates/dialog/weaponSkillInfo.hbs`,
+    WEAPON_SKILL_MANAGER_HEADER: `modules/${MODULE.ID}/templates/dialog/weaponSkillManagerHeader.hbs`,
+    WEAPON_SKILL_MANAGER_SKILLS: `modules/${MODULE.ID}/templates/dialog/weaponSkillManagerSkills.hbs`,
+    WEAPON_SKILL_MANAGER_FOOTER: `modules/${MODULE.ID}/templates/dialog/weaponSkillManagerFooter.hbs`,
     DIALOG_APPLY_DAMAGE: `modules/${MODULE.ID}/templates/dialog/applyDamage.hbs`,
     CHAT_DOT_DAMAGE: `modules/${MODULE.ID}/templates/chat/dotDmg.hbs`,
     CHAT_HOT_HEAL: `modules/${MODULE.ID}/templates/chat/hotHeal.hbs`,
