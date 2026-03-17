@@ -215,7 +215,20 @@ export const WeaponSkillManagerMixin = Superclass =>
         static async onOpenSkill(event, element) {
             event.preventDefault();
             const skill = await this.getSkillById(element.dataset.skillId);
-            skill?.sheet?.render(true);
+            const sheet = skill?.sheet;
+            if (!sheet) return;
+
+            if (!sheet._weaponSkillManagerRefreshWrapped) {
+                const originalClose = sheet.close.bind(sheet);
+                sheet.close = async (...args) => {
+                    const result = await originalClose(...args);
+                    if (this.rendered) this.render(true);
+                    return result;
+                };
+                sheet._weaponSkillManagerRefreshWrapped = true;
+            }
+
+            sheet.render(true);
         }
 
         static async onRemoveSkill(event, element) {
@@ -223,6 +236,7 @@ export const WeaponSkillManagerMixin = Superclass =>
             await this.detachSkill(element.dataset.skillId);
         }
     };
+
 
 
 

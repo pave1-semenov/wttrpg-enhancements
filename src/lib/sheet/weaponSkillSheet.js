@@ -68,6 +68,14 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         }
     };
 
+    static getSystemWeaponSheetClass() {
+        const sheets = CONFIG.Item?.sheetClasses?.weapon ?? {};
+        return sheets['witcher.WitcherWeaponSheet']?.cls
+            ?? Object.values(sheets).find(entry => entry?.id?.startsWith('witcher.'))?.cls
+            ?? Object.values(sheets).find(entry => entry?.default)?.cls
+            ?? null;
+    }
+
     static parseAttackSkillOverride(value) {
         if (!value) return { mode: 'none', key: '' };
         const separatorIndex = value.indexOf(':');
@@ -105,6 +113,7 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
 
         const updateData = {
             name: data.name ?? this.document.name,
+            img: data.img ?? this.document.img,
             flags: {
                 [MODULE.FLAGS_KEY]: {
                     ...(this.document.flags?.[MODULE.FLAGS_KEY] ?? {}),
@@ -149,6 +158,23 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         };
 
         await this.document.update(updateData, { render: true });
+    }
+
+    getSystemPropertiesConfiguration() {
+        if (this._systemPropertiesConfiguration?.application?.document === this.document) {
+            return this._systemPropertiesConfiguration;
+        }
+
+        const WeaponSheetClass = this.constructor.getSystemWeaponSheetClass();
+        if (!WeaponSheetClass) return null;
+
+        const weaponSheet = new WeaponSheetClass(this.document);
+        const configuration = weaponSheet.configuration ?? null;
+        if (configuration) {
+            configuration.application ??= weaponSheet;
+            this._systemPropertiesConfiguration = configuration;
+        }
+        return configuration;
     }
 
     buildAttackSkillOverrideOptions() {
@@ -216,6 +242,7 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
             }));
         const meleeAttackSkills = (CONFIG.WITCHER?.meleeSkills ?? []).map(skill => CONFIG.WITCHER.skillMap?.[skill]).filter(Boolean);
         const rangedAttackSkills = (CONFIG.WITCHER?.rangedSkills ?? []).map(skill => CONFIG.WITCHER.skillMap?.[skill]).filter(Boolean);
+        const systemPropertiesConfiguration = this.getSystemPropertiesConfiguration();
 
         context.item = this.document;
         this._prepareLifestealtContext(context);
@@ -225,7 +252,9 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
             silverTrait: game.settings.get('TheWitcherTRPG', 'silverTrait')
         };
         context.systemFields = this.document.system.schema.fields;
-        context.effects = this.prepareActiveEffectCategories(this.document.effects);
+        context.effects = systemPropertiesConfiguration
+            ? systemPropertiesConfiguration.prepareActiveEffectCategories(this.document.effects)
+            : [];
         context.damageTypes = damageTypes;
         context.defenseOptions = defenseOptions;
         context.attackOptions = attackOptions;
@@ -259,106 +288,34 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
     _onChangeForm(formConfig, event) {
         super._onChangeForm(formConfig, event);
         if (event.target.dataset.action === 'editEffect') {
-            this.onEditDamagePropertyEffect(event, event.target);
-        }
-    }
-
-    prepareActiveEffectCategories(effects) {
-        const categories = {
-            temporary: {
-                type: 'temporary',
-                label: game.i18n.localize('WITCHER.activeEffect.temporary'),
-                effects: []
-            },
-            passive: {
-                type: 'passive',
-                label: game.i18n.localize('WITCHER.activeEffect.passive'),
-                effects: []
-            },
-            inactive: {
-                type: 'inactive',
-                label: game.i18n.localize('WITCHER.activeEffect.inactive'),
-                effects: []
-            },
-            temporaryItemImprovement: {
-                type: 'temporaryItemImprovement',
-                label: game.i18n.localize('WITCHER.activeEffect.temporaryItemImprovement'),
-                effects: []
+            const systemPropertiesConfiguration = this.getSystemPropertiesConfiguration();
+            if (systemPropertiesConfiguration?._onEditEffect) {
+                return systemPropertiesConfiguration._onEditEffect(event, event.target);
             }
-        };
-
-        for (const effect of effects) {
-            if (effect.disabled) categories.inactive.effects.push(effect);
-            else if (effect.isTemporaryItemImprovement && !effect.isAppliedTemporaryItemImprovement) {
-                categories.temporaryItemImprovement.effects.push(effect);
-            } else if (effect.isTemporary) categories.temporary.effects.push(effect);
-            else categories.passive.effects.push(effect);
         }
-
-        return categories;
     }
 
     static async onManageActiveEffect(event, element) {
-        event.preventDefault();
-        const li = element.closest('li');
-        const effect = li?.dataset.effectId ? this.document.effects.get(li.dataset.effectId) : null;
-
-        switch (element.dataset.action) {
-            case 'create':
-                return this.document.createEmbeddedDocuments('ActiveEffect', [
-                    {
-                        type: li?.dataset.effectType === 'temporaryItemImprovement' ? 'temporaryItemImprovement' : 'base',
-                        name: this.document.name,
-                        icon: this.document.img,
-                        origin: this.document.uuid,
-                        duration: {
-                            rounds: li?.dataset.effectType === 'temporary' ? 1 : undefined
-                        },
-                        disabled: li?.dataset.effectType === 'inactive'
-                    }
-                ]);
-            case 'edit':
-                return effect?.sheet.render(true);
-            case 'delete':
-                return effect?.delete();
-            case 'toggle':
-                return effect?.update({ disabled: !effect.disabled });
+        const systemPropertiesConfiguration = this.getSystemPropertiesConfiguration?.();
+        if (systemPropertiesConfiguration?.constructor?.onManageActiveEffect) {
+            return systemPropertiesConfiguration.constructor.onManageActiveEffect.call(systemPropertiesConfiguration, event, element);
         }
     }
 
     static async onAddDamagePropertyEffect(event, element) {
-        event.preventDefault();
-        const target = element.dataset.target;
-        const newList = foundry.utils.deepClone(foundry.utils.getProperty(this.item, target) ?? []);
-        newList.push({ percentage: 0 });
-        return this.item.update({ [target]: newList });
-    }
-
-    async onEditDamagePropertyEffect(event, element) {
-        event.preventDefault();
-
-        const itemId = element.closest('.list-item')?.dataset.id;
-        const target = element.dataset.target;
-        const field = element.dataset.field;
-        let value = element.value;
-
-        if (value === 'on') value = element.checked;
-
-        const effects = foundry.utils.deepClone(foundry.utils.getProperty(this.item, target) ?? []);
-        const effectIndex = effects.findIndex(effect => effect.id === itemId);
-        if (effectIndex === -1) return;
-
-        effects[effectIndex][field] = value;
-        return this.item.update({ [target]: effects });
+        const systemPropertiesConfiguration = this.getSystemPropertiesConfiguration?.();
+        if (systemPropertiesConfiguration?.constructor?._onAddEffect) {
+            return systemPropertiesConfiguration.constructor._onAddEffect.call(systemPropertiesConfiguration, event, element);
+        }
     }
 
     static async onRemoveDamagePropertyEffect(event, element) {
-        event.preventDefault();
-
-        const target = element.dataset.target;
-        const itemId = element.closest('.list-item')?.dataset.id;
-        const newList = (foundry.utils.getProperty(this.item, target) ?? []).filter(effect => effect.id !== itemId);
-        return this.item.update({ [target]: newList });
+        const systemPropertiesConfiguration = this.getSystemPropertiesConfiguration?.();
+        if (systemPropertiesConfiguration?.constructor?._oRemoveEffect) {
+            return systemPropertiesConfiguration.constructor._oRemoveEffect.call(systemPropertiesConfiguration, event, element);
+        }
     }
 }
+
+
 
