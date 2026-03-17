@@ -1,5 +1,6 @@
 import { getAttachedWeaponSkillsSync, isWeaponSkill } from '../util/weaponSkillAttachment.js';
 import { TEMPLATE_PATHS } from "../util/constants.js";
+import { getWeaponSkillAttackSkillReplacement, getWeaponSkillParentWeapon } from '../util/weaponSkill.js';
 
 const { DialogV2 } = foundry.applications.api;
 
@@ -40,7 +41,7 @@ function formatAttackMode(skill) {
 }
 
 function formatAttackSkill(skill) {
-    const replacement = skill.system?.getAttackSkillReplacement?.(skill.actor ?? skill.parent?.actor);
+    const replacement = getWeaponSkillAttackSkillReplacement(skill.system, skill.actor ?? skill.parent?.actor);
     if (replacement) return replacement.skillName;
 
     const attackMode = Array.from(skill.system?.attackOptions ?? [])[0] ?? 'melee';
@@ -124,7 +125,7 @@ async function showWeaponSkillInfoDialog(skillUuid) {
         {
             name: skill.name,
             img: skill.img,
-            parentWeapon: skill.system?.parentWeapon?.name ?? '',
+            parentWeapon: getWeaponSkillParentWeapon(skill.system, skill)?.name ?? '',
             description,
             stats: buildSkillStats(skill)
         }
@@ -169,7 +170,7 @@ export async function wrapWeaponAttack(wrapped, weapon, options = {}) {
     }
 
     const chosenSkill = attachedSkills.find(skill => skill.id === choice.skillId);
-    const skillReplacement = chosenSkill?.system?.getAttackSkillReplacement?.(chosenSkill.actor ?? weapon.actor) ?? options.skillReplacement;
+    const skillReplacement = getWeaponSkillAttackSkillReplacement(chosenSkill?.system, chosenSkill?.actor ?? weapon.actor) ?? options.skillReplacement;
 
     return wrapped(chosenSkill ?? weapon, {
         ...options,
@@ -236,5 +237,8 @@ async function promptWeaponSkillChoice(weapon, attachedSkills) {
         rejectClose: false
     });
 }
+
+
+
 
 

@@ -1,3 +1,4 @@
+import { getWeaponSkillParentWeapon } from '../util/weaponSkill.js';
 import { FLAG_KEYS, MODULE, TEMPLATE_PATHS } from '../util/constants.js';
 import { LifeStealMixin } from '../mixin/lifestealMixin.js';
 
@@ -272,7 +273,7 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
 
     async _prepareContext(options) {
         const context = await super._prepareContext(options);
-        const parentWeapon = this.document.system.parentWeapon;
+        const parentWeapon = getWeaponSkillParentWeapon(this.document.system, this.document);
         const supportedDamageTypes = new Set(['slashing', 'piercing', 'bludgeoning', 'elemental']);
         const damageTypes = (CONFIG.WITCHER?.damageTypes ?? []).filter(type => supportedDamageTypes.has(type.value));
         const defenseOptions = CONFIG.WITCHER?.defenseOptions ?? [];
@@ -441,6 +442,7 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         return this.item.update({ [target]: newList });
     }
 }
+
 
 
 

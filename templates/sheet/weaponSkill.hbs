@@ -61,7 +61,10 @@
                 {{selectOptions meleeAttackSkills selected=item.system.meleeAttackSkill valueAttr="name" labelAttr="label" localize=true}}
             </select>
         </div>
-        {{formGroup systemFields.applyMeleeBonus value=item.system.applyMeleeBonus localize=true}}
+        <div class="form-group">
+            <label>{{localize "WITCHER.Weapon.MeleeBonus"}}</label>
+            <input name="system.applyMeleeBonus" type="checkbox" {{checked item.system.applyMeleeBonus}}>
+        </div>
         {{/if}}
 
         {{#if hasRangedAttack}}
@@ -89,16 +92,22 @@
         <legend>{{localize "WITCHER.Attack.name"}}</legend>
         {{#if hasRangedAttack}}
         <div class="form-group">
-            <label>{{localize systemFields.accuracy.label}}</label>
+            <label>{{localize "WITCHER.Weapon.Short.WeaponAccuracy"}}</label>
             <input name="system.accuracy" type="number" value="{{item.system.accuracy}}" data-dtype="Number">
         </div>
-        {{formGroup systemFields.usingAmmo value=item.system.usingAmmo localize=true}}
+        <div class="form-group">
+            <label>{{localize "WITCHER.Weapon.useAmmo"}}</label>
+            <input name="system.usingAmmo" type="checkbox" {{checked item.system.usingAmmo}}>
+        </div>
         {{/if}}
         <div class="form-group">
-            <label>{{localize systemFields.range.label}}</label>
+            <label>{{localize "WITCHER.Weapon.Range"}}</label>
             <input name="system.range" type="text" value="{{item.system.range}}" placeholder="0m">
         </div>
-        {{formGroup systemFields.rollOnlyDmg value=item.system.rollOnlyDmg localize=true}}
+        <div class="form-group">
+            <label>{{localize "WITCHER.Weapon.onlyDmg"}}</label>
+            <input name="system.rollOnlyDmg" type="checkbox" {{checked item.system.rollOnlyDmg}}>
+        </div>
         <p class="hint">Enhancement items are inherited from the parent weapon when the skill is attached and are not edited here.</p>
     </fieldset>
 

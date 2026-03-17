@@ -1,4 +1,4 @@
-import WeaponSkillData from '../data/weaponSkillData.js';
+import getWeaponSkillDataModel from '../data/weaponSkillData.js';
 import WeaponSkillSheet from '../sheet/weaponSkillSheet.js';
 import { MODULE } from '../util/constants.js';
 
@@ -15,6 +15,7 @@ export function registerItemTypes() {
 
     // Foundry stores module-defined document subtypes with the package prefix,
     // but some lookup paths still reference the raw subtype key.
+    const WeaponSkillData = getWeaponSkillDataModel();
     CONFIG.Item.dataModels[WEAPON_SKILL_BASE_TYPE] = WeaponSkillData;
     CONFIG.Item.dataModels[WEAPON_SKILL_TYPE] = WeaponSkillData;
 
@@ -26,3 +27,4 @@ export function registerItemTypes() {
     Items.registerSheet(MODULE.ID, WeaponSkillSheet, sheetOptions);
     foundry.applications.apps.DocumentSheetConfig.registerSheet(Item, MODULE.ID, WeaponSkillSheet, sheetOptions);
 }
+
