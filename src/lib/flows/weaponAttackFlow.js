@@ -1,3 +1,4 @@
+import { getAttachedWeaponSkillsSync, isWeaponSkill } from '../util/weaponSkillAttachment.js';
 import { TEMPLATE_PATHS } from "../util/constants.js";
 
 const { DialogV2 } = foundry.applications.api;
@@ -153,11 +154,11 @@ async function showWeaponSkillInfoDialog(skillUuid) {
 }
 
 export async function wrapWeaponAttack(wrapped, weapon, options = {}) {
-    if (!weapon || weapon.isWeaponSkill || options.skipWeaponSkillChooser) {
+    if (!weapon || isWeaponSkill(weapon) || options.skipWeaponSkillChooser) {
         return wrapped(weapon, options);
     }
 
-    const attachedSkills = weapon.attachedWeaponSkills ?? [];
+    const attachedSkills = getAttachedWeaponSkillsSync(weapon);
     if (!attachedSkills.length) {
         return wrapped(weapon, options);
     }
@@ -235,4 +236,5 @@ async function promptWeaponSkillChoice(weapon, attachedSkills) {
         rejectClose: false
     });
 }
+
 

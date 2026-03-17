@@ -6,11 +6,9 @@ import { wrapWeaponAttack } from "./lib/flows/weaponAttackFlow.js";
 import { wrapAddItem } from "./lib/flows/addItemFlow.js";
 import { EnhancementRoll } from "./lib/roll/enhancementRoll.js";
 import { MODULE, TEMPLATE_PATHS } from "./lib/util/constants.js";
-import { registerEnhancementsItemDocument } from "./lib/document/enhancementsItem.js";
 import { registerItemTypes } from "./lib/setup/itemTypeRegistration.js";
 Hooks.once('init', function () {
     console.log('The Witcher TRPG Enhancements | Initializing module')
-    registerEnhancementsItemDocument()
     registerItemTypes()
     registerCustomRollClasses()
     preloadTemplates()
@@ -52,3 +50,5 @@ async function preloadTemplates() {
         TEMPLATE_PATHS.TOOLTIP_ENHANCEMENT
     ]);
 }
+
+

@@ -8,6 +8,16 @@ export function isWeaponSkillType(type) {
     return type === WEAPON_SKILL_BASE_TYPE || type === WEAPON_SKILL_TYPE;
 }
 
+export function isWeaponSkill(item) {
+    return isWeaponSkillType(item?.type);
+}
+
+export function getRollSourceItem(item) {
+    if (!item) return item;
+    if (!isWeaponSkill(item)) return item;
+    return item.system?.parentWeapon ?? item;
+}
+
 export function isAttachedToWeapon(item, weaponUuid) {
     return isWeaponSkillType(item?.type) && item.system?.parentWeaponUuid === weaponUuid;
 }
@@ -141,3 +151,4 @@ export async function cloneAttachedWeaponSkillsToActor(sourceWeapon, targetActor
     if (!toCreate.length) return [];
     return targetActor.createEmbeddedDocuments('Item', toCreate);
 }
+

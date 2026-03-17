@@ -1,3 +1,4 @@
+import { getRollSourceItem } from '../util/weaponSkillAttachment.js';
 import { applyLifesteal, initLifestealContext } from '../core/lifesteal.js';
 import { getAttackLocationOptions } from '../util/location.js';
 import { ATTRIBUTES, CHAT_FLAGS, FLAG_KEYS, MODULE, SYSTEM, TEMPLATE_PATHS } from '../util/constants.js';
@@ -16,7 +17,7 @@ export async function applyEnhancedDamage(actor, totalDamage, messageId) {
     const attribute = dialogData?.nonLethal ? ATTRIBUTES.STA : ATTRIBUTES.HP
 
     const source = await fromUuid(damage.itemUuid)
-    const rollSource = source?.rollSourceItem ?? source
+    const rollSource = getRollSourceItem(source)
     const lifestealFlags = source?.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]
         ?? rollSource?.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]
     const lifestealContext = initLifestealContext(source, actor, attribute, lifestealFlags)
@@ -68,5 +69,6 @@ async function createApplyDamageDialog(actor, damage) {
         nonLethal
     };
 }
+
 
 

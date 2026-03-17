@@ -1,14 +1,13 @@
 import { WEAPON_SKILL_TYPE } from '../setup/itemTypeRegistration.js';
 import { FLAG_KEYS, MODULE, TEMPLATE_PATHS } from '../util/constants.js';
+import { getAttachedWeaponSkills } from '../util/weaponSkillAttachment.js';
 
 const { DialogV2 } = foundry.applications.api;
 
 export const WeaponSkillManagerMixin = Superclass =>
     class extends Superclass {
         async getAttachedSkills() {
-            const skills = this.document.getAttachedWeaponSkillsAsync
-                ? await this.document.getAttachedWeaponSkillsAsync()
-                : this.document.attachedWeaponSkills ?? [];
+            const skills = await getAttachedWeaponSkills(this.document);
             return skills.filter(item => item.type === WEAPON_SKILL_TYPE);
         }
 
@@ -220,4 +219,6 @@ export const WeaponSkillManagerMixin = Superclass =>
             await this.detachSkill(element.dataset.skillId);
         }
     };
+
+
 
