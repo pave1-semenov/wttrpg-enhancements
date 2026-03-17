@@ -68,84 +68,6 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         }
     };
 
-    static getInputValue(form, selector, fallback = '') {
-        const element = form.querySelector(selector);
-        if (element instanceof HTMLInputElement || element instanceof HTMLSelectElement || element instanceof HTMLTextAreaElement) {
-            return element.value;
-        }
-        return fallback;
-    }
-
-    static getCheckboxValue(form, selector) {
-        const element = form.querySelector(selector);
-        return element instanceof HTMLInputElement ? element.checked : false;
-    }
-
-    static getMultiSelectValues(form, selector) {
-        const element = form.querySelector(selector);
-        if (!(element instanceof HTMLSelectElement)) return [];
-        return Array.from(element.selectedOptions).map(option => option.value);
-    }
-
-    static getSelectedRadioValue(form, selector, fallback = '') {
-        const element = form.querySelector(`${selector}:checked`);
-        return element instanceof HTMLInputElement ? element.value : fallback;
-    }
-
-    static getSelectSize(options, { min = 2, max = 12 } = {}) {
-        const optionCount = Array.isArray(options) ? options.length : Object.keys(options ?? {}).length;
-        return Math.max(min, Math.min(max, optionCount || min));
-    }
-
-    static autoSizeMultiSelect(select) {
-        if (!(select instanceof HTMLSelectElement) || !select.multiple) return;
-
-        const optionCount = Math.max(1, select.options.length);
-        const computed = window.getComputedStyle(select);
-        const optionHeight = parseFloat(computed.lineHeight) || parseFloat(computed.fontSize) * 1.4 || 22;
-        const paddingTop = parseFloat(computed.paddingTop) || 0;
-        const paddingBottom = parseFloat(computed.paddingBottom) || 0;
-        const borderTop = parseFloat(computed.borderTopWidth) || 0;
-        const borderBottom = parseFloat(computed.borderBottomWidth) || 0;
-        const extraChrome = 6;
-        const height = Math.ceil(optionCount * optionHeight + paddingTop + paddingBottom + borderTop + borderBottom + extraChrome);
-
-        select.style.height = `${height}px`;
-        select.style.minHeight = `${height}px`;
-        select.size = optionCount;
-    }
-
-    static getDamagePropertyInputValue(element) {
-        if (element instanceof HTMLInputElement) {
-            if (element.type === 'checkbox') return element.checked;
-            if (element.type === 'number' || element.dataset.dtype === 'Number') {
-                if (element.value === '') return null;
-                const parsed = Number(element.value);
-                return Number.isNaN(parsed) ? null : parsed;
-            }
-            return element.value;
-        }
-
-        if (element instanceof HTMLSelectElement) return element.value;
-        if (element instanceof HTMLTextAreaElement) return element.value;
-        return undefined;
-    }
-
-    static extractDamageProperties(form, updateData) {
-        const controls = form.querySelectorAll('[name*="damageProperties."]');
-
-        for (const control of controls) {
-            const name = control.getAttribute('name');
-            if (!name) continue;
-
-            const normalizedName = name.startsWith('system.') ? name : `system.${name}`;
-            const value = WeaponSkillSheet.getDamagePropertyInputValue(control);
-            if (value === undefined) continue;
-
-            foundry.utils.setProperty(updateData, normalizedName, value);
-        }
-    }
-
     static parseAttackSkillOverride(value) {
         if (!value) return { mode: 'none', key: '' };
         const separatorIndex = value.indexOf(':');
@@ -157,74 +79,74 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         };
     }
 
-    static async saveData(event, form, formData) {
-        const currentAttackMode = Array.from(this.document.system.attackOptions ?? [])[0] ?? 'melee';
-        const attackMode = WeaponSkillSheet.getSelectedRadioValue(form, 'input[name="system.attackMode"]', currentAttackMode);
-        const isRanged = attackMode === 'ranged';
-        const description = foundry.utils.getProperty(formData?.object ?? {}, 'system.description')
-            ?? WeaponSkillSheet.getInputValue(form, '[name="system.description"]', this.document.system.description ?? '');
-        const attackSkillOverride = WeaponSkillSheet.parseAttackSkillOverride(
-            WeaponSkillSheet.getInputValue(form, 'select[name="system.attackSkillOverride"]', '')
-        );
+    static normalizeArrayValue(value, fallback = []) {
+        if (Array.isArray(value)) return value.filter(entry => entry !== undefined && entry !== null && entry !== '');
+        if (value && typeof value === 'object') {
+            return Object.values(value).filter(entry => entry !== undefined && entry !== null && entry !== '');
+        }
+        if (value === undefined || value === null || value === '') return fallback;
+        return [value];
+    }
 
-        const lifestealFlags = {
-            enabled: WeaponSkillSheet.getCheckboxValue(form, 'input[name="lifesteal.enabled"]'),
-            flatPercentage: Number(WeaponSkillSheet.getInputValue(form, 'input[name="lifesteal.flatPercentage"]', this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.flatPercentage ?? 100)),
-            storeOverheal: WeaponSkillSheet.getCheckboxValue(form, 'input[name="lifesteal.storeOverheal"]'),
-            overhealPercentage: Number(WeaponSkillSheet.getInputValue(form, 'input[name="lifesteal.overhealPercentage"]', this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.overhealPercentage ?? 100)),
-            overhealThreshold: Number(WeaponSkillSheet.getInputValue(form, 'input[name="lifesteal.overhealThreshold"]', this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.overhealThreshold ?? 0))
-        };
+    static toNumber(value, fallback = 0) {
+        if (value === undefined || value === null || value === '') return fallback;
+        const parsed = Number(value);
+        return Number.isNaN(parsed) ? fallback : parsed;
+    }
+
+    static async saveData(event, form, formData) {
+        const data = foundry.utils.expandObject(formData.object ?? {});
+        const currentAttackMode = Array.from(this.document.system.attackOptions ?? [])[0] ?? 'melee';
+        const attackMode = data.system?.attackMode ?? currentAttackMode;
+        const isRanged = attackMode === 'ranged';
+        const attackSkillOverride = WeaponSkillSheet.parseAttackSkillOverride(data.system?.attackSkillOverride ?? '');
+        const lifestealData = data.lifesteal ?? {};
+        const systemData = data.system ?? {};
 
         const updateData = {
-            name: WeaponSkillSheet.getInputValue(form, 'input[name="name"]', this.document.name),
+            name: data.name ?? this.document.name,
             flags: {
                 [MODULE.FLAGS_KEY]: {
                     ...(this.document.flags?.[MODULE.FLAGS_KEY] ?? {}),
-                    [FLAG_KEYS.LIFESTEAL]: lifestealFlags
+                    [FLAG_KEYS.LIFESTEAL]: {
+                        enabled: !!lifestealData.enabled,
+                        flatPercentage: WeaponSkillSheet.toNumber(
+                            lifestealData.flatPercentage,
+                            this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.flatPercentage ?? 100
+                        ),
+                        storeOverheal: !!lifestealData.storeOverheal,
+                        overhealPercentage: WeaponSkillSheet.toNumber(
+                            lifestealData.overhealPercentage,
+                            this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.overhealPercentage ?? 100
+                        ),
+                        overhealThreshold: WeaponSkillSheet.toNumber(
+                            lifestealData.overhealThreshold,
+                            this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.overhealThreshold ?? 0
+                        )
+                    }
                 }
             },
             system: {
-                description,
-                parentWeaponUuid: WeaponSkillSheet.getInputValue(
-                    form,
-                    'input[name="system.parentWeaponUuid"]',
-                    this.document.system.parentWeaponUuid ?? ''
-                ),
-                damage: WeaponSkillSheet.getInputValue(form, 'input[name="system.damage"]', this.document.system.damage ?? ''),
-                damageType: WeaponSkillSheet.getMultiSelectValues(form, 'select[name="system.damageType"]'),
+                description: systemData.description ?? this.document.system.description ?? '',
+                parentWeaponUuid: systemData.parentWeaponUuid ?? this.document.system.parentWeaponUuid ?? '',
+                damage: systemData.damage ?? this.document.system.damage ?? '',
+                damageType: WeaponSkillSheet.normalizeArrayValue(systemData.damageType),
                 attackOptions: [attackMode],
-                meleeAttackSkill: WeaponSkillSheet.getInputValue(
-                    form,
-                    'select[name="system.meleeAttackSkill"]',
-                    this.document.system.meleeAttackSkill ?? ''
-                ),
-                rangedAttackSkill: isRanged
-                    ? WeaponSkillSheet.getInputValue(
-                          form,
-                          'select[name="system.rangedAttackSkill"]',
-                          this.document.system.rangedAttackSkill ?? ''
-                      )
-                    : '',
+                meleeAttackSkill: systemData.meleeAttackSkill ?? this.document.system.meleeAttackSkill ?? '',
+                rangedAttackSkill: isRanged ? (systemData.rangedAttackSkill ?? this.document.system.rangedAttackSkill ?? '') : '',
                 attackSkillOverrideMode: attackSkillOverride.mode,
                 attackSkillOverrideKey: attackSkillOverride.key,
-                applyMeleeBonus: attackMode === 'melee'
-                    ? WeaponSkillSheet.getCheckboxValue(form, 'input[name="system.applyMeleeBonus"]')
-                    : false,
+                applyMeleeBonus: attackMode === 'melee' ? !!systemData.applyMeleeBonus : false,
                 isThrowable: false,
                 quantity: '1',
-                accuracy: isRanged
-                    ? Number(WeaponSkillSheet.getInputValue(form, 'input[name="system.accuracy"]', this.document.system.accuracy ?? 0))
-                    : 0,
-                range: WeaponSkillSheet.getInputValue(form, 'input[name="system.range"]', this.document.system.range ?? ''),
-                rollOnlyDmg: WeaponSkillSheet.getCheckboxValue(form, 'input[name="system.rollOnlyDmg"]'),
-                usingAmmo: isRanged
-                    ? WeaponSkillSheet.getCheckboxValue(form, 'input[name="system.usingAmmo"]')
-                    : false,
-                defenseOptions: WeaponSkillSheet.getMultiSelectValues(form, 'select[name="system.defenseOptions"]')
+                accuracy: isRanged ? WeaponSkillSheet.toNumber(systemData.accuracy, this.document.system.accuracy ?? 0) : 0,
+                range: systemData.range ?? this.document.system.range ?? '',
+                rollOnlyDmg: !!systemData.rollOnlyDmg,
+                usingAmmo: isRanged ? !!systemData.usingAmmo : false,
+                defenseOptions: WeaponSkillSheet.normalizeArrayValue(systemData.defenseOptions),
+                damageProperties: foundry.utils.deepClone(systemData.damageProperties ?? this.document.system.damageProperties ?? {})
             }
         };
-
-        WeaponSkillSheet.extractDamageProperties(form, updateData);
 
         await this.document.update(updateData, { render: true });
     }
@@ -275,8 +197,16 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         const context = await super._prepareContext(options);
         const parentWeapon = getWeaponSkillParentWeapon(this.document.system, this.document);
         const supportedDamageTypes = new Set(['slashing', 'piercing', 'bludgeoning', 'elemental']);
-        const damageTypes = (CONFIG.WITCHER?.damageTypes ?? []).filter(type => supportedDamageTypes.has(type.value));
-        const defenseOptions = CONFIG.WITCHER?.defenseOptions ?? [];
+        const damageTypes = (CONFIG.WITCHER?.damageTypes ?? [])
+            .filter(type => supportedDamageTypes.has(type.value))
+            .map(type => ({
+                ...type,
+                checked: (this.document.system.damageType ?? []).includes(type.value)
+            }));
+        const defenseOptions = (CONFIG.WITCHER?.defenseOptions ?? []).map(option => ({
+            ...option,
+            checked: (this.document.system.defenseOptions ?? []).includes(option.value)
+        }));
         const selectedAttackMode = Array.from(this.document.system.attackOptions ?? [])[0] ?? 'melee';
         const attackOptions = (CONFIG.WITCHER?.attackOptions ?? [])
             .filter(option => ['melee', 'ranged'].includes(option.value))
@@ -297,14 +227,12 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         context.systemFields = this.document.system.schema.fields;
         context.effects = this.prepareActiveEffectCategories(this.document.effects);
         context.damageTypes = damageTypes;
+        context.defenseOptions = defenseOptions;
         context.attackOptions = attackOptions;
         context.attackSkillOverrideOptions = this.buildAttackSkillOverrideOptions();
         context.selectedAttackMode = selectedAttackMode;
         context.meleeAttackSkills = meleeAttackSkills;
         context.rangedAttackSkills = rangedAttackSkills;
-        context.selectedDamageTypes = this.document.system.damageType ?? [];
-        context.damageTypeSelectSize = WeaponSkillSheet.getSelectSize(damageTypes, { min: 3, max: 16 });
-        context.defenseOptionsSelectSize = WeaponSkillSheet.getSelectSize(defenseOptions, { min: 3, max: 12 });
         context.hasMeleeAttack = selectedAttackMode === 'melee';
         context.hasRangedAttack = selectedAttackMode === 'ranged';
         context.enrichedText = {
@@ -326,15 +254,6 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         context.tabs = this._prepareTabs('primary');
 
         return context;
-    }
-
-    _onRender(context, options) {
-        super._onRender(context, options);
-
-        const multiSelects = this.element?.querySelectorAll('select[name="system.damageType"], select[name="system.defenseOptions"]') ?? [];
-        for (const select of multiSelects) {
-            WeaponSkillSheet.autoSizeMultiSelect(select);
-        }
     }
 
     _onChangeForm(formConfig, event) {
@@ -442,10 +361,4 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         return this.item.update({ [target]: newList });
     }
 }
-
-
-
-
-
-
 

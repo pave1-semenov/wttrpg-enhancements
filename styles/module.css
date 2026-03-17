@@ -896,3 +896,20 @@
 .weapon-skill-info-dialog__stats-card {
     flex: 0 0 auto;
 }
+`r`n
+
+
+.weapon-skill-sheet__checkbox-group {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+}
+
+.weapon-skill-sheet__checkbox-group .checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
