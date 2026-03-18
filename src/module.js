@@ -1,5 +1,5 @@
 import { registerCombatHooks } from "./lib/hooks/combat.js";
-import { addActiveEffectEnhanceOption, addItemButtonAppV1, addItemButtonAppV2 } from "./lib/hooks/buttons.js";
+import { addActiveEffectEnhanceOption, addItemButtonAppV2 } from "./lib/hooks/buttons.js";
 import { addEnhancedDamageContextOption } from "./lib/hooks/chat.js";
 import { wrapDamageRoll } from "./lib/flows/damageRollFlow.js";
 import { wrapWeaponAttack } from "./lib/flows/weaponAttackFlow.js";
@@ -22,7 +22,6 @@ Hooks.once('ready', async function () {
 })
 Hooks.on('getHeaderControlsApplicationV2', addActiveEffectEnhanceOption)
 Hooks.on('getHeaderControlsApplicationV2', addItemButtonAppV2)
-Hooks.on('getItemSheetHeaderButtons', addItemButtonAppV1)
 Hooks.on('getChatMessageContextOptions', addEnhancedDamageContextOption)
 function registerCustomRollClasses() {
     if (!Array.isArray(CONFIG.Dice?.rolls)) return

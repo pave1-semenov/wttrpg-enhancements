@@ -50,6 +50,16 @@ export default class ItemEnhancementSheet extends WeaponSkillManagerMixin(LifeSt
         }
     };
 
+    /** @override */
+    _configureRenderOptions(options) {
+        super._configureRenderOptions(options);
+        options.parts = ['tabs', ENHANCEMENT_KEYS.LIFESTEAL]
+
+        if (this.document?.type === 'weapon') { 
+            options.parts.push(ENHANCEMENT_KEYS.WEAPON_SKILL)
+        }
+    };
+
     static async saveData(event, form, formData) {
         const update = await this._prepareUpdateData(formData);
         await this.document.update(update);

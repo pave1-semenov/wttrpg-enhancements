@@ -1,29 +1,10 @@
 import ItemEnhancementSheet from '../sheet/itemEnhancements.js';
 import ActiveEffectsEnhancementsSheet from '../sheet/activeEffectsEnhancements.js';
 
-export function addItemButtonAppV1(sheet, buttons) {
-    const isWeapon = sheet.document?.type === 'weapon';
-
-    if (isWeapon && game.user.isGM) {
-        buttons.splice(0, -1, {
-            class: 'enhancement',
-            icon: 'fas fa-circle-up',
-            label: 'WTTRPGEnhancements.Buttons.Title',
-            onclick: async () => {
-                await new ItemEnhancementSheet({
-                    document: sheet.document
-                }).render(true);
-            }
-        });
-    }
-
-    return buttons;
-}
-
 export function addItemButtonAppV2(sheet, buttons) {
-    const isSpell = sheet.document?.type === 'spell';
+    const enhancaeble = ['spell', 'weapon'].includes(sheet.document?.type);
 
-    if (isSpell && game.user.isGM) {
+    if (enhancaeble && game.user.isGM) {
         buttons.push({
             class: 'enhancement',
             icon: 'fas fa-circle-up',
