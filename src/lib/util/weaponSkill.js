@@ -1,4 +1,4 @@
-import { ATTACK_MODES, ATTACK_SKILL_OVERRIDE_MODES, DOCUMENT_TYPES, ITEM_TYPES } from './constants.js';
+import { ATTACK_MODES, ATTACK_SKILL_OVERRIDE_MODES, DOCUMENT_TYPES } from './constants.js';
 
 export function deriveWeaponSkillAttackMode(source) {
     const attackOptions = Array.isArray(source?.attackOptions)
@@ -69,34 +69,46 @@ export function getWeaponSkillParentWeapon(itemOrSystem, parent) {
     }
 }
 
-export function getWeaponSkillAttackSkillReplacement(system, actor) {
-    if (!system || !actor || system.attackSkillOverrideMode === ATTACK_SKILL_OVERRIDE_MODES.NONE || !system.attackSkillOverrideKey) return null;
+export function getWeaponSkillAttackMode(system) {
+    return Array.from(system?.attackOptions ?? [])[0] ?? ATTACK_MODES.MELEE;
+}
 
-    if (system.attackSkillOverrideMode === ATTACK_SKILL_OVERRIDE_MODES.STANDARD) {
-        const skillMapEntry = CONFIG.WITCHER?.skillMap?.[system.attackSkillOverrideKey];
-        const stat = skillMapEntry?.attribute?.name;
-        const level = actor.system?.skills?.[stat]?.[system.attackSkillOverrideKey]?.value;
-        if (!skillMapEntry || !stat || level === undefined) return null;
+export function getWeaponSkillNativeAttackSkill(system) {
+    const attackMode = getWeaponSkillAttackMode(system);
+    return attackMode === ATTACK_MODES.RANGED
+        ? system?.rangedAttackSkill
+        : system?.meleeAttackSkill;
+}
 
-        return {
-            skillName: game.i18n.localize(skillMapEntry.label),
-            stat,
-            level
-        };
+export function getWeaponSkillEffectiveAttackSkill(system) {
+    if (!system) return '';
+    if (
+        system.attackSkillOverrideMode === ATTACK_SKILL_OVERRIDE_MODES.STANDARD
+        && system.attackSkillOverrideKey
+    ) {
+        return system.attackSkillOverrideKey;
     }
 
-    if (system.attackSkillOverrideMode === ATTACK_SKILL_OVERRIDE_MODES.CUSTOM) {
-        const customSkill = actor.items?.find(item => item.type === ITEM_TYPES.SKILL && item.name === system.attackSkillOverrideKey);
-        const stat = customSkill?.system?.attribute;
-        const level = customSkill?.system?.value;
-        if (!customSkill || !stat) return null;
+    return getWeaponSkillNativeAttackSkill(system) ?? '';
+}
 
-        return {
-            skillName: customSkill.name,
-            stat,
-            level: level ?? 0
-        };
+export async function withWeaponSkillNativeAttackOverride(skill, callback) {
+    if (
+        !skill?.system
+        || skill.system.attackSkillOverrideMode !== ATTACK_SKILL_OVERRIDE_MODES.STANDARD
+        || !skill.system.attackSkillOverrideKey
+    ) {
+        return callback(skill);
     }
 
-    return null;
+    const attackMode = getWeaponSkillAttackMode(skill.system);
+    const fieldName = attackMode === ATTACK_MODES.RANGED ? 'rangedAttackSkill' : 'meleeAttackSkill';
+    const originalValue = skill.system[fieldName];
+    skill.system[fieldName] = skill.system.attackSkillOverrideKey;
+
+    try {
+        return await callback(skill);
+    } finally {
+        skill.system[fieldName] = originalValue;
+    }
 }

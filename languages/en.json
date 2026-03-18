@@ -135,8 +135,7 @@
                                                    "EffectsNote":  "Active effects can be managed through the effects tab when editing the weapon skill item directly.",
                                                    "AttackSkillOverrideLabel":  "Attack Skill",
                                                    "AttackSkillOverrideDefault":  "Use weapon skill default",
-                                                   "AttackSkillOverrideHint":  "Optional: replace the normal melee or ranged attack skill with any selected actor skill.",
-                                                   "CustomSkillPrefix":  "Custom"
+                                                   "AttackSkillOverrideHint":  "Optional: replace the normal melee or ranged attack skill with any selected standard system skill."
                                                },
                                "WeaponSkillManager":  {
                                                           "Title":  "Manage Weapon Skills",
@@ -182,3 +181,5 @@
                            }
               }
 }
+
+

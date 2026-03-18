@@ -1,5 +1,5 @@
 import { getWeaponSkillParentWeapon } from '../util/weaponSkill.js';
-import { ATTACK_MODES, ATTACK_SKILL_OVERRIDE_MODES, FLAG_KEYS, ITEM_TYPES, MODULE, TEMPLATE_PATHS, WEAPON_SKILL_DEFAULTS } from '../util/constants.js';
+import { ATTACK_MODES, ATTACK_SKILL_OVERRIDE_MODES, FLAG_KEYS, MODULE, TEMPLATE_PATHS, WEAPON_SKILL_DEFAULTS } from '../util/constants.js';
 import { LifeStealMixin } from '../mixin/lifestealMixin.js';
 
 const { ItemSheetV2 } = foundry.applications.sheets;
@@ -78,12 +78,9 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
 
     static parseAttackSkillOverride(value) {
         if (!value) return { mode: ATTACK_SKILL_OVERRIDE_MODES.NONE, key: '' };
-        const separatorIndex = value.indexOf(':');
-        if (separatorIndex === -1) return { mode: ATTACK_SKILL_OVERRIDE_MODES.NONE, key: '' };
-
         return {
-            mode: value.slice(0, separatorIndex),
-            key: value.slice(separatorIndex + 1)
+            mode: ATTACK_SKILL_OVERRIDE_MODES.STANDARD,
+            key: value
         };
     }
 
@@ -185,25 +182,15 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
 
         const standardSkills = Object.values(CONFIG.WITCHER?.skillMap ?? {})
             .map(skill => ({
-                value: `${ATTACK_SKILL_OVERRIDE_MODES.STANDARD}:${skill.name}`,
+                value: skill.name,
                 label: game.i18n.localize(skill.label)
             }))
             .sort((a, b) => a.label.localeCompare(b.label));
 
         options.push(...standardSkills);
 
-        const customSkills = (this.document.actor?.items ?? [])
-            .filter(item => item.type === ITEM_TYPES.SKILL)
-            .map(skill => ({
-                value: `${ATTACK_SKILL_OVERRIDE_MODES.CUSTOM}:${skill.name}`,
-                label: `${game.i18n.localize('WTTRPGEnhancements.WeaponSkill.CustomSkillPrefix')}: ${skill.name}`
-            }))
-            .sort((a, b) => a.label.localeCompare(b.label));
-
-        options.push(...customSkills);
-
-        const currentValue = this.document.system.attackSkillOverrideMode && this.document.system.attackSkillOverrideMode !== ATTACK_SKILL_OVERRIDE_MODES.NONE
-            ? `${this.document.system.attackSkillOverrideMode}:${this.document.system.attackSkillOverrideKey ?? ''}`
+        const currentValue = this.document.system.attackSkillOverrideMode === ATTACK_SKILL_OVERRIDE_MODES.STANDARD
+            ? (this.document.system.attackSkillOverrideKey ?? '')
             : '';
 
         if (currentValue && !options.some(option => option.value === currentValue)) {
@@ -316,8 +303,3 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         }
     }
 }
-
-
-
-
-

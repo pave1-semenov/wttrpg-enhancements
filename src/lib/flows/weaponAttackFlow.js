@@ -1,11 +1,15 @@
 import { getAttachedWeaponSkillsSync, isWeaponSkill } from '../util/weaponSkillAttachment.js';
 import { ATTACK_MODES, TEMPLATE_PATHS } from '../util/constants.js';
-import { getWeaponSkillAttackSkillReplacement, getWeaponSkillParentWeapon } from '../util/weaponSkill.js';
+import {
+    getWeaponSkillEffectiveAttackSkill,
+    getWeaponSkillParentWeapon,
+    withWeaponSkillNativeAttackOverride
+} from '../util/weaponSkill.js';
 
 const { DialogV2 } = foundry.applications.api;
 
 function formatBoolean(value) {
-    return game.i18n.localize(value ? "WTTRPGEnhancements.WeaponSkillAttack.Yes" : "WTTRPGEnhancements.WeaponSkillAttack.No");
+    return game.i18n.localize(value ? 'WTTRPGEnhancements.WeaponSkillAttack.Yes' : 'WTTRPGEnhancements.WeaponSkillAttack.No');
 }
 
 function formatDamageTypes(skill) {
@@ -41,14 +45,7 @@ function formatAttackMode(skill) {
 }
 
 function formatAttackSkill(skill) {
-    const replacement = getWeaponSkillAttackSkillReplacement(skill.system, skill.actor ?? skill.parent?.actor);
-    if (replacement) return replacement.skillName;
-
-    const attackMode = Array.from(skill.system?.attackOptions ?? [])[0] ?? ATTACK_MODES.MELEE;
-    const skillName = attackMode === ATTACK_MODES.RANGED
-        ? skill.system?.rangedAttackSkill
-        : skill.system?.meleeAttackSkill;
-
+    const skillName = getWeaponSkillEffectiveAttackSkill(skill.system);
     return CONFIG.WITCHER?.skillMap?.[skillName]?.label
         ? game.i18n.localize(CONFIG.WITCHER.skillMap[skillName].label)
         : skillName || '-';
@@ -165,17 +162,17 @@ export async function wrapWeaponAttack(wrapped, weapon, options = {}) {
     }
 
     const choice = await promptWeaponSkillChoice(weapon, attachedSkills);
-    if (!choice || choice.mode === "standard") {
+    if (!choice || choice.mode === 'standard') {
         return wrapped(weapon, options);
     }
 
     const chosenSkill = attachedSkills.find(skill => skill.id === choice.skillId);
-    const skillReplacement = getWeaponSkillAttackSkillReplacement(chosenSkill?.system, chosenSkill?.actor ?? weapon.actor) ?? options.skillReplacement;
 
-    return wrapped(chosenSkill ?? weapon, {
-        ...options,
-        skillReplacement,
-        skipWeaponSkillChooser: true
+    return withWeaponSkillNativeAttackOverride(chosenSkill ?? weapon, activeWeapon => {
+        return wrapped(activeWeapon, {
+            ...options,
+            skipWeaponSkillChooser: true
+        });
     });
 }
 
@@ -195,14 +192,14 @@ async function promptWeaponSkillChoice(weapon, attachedSkills) {
 
     return DialogV2.wait({
         window: {
-            title: game.i18n.format("WTTRPGEnhancements.WeaponSkillAttack.ChooseTitle", {
+            title: game.i18n.format('WTTRPGEnhancements.WeaponSkillAttack.ChooseTitle', {
                 weapon: weapon.name
             }),
             resizable: true
         },
         position: {
             width: 920,
-            height: "auto"
+            height: 'auto'
         },
         content,
         render: (_event, dialog) => {
@@ -218,29 +215,22 @@ async function promptWeaponSkillChoice(weapon, attachedSkills) {
         },
         buttons: [
             {
-                action: "useSkill",
-                label: game.i18n.localize("WTTRPGEnhancements.WeaponSkillAttack.UseSkill"),
+                action: 'useSkill',
+                label: game.i18n.localize('WTTRPGEnhancements.WeaponSkillAttack.UseSkill'),
                 default: true,
                 callback: (event, button) => ({
-                    mode: "skill",
+                    mode: 'skill',
                     skillId: button.form.elements.selectedSkill.value
                 })
             },
             {
-                action: "standard",
-                label: game.i18n.localize("WTTRPGEnhancements.WeaponSkillAttack.StandardAttack"),
+                action: 'standard',
+                label: game.i18n.localize('WTTRPGEnhancements.WeaponSkillAttack.StandardAttack'),
                 callback: () => ({
-                    mode: "standard"
+                    mode: 'standard'
                 })
             }
         ],
         rejectClose: false
     });
 }
-
-
-
-
-
-
-
