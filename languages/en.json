@@ -1,104 +1,189 @@
 {
-    "WTTRPGEnhancements": {
-        "Enhancements": {
-            "lifesteal": "Lifesteal",
-            "dot": "DOT",
-            "hot": "HOT",
-            "amp": "Amplifier"
-        },
-        "Buttons": {
-            "Title": "WTTRPG enhancements"
-        },
-        "Chat": {
-            "Dot": {
-                "Title": "Damage Over Time",
-                "Tag": "DOT",
-                "SpDamage": "SP damage",
-                "Type": "Type",
-                "Location": "Location"
-            },
-            "Hot": {
-                "Title": "Heal Over Time",
-                "Tag": "HOT",
-                "Formula": "Formula",
-                "Healer": "Healer",
-                "Target": "Target",
-                "HealApplied": "Heal applied",
-                "HpChange": "HP change",
-                "Status": "Status",
-                "NoBenefit": "No healing applied (target is already at full HP)"
-            },
-            "Lifesteal": {
-                "Title": "Lifesteal Trigger",
-                "Tag": "Leech",
-                "Attacker": "Attacker",
-                "Target": "Target",
-                "DamageDealt": "Damage dealt",
-                "Lifesteal": "Lifesteal",
-                "OverhealToShield": "Overheal to shield",
-                "HpChange": "HP change",
-                "AttributeChange": "{attribute} change",
-                "ShieldValue": "Shield: {value}",
-                "Percent": "({percent}%)",
-                "RollFlavor": "Lifesteal {percent}% of damage done",
-                "Status": "Status",
-                "NoBenefitHpAndShieldCapped": "No benefit: HP is full and shield is at its threshold",
-                "NoBenefitHpCapped": "No benefit: HP is already full",
-                "NoBenefitStatCapped": "No benefit: attribute is already full",
-                "NoBenefitGeneric": "No benefit from this lifesteal tick"
-            }
-        },
-        "Sheet": {
-            "Lifesteal": {
-                "Title": "Lifesteal settings",
-                "Enabled": "Enabled",
-                "FlatPercentage": "Flat lifesteal percentage",
-                "StoreOverheal": "Store overheal",
-                "OverhealPercentage": "Overheal percentage",
-                "OverhealThreshold": "Overheal shield threshold"
-            },
-            "Dot": {
-                "Title": "Dot settings",
-                "Enabled": "Enabled",
-                "Formula": "Formula",
-                "DamageType": "Damage Type",
-                "Location": "Location",
-                "AutoApply": "Auto apply"
-            },
-            "Hot": {
-                "Title": "Hot settings",
-                "Enabled": "Enabled",
-                "Formula": "Formula"
-            },
-            "Amplifier": {
-                "Title": "Amplifier settings",
-                "Enabled": "Enabled",
-                "DamageType": "Damage type",
-                "Multiplier": "Multiplicative amplifier",
-                "VariableFormula": "Variable amplifier formula"
-            },
-            "DamageProperties": {
-                "Title": "Damage properties",
-                "Inherit": "Inherit damage properties",
-                "ArmorPiercing": "Armor Piercing",
-                "ImprovedArmorPiercing": "Improved Armor Piercing",
-                "DamageToAllLocations": "Damage to all locations",
-                "BypassesWornArmor": "Bypasses worn armor",
-                "BypassesNaturalArmor": "Bypasses natural armor",
-                "NonLethal": "Non-lethal damage",
-                "Meteorite": "Meteorite damage",
-                "Silver": "Silver damage",
-                "SpDamage": "SP damage"
-            }
-        },
-        "Stats": {
-            "hp": "HP",
-            "sta": "Stamina",
-            "shield": "Shield",
-            "default": "STAT"
-        },
-        "Misc": {
-            "Enhanced": "enhanced"
-        }
-    }
+    "WTTRPGEnhancements":  {
+                               "Enhancements":  {
+                                                    "lifesteal":  "Lifesteal",
+                                                    "dot":  "DOT",
+                                                    "hot":  "HOT",
+                                                    "amp":  "Amplifier",
+                                                    "weaponSkill":  "Weapon Skills"
+                                                },
+                               "Buttons":  {
+                                               "Title":  "WTTRPG enhancements"
+                                           },
+                               "Chat":  {
+                                            "Dot":  {
+                                                        "Title":  "Damage Over Time",
+                                                        "Tag":  "DOT",
+                                                        "SpDamage":  "SP damage",
+                                                        "Type":  "Type",
+                                                        "Location":  "Location"
+                                                    },
+                                            "Hot":  {
+                                                        "Title":  "Heal Over Time",
+                                                        "Tag":  "HOT",
+                                                        "Formula":  "Formula",
+                                                        "Healer":  "Healer",
+                                                        "Target":  "Target",
+                                                        "HealApplied":  "Heal applied",
+                                                        "HpChange":  "HP change",
+                                                        "Status":  "Status",
+                                                        "NoBenefit":  "No healing applied (target is already at full HP)"
+                                                    },
+                                            "Lifesteal":  {
+                                                              "Title":  "Lifesteal Trigger",
+                                                              "Tag":  "Leech",
+                                                              "Attacker":  "Attacker",
+                                                              "Target":  "Target",
+                                                              "DamageDealt":  "Damage dealt",
+                                                              "Lifesteal":  "Lifesteal",
+                                                              "OverhealToShield":  "Overheal to shield",
+                                                              "HpChange":  "HP change",
+                                                              "AttributeChange":  "{attribute} change",
+                                                              "ShieldValue":  "Shield: {value}",
+                                                              "Percent":  "({percent}%)",
+                                                              "RollFlavor":  "Lifesteal {percent}% of damage done",
+                                                              "Status":  "Status",
+                                                              "NoBenefitHpAndShieldCapped":  "No benefit: HP is full and shield is at its threshold",
+                                                              "NoBenefitHpCapped":  "No benefit: HP is already full",
+                                                              "NoBenefitStatCapped":  "No benefit: attribute is already full",
+                                                              "NoBenefitGeneric":  "No benefit from this lifesteal tick"
+                                                          }
+                                        },
+                               "Sheet":  {
+                                             "Lifesteal":  {
+                                                               "Title":  "Lifesteal settings",
+                                                               "Enabled":  "Enabled",
+                                                               "FlatPercentage":  "Flat lifesteal percentage",
+                                                               "StoreOverheal":  "Store overheal",
+                                                               "OverhealPercentage":  "Overheal percentage",
+                                                               "OverhealThreshold":  "Overheal shield threshold"
+                                                           },
+                                             "Dot":  {
+                                                         "Title":  "Dot settings",
+                                                         "Enabled":  "Enabled",
+                                                         "Formula":  "Formula",
+                                                         "DamageType":  "Damage Type",
+                                                         "Location":  "Location",
+                                                         "AutoApply":  "Auto apply"
+                                                     },
+                                             "Hot":  {
+                                                         "Title":  "Hot settings",
+                                                         "Enabled":  "Enabled",
+                                                         "Formula":  "Formula"
+                                                     },
+                                             "Amplifier":  {
+                                                               "Title":  "Amplifier settings",
+                                                               "Enabled":  "Enabled",
+                                                               "DamageType":  "Damage type",
+                                                               "Multiplier":  "Multiplicative amplifier",
+                                                               "VariableFormula":  "Variable amplifier formula"
+                                                           },
+                                             "DamageProperties":  {
+                                                                      "Title":  "Damage properties",
+                                                                      "Inherit":  "Inherit damage properties",
+                                                                      "ArmorPiercing":  "Armor Piercing",
+                                                                      "ImprovedArmorPiercing":  "Improved Armor Piercing",
+                                                                      "DamageToAllLocations":  "Damage to all locations",
+                                                                      "BypassesWornArmor":  "Bypasses worn armor",
+                                                                      "BypassesNaturalArmor":  "Bypasses natural armor",
+                                                                      "NonLethal":  "Non-lethal damage",
+                                                                      "Meteorite":  "Meteorite damage",
+                                                                      "Silver":  "Silver damage",
+                                                                      "SpDamage":  "SP damage"
+                                                                  }
+                                         },
+                               "Stats":  {
+                                             "hp":  "HP",
+                                             "sta":  "Stamina",
+                                             "shield":  "Shield",
+                                             "default":  "STAT"
+                                         },
+                               "ItemTypes":  {
+                                                 "WeaponSkill":  "Weapon Skill",
+                                                 "WeaponSkillHint":  "A special technique or ability that can be attached to weapons to modify attack and damage rolls"
+                                             },
+                               "WeaponSkill":  {
+                                                   "Title":  "Weapon Skills",
+                                                   "SheetTitle":  "Weapon Skill Configuration",
+                                                   "ParentWeapon":  "Parent Weapon",
+                                                   "ParentWeaponUuid":  "Parent Weapon UUID",
+                                                   "DamageSettings":  "Damage Settings",
+                                                   "DamageFormula":  "Damage Formula",
+                                                   "DamageTypes":  "Damage Types",
+                                                   "GeneralSettings":  "General Settings",
+                                                   "Availability":  "Availability",
+                                                   "Concealment":  "Concealment",
+                                                   "Hands":  "Hands Required",
+                                                   "Equipped":  "Equipped",
+                                                   "RollOnlyDamage":  "Roll Only Damage",
+                                                   "UsesAmmo":  "Uses Ammunition",
+                                                   "Accuracy":  "Accuracy Modifier",
+                                                   "RateOfFire":  "Rate of Fire",
+                                                   "Enhancements":  "Enhancements",
+                                                   "Reliability":  "Reliability",
+                                                   "MaxReliability":  "Max Reliability",
+                                                   "AttackOptions":  "Attack Options",
+                                                   "MeleeAttackSkill":  "Melee Attack Skill",
+                                                   "RangedAttackSkill":  "Ranged Attack Skill",
+                                                   "SpellAttackSkill":  "Spell Attack Skill",
+                                                   "ApplyMeleeBonus":  "Apply Melee Bonus",
+                                                   "ApplyRangedMeleeBonus":  "Apply Ranged Melee Bonus",
+                                                   "IsThrowable":  "Is Throwable",
+                                                   "DamageProperties":  "Damage Properties",
+                                                   "DefenseProperties":  "Defense Properties",
+                                                   "ActiveEffects":  "Active Effects",
+                                                   "EffectsNote":  "Active effects can be managed through the effects tab when editing the weapon skill item directly.",
+                                                   "AttackSkillOverrideLabel":  "Attack Skill",
+                                                   "AttackSkillOverrideDefault":  "Use weapon skill default",
+                                                   "AttackSkillOverrideHint":  "Optional: replace the normal melee or ranged attack skill with any selected standard system skill.",
+                                                   "AttackRollModifierLabel":  "Attack Roll Modifier",
+                                                   "AttackRollModifierHint":  "Applied to the attack roll formula exactly like weapon accuracy. Can be positive or negative."
+                                               },
+                               "WeaponSkillManager":  {
+                                                          "Title":  "Manage Weapon Skills",
+                                                          "Weapon":  "Weapon",
+                                                          "AttachedSkills":  "Attached Skills",
+                                                          "Active":  "Active Skill",
+                                                          "Attach":  "Attach Skill",
+                                                          "AttachTitle":  "Attach {skill}",
+                                                          "AttachmentMode":  "Attachment Mode",
+                                                          "AttachHint":  "Choose whether the attached copy should use the weapon\u0027s values or preserve the template\u0027s values.",
+                                                          "InheritWeaponProperties":  "Inherit {weapon} properties",
+                                                          "KeepTemplateProperties":  "Keep {skill} template properties",
+                                                          "NewSkillName":  "{weapon} Skill",
+                                                          "SetActive":  "Set as Active",
+                                                          "NoSkillsAvailable":  "No weapon skills available yet. Create some skills first!",
+                                                          "Save":  "Save Changes",
+                                                          "Cancel":  "Cancel",
+                                                          "SkillsSaved":  "Weapon skills have been saved successfully!"
+                                                      },
+                               "WeaponSkillAttack":  {
+                                                         "ChooseTitle":  "Attack With {weapon}",
+                                                         "UseSkill":  "Attack With Selected Skill",
+                                                         "StandardAttack":  "Proceed With Standard Attack",
+                                                         "StandardHint":  "Or continue with the weapon\u0027s normal attack flow.",
+                                                         "SkillMeta":  "Weapon skill",
+                                                         "Or":  "OR",
+                                                         "ShowDescription":  "Show full description",
+                                                         "MoreInfo":  "More info",
+                                                         "InfoTitle":  "{skill} Details",
+                                                         "InfoStats":  "Combat Stats",
+                                                         "CloseInfo":  "Close",
+                                                         "NoDescription":  "No description available.",
+                                                         "Yes":  "Yes",
+                                                         "No":  "No"
+                                                     },
+                               "Misc":  {
+                                            "Enhanced":  "enhanced"
+                                        }
+                           },
+    "TYPES":  {
+                  "Item":  {
+                               "wttrpg-enhancements.weapon-skill":  "Weapon Skill"
+                           }
+              }
 }
+
+
+
+

@@ -1,28 +1,27 @@
-import ActiveEffectsEnhancementsSheet from '../sheet/activeEffectsEnhancements.js';
 import ItemEnhancementSheet from '../sheet/itemEnhancements.js';
+import ActiveEffectsEnhancementsSheet from '../sheet/activeEffectsEnhancements.js';
 
 export function addItemButtonAppV1(sheet, buttons) {
-    const isWeapon = sheet.document?.type === "weapon"
-    console.log(sheet.document, isWeapon)
+    const isWeapon = sheet.document?.type === 'weapon';
 
     if (isWeapon && game.user.isGM) {
         buttons.splice(0, -1, {
             class: 'enhancement',
             icon: 'fas fa-circle-up',
-            label: '',
+            label: 'WTTRPGEnhancements.Buttons.Title',
             onclick: async () => {
                 await new ItemEnhancementSheet({
-                    document: sheet.document,
-                }).render(true)
+                    document: sheet.document
+                }).render(true);
             }
-        })
+        });
     }
 
-    return buttons
+    return buttons;
 }
 
 export function addItemButtonAppV2(sheet, buttons) {
-    const isSpell = sheet.document?.type === "spell"
+    const isSpell = sheet.document?.type === 'spell';
 
     if (isSpell && game.user.isGM) {
         buttons.push({
@@ -31,18 +30,17 @@ export function addItemButtonAppV2(sheet, buttons) {
             label: 'WTTRPGEnhancements.Buttons.Title',
             onClick: async () => {
                 await new ItemEnhancementSheet({
-                    document: sheet.document,
-                }).render(true)
+                    document: sheet.document
+                }).render(true);
             }
-        })
+        });
     }
 
-    return buttons
+    return buttons;
 }
 
-
 export function addActiveEffectEnhanceOption(sheet, buttons) {
-    const isActiveEffectSheet = sheet.document?.documentName === "ActiveEffect"
+    const isActiveEffectSheet = sheet.document?.documentName === 'ActiveEffect';
 
     if (isActiveEffectSheet && game.user.isGM) {
         buttons.push({
@@ -51,11 +49,11 @@ export function addActiveEffectEnhanceOption(sheet, buttons) {
             label: 'WTTRPGEnhancements.Buttons.Title',
             onClick: async () => {
                 await new ActiveEffectsEnhancementsSheet({
-                    document: sheet.document,
-                }).render(true)
+                    document: sheet.document
+                }).render(true);
             }
         });
     }
 
-    return buttons
+    return buttons;
 }
