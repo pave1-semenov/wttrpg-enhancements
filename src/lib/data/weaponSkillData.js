@@ -63,7 +63,6 @@ export default function getWeaponSkillDataModel() {
                 this.rangedAttackSkill = '';
                 this.usingAmmo = false;
                 this.isThrowable = WEAPON_SKILL_DEFAULTS.IS_THROWABLE;
-                this.accuracy = 0;
             } else {
                 this.applyMeleeBonus = false;
             }
@@ -85,4 +84,5 @@ export default function getWeaponSkillDataModel() {
 
     return weaponSkillDataModelClass;
 }
+
 

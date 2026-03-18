@@ -72,6 +72,10 @@ function buildSkillStats(skill) {
             value: formatAttackSkill(skill)
         },
         {
+            label: game.i18n.localize('WTTRPGEnhancements.WeaponSkill.AttackRollModifierLabel'),
+            value: `${skill.system?.accuracy ?? 0}`
+        },
+        {
             label: game.i18n.localize('WITCHER.Weapon.Range'),
             value: skill.system?.range || '-'
         }
@@ -83,16 +87,10 @@ function buildSkillStats(skill) {
             value: formatBoolean(!!skill.system?.applyMeleeBonus)
         });
     } else {
-        stats.push(
-            {
-                label: game.i18n.localize('WITCHER.Weapon.Short.WeaponAccuracy'),
-                value: `${skill.system?.accuracy ?? 0}`
-            },
-            {
-                label: game.i18n.localize('WITCHER.Weapon.useAmmo'),
-                value: formatBoolean(!!skill.system?.usingAmmo)
-            }
-        );
+        stats.push({
+            label: game.i18n.localize('WITCHER.Weapon.useAmmo'),
+            value: formatBoolean(!!skill.system?.usingAmmo)
+        });
     }
 
     stats.push(

@@ -135,7 +135,9 @@
                                                    "EffectsNote":  "Active effects can be managed through the effects tab when editing the weapon skill item directly.",
                                                    "AttackSkillOverrideLabel":  "Attack Skill",
                                                    "AttackSkillOverrideDefault":  "Use weapon skill default",
-                                                   "AttackSkillOverrideHint":  "Optional: replace the normal melee or ranged attack skill with any selected standard system skill."
+                                                   "AttackSkillOverrideHint":  "Optional: replace the normal melee or ranged attack skill with any selected standard system skill.",
+                                                   "AttackRollModifierLabel":  "Attack Roll Modifier",
+                                                   "AttackRollModifierHint":  "Applied to the attack roll formula exactly like weapon accuracy. Can be positive or negative."
                                                },
                                "WeaponSkillManager":  {
                                                           "Title":  "Manage Weapon Skills",
@@ -181,5 +183,7 @@
                            }
               }
 }
+
+
 
 

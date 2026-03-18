@@ -145,7 +145,7 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
                 applyMeleeBonus: attackMode === ATTACK_MODES.MELEE ? !!systemData.applyMeleeBonus : false,
                 isThrowable: WEAPON_SKILL_DEFAULTS.IS_THROWABLE,
                 quantity: WEAPON_SKILL_DEFAULTS.QUANTITY,
-                accuracy: isRanged ? WeaponSkillSheet.toNumber(systemData.accuracy, this.document.system.accuracy ?? 0) : 0,
+                accuracy: WeaponSkillSheet.toNumber(systemData.accuracy, this.document.system.accuracy ?? 0),
                 range: systemData.range ?? this.document.system.range ?? '',
                 rollOnlyDmg: !!systemData.rollOnlyDmg,
                 usingAmmo: isRanged ? !!systemData.usingAmmo : false,
@@ -303,3 +303,4 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         }
     }
 }
+

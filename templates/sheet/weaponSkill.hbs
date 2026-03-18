@@ -97,11 +97,12 @@
 
     <fieldset>
         <legend>{{localize "WITCHER.Attack.name"}}</legend>
-        {{#if hasRangedAttack}}
         <div class="form-group">
-            <label>{{localize "WITCHER.Weapon.Short.WeaponAccuracy"}}</label>
+            <label>{{localize "WTTRPGEnhancements.WeaponSkill.AttackRollModifierLabel"}}</label>
             <input name="system.accuracy" type="number" value="{{item.system.accuracy}}" data-dtype="Number">
+            <p class="hint">{{localize "WTTRPGEnhancements.WeaponSkill.AttackRollModifierHint"}}</p>
         </div>
+        {{#if hasRangedAttack}}
         <div class="form-group">
             <label>{{localize "WITCHER.Weapon.useAmmo"}}</label>
             <input name="system.usingAmmo" type="checkbox" {{checked item.system.usingAmmo}}>
@@ -132,3 +133,4 @@
         </div>
     </fieldset>
 </section>
+
