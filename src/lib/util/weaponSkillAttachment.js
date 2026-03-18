@@ -1,5 +1,5 @@
 import { WEAPON_SKILL_BASE_TYPE, WEAPON_SKILL_TYPE } from '../setup/itemTypeRegistration.js';
-import { MODULE } from './constants.js';
+import { DOCUMENT_TYPES, ITEM_TYPES, MODULE } from './constants.js';
 
 export const SOURCE_ITEM_UUID_FLAG = 'sourceItemUuid';
 export const LEGACY_SOURCE_WORLD_ITEM_ID_FLAG = 'sourceWorldItemId';
@@ -67,7 +67,7 @@ async function resolveUuid(uuid) {
 }
 
 async function resolveSourceWeapon(sourceWeapon) {
-    if (sourceWeapon?.type !== 'weapon') return null;
+    if (sourceWeapon?.type !== ITEM_TYPES.WEAPON) return null;
 
     const documentId = getDocumentId(sourceWeapon);
     const compendiumSource = sourceWeapon?._stats?.compendiumSource ?? null;
@@ -75,18 +75,18 @@ async function resolveSourceWeapon(sourceWeapon) {
     const uuidCandidates = [sourceWeapon?.uuid, compendiumSource].filter(Boolean);
     for (const candidate of uuidCandidates) {
         const document = await resolveUuid(candidate);
-        if (document?.type === 'weapon') return document;
+        if (document?.type === ITEM_TYPES.WEAPON) return document;
     }
 
     if (sourceWeapon.pack && documentId) {
         const pack = game.packs.get(sourceWeapon.pack);
         const document = await pack?.getDocument(documentId);
-        if (document?.type === 'weapon') return document;
+        if (document?.type === ITEM_TYPES.WEAPON) return document;
     }
 
     if (documentId) {
         const worldDocument = game.items.get(documentId);
-        if (worldDocument?.type === 'weapon') return worldDocument;
+        if (worldDocument?.type === ITEM_TYPES.WEAPON) return worldDocument;
     }
 
     if (isLikelyItemDocument(sourceWeapon)) {
@@ -97,7 +97,7 @@ async function resolveSourceWeapon(sourceWeapon) {
 }
 
 export function getAttachedWeaponSkillsSync(item) {
-    if (item?.type !== 'weapon' || !item?.uuid) return [];
+    if (item?.type !== ITEM_TYPES.WEAPON || !item?.uuid) return [];
 
     const ownedSkills = item.actor?.items?.filter(entry => isAttachedToWeapon(entry, item.uuid)) ?? [];
     const ownedSourceUuids = new Set(
@@ -130,7 +130,7 @@ export async function getAttachedWeaponSkills(item) {
 }
 
 export async function cloneAttachedWeaponSkillsToActor(sourceWeapon, targetActor, targetWeapon) {
-    if (sourceWeapon?.type !== 'weapon' || !targetActor || !targetWeapon) return [];
+    if (sourceWeapon?.type !== ITEM_TYPES.WEAPON || !targetActor || !targetWeapon) return [];
 
     const resolvedSourceWeapon = await resolveSourceWeapon(sourceWeapon);
     if (!resolvedSourceWeapon) return [];
@@ -149,6 +149,8 @@ export async function cloneAttachedWeaponSkillsToActor(sourceWeapon, targetActor
         .map(skill => prepareEmbeddedSkillData(skill, targetWeapon));
 
     if (!toCreate.length) return [];
-    return targetActor.createEmbeddedDocuments('Item', toCreate);
+    return targetActor.createEmbeddedDocuments(DOCUMENT_TYPES.ITEM, toCreate);
 }
+
+
 

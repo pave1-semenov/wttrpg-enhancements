@@ -1,5 +1,5 @@
 import { getAttachedWeaponSkillsSync, isWeaponSkill } from '../util/weaponSkillAttachment.js';
-import { TEMPLATE_PATHS } from "../util/constants.js";
+import { ATTACK_MODES, TEMPLATE_PATHS } from '../util/constants.js';
 import { getWeaponSkillAttackSkillReplacement, getWeaponSkillParentWeapon } from '../util/weaponSkill.js';
 
 const { DialogV2 } = foundry.applications.api;
@@ -36,7 +36,7 @@ function formatDefenseOptions(skill) {
 }
 
 function formatAttackMode(skill) {
-    const attackMode = Array.from(skill.system?.attackOptions ?? [])[0] ?? 'melee';
+    const attackMode = Array.from(skill.system?.attackOptions ?? [])[0] ?? ATTACK_MODES.MELEE;
     return game.i18n.localize(`WITCHER.Attack.attackOptions.${attackMode}`);
 }
 
@@ -44,8 +44,8 @@ function formatAttackSkill(skill) {
     const replacement = getWeaponSkillAttackSkillReplacement(skill.system, skill.actor ?? skill.parent?.actor);
     if (replacement) return replacement.skillName;
 
-    const attackMode = Array.from(skill.system?.attackOptions ?? [])[0] ?? 'melee';
-    const skillName = attackMode === 'ranged'
+    const attackMode = Array.from(skill.system?.attackOptions ?? [])[0] ?? ATTACK_MODES.MELEE;
+    const skillName = attackMode === ATTACK_MODES.RANGED
         ? skill.system?.rangedAttackSkill
         : skill.system?.meleeAttackSkill;
 
@@ -55,7 +55,7 @@ function formatAttackSkill(skill) {
 }
 
 function buildSkillStats(skill) {
-    const attackMode = Array.from(skill.system?.attackOptions ?? [])[0] ?? 'melee';
+    const attackMode = Array.from(skill.system?.attackOptions ?? [])[0] ?? ATTACK_MODES.MELEE;
 
     const stats = [
         {
@@ -80,7 +80,7 @@ function buildSkillStats(skill) {
         }
     ];
 
-    if (attackMode === 'melee') {
+    if (attackMode === ATTACK_MODES.MELEE) {
         stats.push({
             label: game.i18n.localize('WITCHER.Weapon.MeleeBonus'),
             value: formatBoolean(!!skill.system?.applyMeleeBonus)
@@ -237,6 +237,8 @@ async function promptWeaponSkillChoice(weapon, attachedSkills) {
         rejectClose: false
     });
 }
+
+
 
 
 

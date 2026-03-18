@@ -1,3 +1,4 @@
+import { ATTACK_MODES, ATTACK_SKILL_OVERRIDE_MODES, WEAPON_SKILL_DEFAULTS } from '../util/constants.js';
 import {
     createWeaponSkillTypeState,
     deriveWeaponSkillAttackMode,
@@ -28,7 +29,7 @@ export default function getWeaponSkillDataModel() {
                     label: 'WITCHER.Dialog.damageType'
                 }),
                 attackSkillOverrideMode: new fields.StringField({
-                    initial: 'none',
+                    initial: ATTACK_SKILL_OVERRIDE_MODES.NONE,
                     label: 'WTTRPGEnhancements.WeaponSkill.AttackSkillOverrideLabel'
                 }),
                 attackSkillOverrideKey: new fields.StringField({ initial: '' })
@@ -41,9 +42,9 @@ export default function getWeaponSkillDataModel() {
             if (!Array.isArray(this.damageType)) this.damageType = [];
             if (!Array.isArray(this.defenseOptions)) this.defenseOptions = Array.from(this.defenseOptions ?? []);
             if (!(this.attackOptions instanceof Set)) this.attackOptions = new Set(this.attackOptions ?? []);
-            if (!this.attackSkillOverrideMode) this.attackSkillOverrideMode = 'none';
-            this.quantity = '1';
-            this.isThrowable = false;
+            if (!this.attackSkillOverrideMode) this.attackSkillOverrideMode = ATTACK_SKILL_OVERRIDE_MODES.NONE;
+            this.quantity = WEAPON_SKILL_DEFAULTS.QUANTITY;
+            this.isThrowable = WEAPON_SKILL_DEFAULTS.IS_THROWABLE;
 
             const parentWeapon = getWeaponSkillParentWeapon(this, this.parent)?.system;
             if (!this.attackOptions.size) {
@@ -58,10 +59,10 @@ export default function getWeaponSkillDataModel() {
             const attackMode = Array.from(this.attackOptions)[0] ?? deriveWeaponSkillAttackMode(this);
             this.attackOptions = new Set([attackMode]);
 
-            if (attackMode === 'melee') {
+            if (attackMode === ATTACK_MODES.MELEE) {
                 this.rangedAttackSkill = '';
                 this.usingAmmo = false;
-                this.isThrowable = false;
+                this.isThrowable = WEAPON_SKILL_DEFAULTS.IS_THROWABLE;
                 this.accuracy = 0;
             } else {
                 this.applyMeleeBonus = false;
@@ -84,3 +85,4 @@ export default function getWeaponSkillDataModel() {
 
     return weaponSkillDataModelClass;
 }
+

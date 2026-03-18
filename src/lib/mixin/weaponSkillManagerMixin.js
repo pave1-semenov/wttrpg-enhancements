@@ -1,8 +1,13 @@
 import { WEAPON_SKILL_TYPE } from '../setup/itemTypeRegistration.js';
-import { FLAG_KEYS, MODULE, TEMPLATE_PATHS } from '../util/constants.js';
+import { ATTACK_SKILL_OVERRIDE_MODES, DOCUMENT_TYPES, FLAG_KEYS, MODULE, TEMPLATE_PATHS, WEAPON_SKILL_DEFAULTS } from '../util/constants.js';
 import { getAttachedWeaponSkills } from '../util/weaponSkillAttachment.js';
 
 const { DialogV2 } = foundry.applications.api;
+
+const ATTACH_MODES = {
+    WEAPON: 'weapon',
+    TEMPLATE: 'template'
+};
 
 export const WeaponSkillManagerMixin = Superclass =>
     class extends Superclass {
@@ -21,13 +26,13 @@ export const WeaponSkillManagerMixin = Superclass =>
         async promptAttachMode(skill) {
             const options = [
                 {
-                    value: 'weapon',
+                    value: ATTACH_MODES.WEAPON,
                     label: game.i18n.format('WTTRPGEnhancements.WeaponSkillManager.InheritWeaponProperties', {
                         weapon: this.document.name
                     })
                 },
                 {
-                    value: 'template',
+                    value: ATTACH_MODES.TEMPLATE,
                     label: game.i18n.format('WTTRPGEnhancements.WeaponSkillManager.KeepTemplateProperties', {
                         skill: skill.name
                     })
@@ -81,18 +86,18 @@ export const WeaponSkillManagerMixin = Superclass =>
                 damage: weaponSystem.damage ?? sourceData.system?.damage ?? '',
                 damageType: this.getWeaponDamageTypes(weaponSystem, sourceData.system?.damageType ?? []),
                 type: foundry.utils.deepClone(weaponSystem.type ?? sourceData.system?.type ?? {}),
-                quantity: '1',
+                quantity: WEAPON_SKILL_DEFAULTS.QUANTITY,
                 range: weaponSystem.range ?? sourceData.system?.range ?? '',
                 accuracy: weaponSystem.accuracy ?? sourceData.system?.accuracy ?? 0,
                 usingAmmo: weaponSystem.usingAmmo ?? sourceData.system?.usingAmmo ?? false,
                 rollOnlyDmg: weaponSystem.rollOnlyDmg ?? sourceData.system?.rollOnlyDmg ?? false,
-                isThrowable: false,
+                isThrowable: WEAPON_SKILL_DEFAULTS.IS_THROWABLE,
                 attackOptions: this.toPlainArray(weaponSystem.attackOptions, sourceData.system?.attackOptions ?? []),
                 meleeAttackSkill: weaponSystem.meleeAttackSkill ?? sourceData.system?.meleeAttackSkill ?? '',
                 rangedAttackSkill: weaponSystem.rangedAttackSkill ?? sourceData.system?.rangedAttackSkill ?? '',
                 spellAttackSkill: weaponSystem.spellAttackSkill ?? sourceData.system?.spellAttackSkill ?? 'spellcasting',
                 itemUseAttackSkill: weaponSystem.itemUseAttackSkill ?? sourceData.system?.itemUseAttackSkill ?? '',
-                attackSkillOverrideMode: sourceData.system?.attackSkillOverrideMode ?? 'none',
+                attackSkillOverrideMode: sourceData.system?.attackSkillOverrideMode ?? ATTACK_SKILL_OVERRIDE_MODES.NONE,
                 attackSkillOverrideKey: sourceData.system?.attackSkillOverrideKey ?? '',
                 applyMeleeBonus: weaponSystem.applyMeleeBonus ?? sourceData.system?.applyMeleeBonus ?? false,
                 enhancementItemIds: foundry.utils.deepClone(
@@ -112,8 +117,8 @@ export const WeaponSkillManagerMixin = Superclass =>
         buildTemplateSkillData(sourceData) {
             return {
                 ...foundry.utils.deepClone(sourceData.system ?? {}),
-                quantity: '1',
-                isThrowable: false,
+                quantity: WEAPON_SKILL_DEFAULTS.QUANTITY,
+                isThrowable: WEAPON_SKILL_DEFAULTS.IS_THROWABLE,
                 attackOptions: this.toPlainArray(sourceData.system?.attackOptions, []),
                 damageType: foundry.utils.deepClone(sourceData.system?.damageType ?? []),
                 defenseOptions: this.toPlainArray(sourceData.system?.defenseOptions, []),
@@ -127,7 +132,7 @@ export const WeaponSkillManagerMixin = Superclass =>
 
         buildCreateFlags(sourceData, attachMode) {
             const flags = foundry.utils.deepClone(sourceData.flags ?? {});
-            if (attachMode !== 'weapon') return flags;
+            if (attachMode !== ATTACH_MODES.WEAPON) return flags;
 
             flags[MODULE.FLAGS_KEY] ??= {};
             const weaponLifesteal = foundry.utils.deepClone(this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]);
@@ -144,14 +149,14 @@ export const WeaponSkillManagerMixin = Superclass =>
             if (!attachMode) return null;
 
             const skillData =
-                attachMode === 'weapon' ? this.buildInheritedSkillData(sourceData) : this.buildTemplateSkillData(sourceData);
+                attachMode === ATTACH_MODES.WEAPON ? this.buildInheritedSkillData(sourceData) : this.buildTemplateSkillData(sourceData);
             const createData = {
                 name,
                 type: WEAPON_SKILL_TYPE,
                 img: sourceData.img ?? this.document.img,
                 system: skillData,
                 effects:
-                    attachMode === 'weapon'
+                    attachMode === ATTACH_MODES.WEAPON
                         ? this.document.effects.toObject()
                         : foundry.utils.deepClone(sourceData.effects ?? []),
                 flags: this.buildCreateFlags(sourceData, attachMode)
@@ -159,7 +164,7 @@ export const WeaponSkillManagerMixin = Superclass =>
 
             let createdSkill;
             if (this.document.actor) {
-                [createdSkill] = await this.document.actor.createEmbeddedDocuments('Item', [createData]);
+                [createdSkill] = await this.document.actor.createEmbeddedDocuments(DOCUMENT_TYPES.ITEM, [createData]);
             } else if (this.document.pack) {
                 createdSkill = await Item.create(createData, { pack: this.document.pack });
             } else {
@@ -200,13 +205,13 @@ export const WeaponSkillManagerMixin = Superclass =>
         static async onCreateSkill(event, element) {
             event.preventDefault();
 
-            const sourceData = { system: { quantity: '1', isThrowable: false }, effects: [], flags: {}, img: this.document.img };
+            const sourceData = { system: { quantity: WEAPON_SKILL_DEFAULTS.QUANTITY, isThrowable: WEAPON_SKILL_DEFAULTS.IS_THROWABLE }, effects: [], flags: {}, img: this.document.img };
             const createdSkill = await this.createAndAttachSkill(
                 sourceData,
                 game.i18n.format('WTTRPGEnhancements.WeaponSkillManager.NewSkillName', {
                     weapon: this.document.name
                 }),
-                'weapon'
+                ATTACH_MODES.WEAPON
             );
 
             createdSkill?.sheet?.render(true);
@@ -236,6 +241,8 @@ export const WeaponSkillManagerMixin = Superclass =>
             await this.detachSkill(element.dataset.skillId);
         }
     };
+
+
 
 
 

@@ -1,5 +1,5 @@
 import { getWeaponSkillParentWeapon } from '../util/weaponSkill.js';
-import { FLAG_KEYS, MODULE, TEMPLATE_PATHS } from '../util/constants.js';
+import { ATTACK_MODES, ATTACK_SKILL_OVERRIDE_MODES, FLAG_KEYS, ITEM_TYPES, MODULE, TEMPLATE_PATHS, WEAPON_SKILL_DEFAULTS } from '../util/constants.js';
 import { LifeStealMixin } from '../mixin/lifestealMixin.js';
 
 const { ItemSheetV2 } = foundry.applications.sheets;
@@ -77,9 +77,9 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
     }
 
     static parseAttackSkillOverride(value) {
-        if (!value) return { mode: 'none', key: '' };
+        if (!value) return { mode: ATTACK_SKILL_OVERRIDE_MODES.NONE, key: '' };
         const separatorIndex = value.indexOf(':');
-        if (separatorIndex === -1) return { mode: 'none', key: '' };
+        if (separatorIndex === -1) return { mode: ATTACK_SKILL_OVERRIDE_MODES.NONE, key: '' };
 
         return {
             mode: value.slice(0, separatorIndex),
@@ -104,9 +104,9 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
 
     static async saveData(event, form, formData) {
         const data = foundry.utils.expandObject(formData.object ?? {});
-        const currentAttackMode = Array.from(this.document.system.attackOptions ?? [])[0] ?? 'melee';
+        const currentAttackMode = Array.from(this.document.system.attackOptions ?? [])[0] ?? ATTACK_MODES.MELEE;
         const attackMode = data.system?.attackMode ?? currentAttackMode;
-        const isRanged = attackMode === 'ranged';
+        const isRanged = attackMode === ATTACK_MODES.RANGED;
         const attackSkillOverride = WeaponSkillSheet.parseAttackSkillOverride(data.system?.attackSkillOverride ?? '');
         const lifestealData = data.lifesteal ?? {};
         const systemData = data.system ?? {};
@@ -145,9 +145,9 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
                 rangedAttackSkill: isRanged ? (systemData.rangedAttackSkill ?? this.document.system.rangedAttackSkill ?? '') : '',
                 attackSkillOverrideMode: attackSkillOverride.mode,
                 attackSkillOverrideKey: attackSkillOverride.key,
-                applyMeleeBonus: attackMode === 'melee' ? !!systemData.applyMeleeBonus : false,
-                isThrowable: false,
-                quantity: '1',
+                applyMeleeBonus: attackMode === ATTACK_MODES.MELEE ? !!systemData.applyMeleeBonus : false,
+                isThrowable: WEAPON_SKILL_DEFAULTS.IS_THROWABLE,
+                quantity: WEAPON_SKILL_DEFAULTS.QUANTITY,
                 accuracy: isRanged ? WeaponSkillSheet.toNumber(systemData.accuracy, this.document.system.accuracy ?? 0) : 0,
                 range: systemData.range ?? this.document.system.range ?? '',
                 rollOnlyDmg: !!systemData.rollOnlyDmg,
@@ -185,7 +185,7 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
 
         const standardSkills = Object.values(CONFIG.WITCHER?.skillMap ?? {})
             .map(skill => ({
-                value: `standard:${skill.name}`,
+                value: `${ATTACK_SKILL_OVERRIDE_MODES.STANDARD}:${skill.name}`,
                 label: game.i18n.localize(skill.label)
             }))
             .sort((a, b) => a.label.localeCompare(b.label));
@@ -193,16 +193,16 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         options.push(...standardSkills);
 
         const customSkills = (this.document.actor?.items ?? [])
-            .filter(item => item.type === 'skill')
+            .filter(item => item.type === ITEM_TYPES.SKILL)
             .map(skill => ({
-                value: `custom:${skill.name}`,
+                value: `${ATTACK_SKILL_OVERRIDE_MODES.CUSTOM}:${skill.name}`,
                 label: `${game.i18n.localize('WTTRPGEnhancements.WeaponSkill.CustomSkillPrefix')}: ${skill.name}`
             }))
             .sort((a, b) => a.label.localeCompare(b.label));
 
         options.push(...customSkills);
 
-        const currentValue = this.document.system.attackSkillOverrideMode && this.document.system.attackSkillOverrideMode !== 'none'
+        const currentValue = this.document.system.attackSkillOverrideMode && this.document.system.attackSkillOverrideMode !== ATTACK_SKILL_OVERRIDE_MODES.NONE
             ? `${this.document.system.attackSkillOverrideMode}:${this.document.system.attackSkillOverrideKey ?? ''}`
             : '';
 
@@ -233,9 +233,9 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
             ...option,
             checked: (this.document.system.defenseOptions ?? []).includes(option.value)
         }));
-        const selectedAttackMode = Array.from(this.document.system.attackOptions ?? [])[0] ?? 'melee';
+        const selectedAttackMode = Array.from(this.document.system.attackOptions ?? [])[0] ?? ATTACK_MODES.MELEE;
         const attackOptions = (CONFIG.WITCHER?.attackOptions ?? [])
-            .filter(option => ['melee', 'ranged'].includes(option.value))
+            .filter(option => [ATTACK_MODES.MELEE, ATTACK_MODES.RANGED].includes(option.value))
             .map(option => ({
                 ...option,
                 checked: selectedAttackMode === option.value
@@ -262,8 +262,8 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         context.selectedAttackMode = selectedAttackMode;
         context.meleeAttackSkills = meleeAttackSkills;
         context.rangedAttackSkills = rangedAttackSkills;
-        context.hasMeleeAttack = selectedAttackMode === 'melee';
-        context.hasRangedAttack = selectedAttackMode === 'ranged';
+        context.hasMeleeAttack = selectedAttackMode === ATTACK_MODES.MELEE;
+        context.hasRangedAttack = selectedAttackMode === ATTACK_MODES.RANGED;
         context.enrichedText = {
             description: {
                 enriched: await foundry.applications.ux.TextEditor.implementation.enrichHTML(
@@ -316,6 +316,8 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         }
     }
 }
+
+
 
 
 

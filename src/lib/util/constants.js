@@ -47,9 +47,6 @@ export const TEMPLATE_PATHS = {
     DIALOG_WEAPON_SKILL_ATTACH_MODE: `modules/${MODULE.ID}/templates/dialog/weaponSkillAttachMode.hbs`,
     DIALOG_WEAPON_SKILL_ATTACK_CHOICE: `modules/${MODULE.ID}/templates/dialog/weaponSkillAttackChoice.hbs`,
     DIALOG_WEAPON_SKILL_INFO: `modules/${MODULE.ID}/templates/dialog/weaponSkillInfo.hbs`,
-    WEAPON_SKILL_MANAGER_HEADER: `modules/${MODULE.ID}/templates/dialog/weaponSkillManagerHeader.hbs`,
-    WEAPON_SKILL_MANAGER_SKILLS: `modules/${MODULE.ID}/templates/dialog/weaponSkillManagerSkills.hbs`,
-    WEAPON_SKILL_MANAGER_FOOTER: `modules/${MODULE.ID}/templates/dialog/weaponSkillManagerFooter.hbs`,
     DIALOG_APPLY_DAMAGE: `modules/${MODULE.ID}/templates/dialog/applyDamage.hbs`,
     CHAT_DOT_DAMAGE: `modules/${MODULE.ID}/templates/chat/dotDmg.hbs`,
     CHAT_HOT_HEAL: `modules/${MODULE.ID}/templates/chat/hotHeal.hbs`,
@@ -62,4 +59,28 @@ export const ATTRIBUTES = {
     HP: 'hp',
     STA: 'sta',
     SHIELD: 'shield'
+}
+export const DOCUMENT_TYPES = {
+    ITEM: 'Item'
+}
+
+export const ITEM_TYPES = {
+    WEAPON: 'weapon',
+    SKILL: 'skill'
+}
+
+export const ATTACK_MODES = {
+    MELEE: 'melee',
+    RANGED: 'ranged'
+}
+
+export const ATTACK_SKILL_OVERRIDE_MODES = {
+    NONE: 'none',
+    STANDARD: 'standard',
+    CUSTOM: 'custom'
+}
+
+export const WEAPON_SKILL_DEFAULTS = {
+    QUANTITY: '1',
+    IS_THROWABLE: false
 }

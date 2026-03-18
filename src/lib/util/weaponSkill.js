@@ -1,18 +1,20 @@
+import { ATTACK_MODES, ATTACK_SKILL_OVERRIDE_MODES, DOCUMENT_TYPES, ITEM_TYPES } from './constants.js';
+
 export function deriveWeaponSkillAttackMode(source) {
     const attackOptions = Array.isArray(source?.attackOptions)
         ? source.attackOptions
         : Array.from(source?.attackOptions ?? []);
-    if (attackOptions.includes('ranged')) return 'ranged';
-    if (attackOptions.includes('melee')) return 'melee';
+    if (attackOptions.includes(ATTACK_MODES.RANGED)) return ATTACK_MODES.RANGED;
+    if (attackOptions.includes(ATTACK_MODES.MELEE)) return ATTACK_MODES.MELEE;
 
     const meleeSkill = source?.meleeAttackSkill ?? source?.attackSkill ?? '';
     const rangedSkill = source?.rangedAttackSkill ?? source?.attackSkill ?? '';
 
-    if (rangedSkill && CONFIG.WITCHER?.rangedSkills?.includes(rangedSkill)) return 'ranged';
-    if (source?.isThrowable || source?.usingAmmo) return 'ranged';
-    if (meleeSkill && CONFIG.WITCHER?.meleeSkills?.includes(meleeSkill)) return 'melee';
+    if (rangedSkill && CONFIG.WITCHER?.rangedSkills?.includes(rangedSkill)) return ATTACK_MODES.RANGED;
+    if (source?.isThrowable || source?.usingAmmo) return ATTACK_MODES.RANGED;
+    if (meleeSkill && CONFIG.WITCHER?.meleeSkills?.includes(meleeSkill)) return ATTACK_MODES.MELEE;
 
-    return 'melee';
+    return ATTACK_MODES.MELEE;
 }
 
 export function deriveWeaponSkillAttackOptions(source) {
@@ -41,7 +43,7 @@ export function createWeaponSkillTypeState(damageTypes = []) {
 
 function getEmbeddedItemIdFromUuid(uuid) {
     if (!uuid || typeof uuid !== 'string') return null;
-    const match = uuid.match(/\.Item\.([^\.]+)$/);
+    const match = uuid.match(new RegExp(`\\.${DOCUMENT_TYPES.ITEM}\\.([^\\.]+)$`));
     return match?.[1] ?? null;
 }
 
@@ -54,7 +56,7 @@ export function getWeaponSkillParentWeapon(itemOrSystem, parent) {
     const actor = ownerParent?.actor;
     if (actor) {
         const embeddedItemId = getEmbeddedItemIdFromUuid(parentWeaponUuid);
-        const sameActorPrefix = `${actor.uuid}.Item.`;
+        const sameActorPrefix = `${actor.uuid}.${DOCUMENT_TYPES.ITEM}.`;
         if (parentWeaponUuid.startsWith(sameActorPrefix) && embeddedItemId) {
             return actor.items.get(embeddedItemId) ?? null;
         }
@@ -68,9 +70,9 @@ export function getWeaponSkillParentWeapon(itemOrSystem, parent) {
 }
 
 export function getWeaponSkillAttackSkillReplacement(system, actor) {
-    if (!system || !actor || system.attackSkillOverrideMode === 'none' || !system.attackSkillOverrideKey) return null;
+    if (!system || !actor || system.attackSkillOverrideMode === ATTACK_SKILL_OVERRIDE_MODES.NONE || !system.attackSkillOverrideKey) return null;
 
-    if (system.attackSkillOverrideMode === 'standard') {
+    if (system.attackSkillOverrideMode === ATTACK_SKILL_OVERRIDE_MODES.STANDARD) {
         const skillMapEntry = CONFIG.WITCHER?.skillMap?.[system.attackSkillOverrideKey];
         const stat = skillMapEntry?.attribute?.name;
         const level = actor.system?.skills?.[stat]?.[system.attackSkillOverrideKey]?.value;
@@ -83,8 +85,8 @@ export function getWeaponSkillAttackSkillReplacement(system, actor) {
         };
     }
 
-    if (system.attackSkillOverrideMode === 'custom') {
-        const customSkill = actor.items?.find(item => item.type === 'skill' && item.name === system.attackSkillOverrideKey);
+    if (system.attackSkillOverrideMode === ATTACK_SKILL_OVERRIDE_MODES.CUSTOM) {
+        const customSkill = actor.items?.find(item => item.type === ITEM_TYPES.SKILL && item.name === system.attackSkillOverrideKey);
         const stat = customSkill?.system?.attribute;
         const level = customSkill?.system?.value;
         if (!customSkill || !stat) return null;

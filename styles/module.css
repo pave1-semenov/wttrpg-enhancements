@@ -269,16 +269,6 @@
     hyphens: auto;
 }
 
-.weapon-skills-card__meta {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    width: 100%;
-    min-height: 2.4em;
-    font-size: 0.76rem;
-    line-height: 1.2;
-    opacity: 0.62;
-}
 
 .weapon-skills-card__remove {
     position: absolute;
@@ -477,143 +467,6 @@
 }
 
 
-.weapon-skills-card__description-preview {
-    display: -webkit-box;
-    margin-top: 0.1rem;
-    font-size: 0.76rem;
-    line-height: 1.3;
-    color: rgba(255, 245, 235, 0.78);
-    text-align: left;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.weapon-skills-card__description-details {
-    width: 100%;
-    margin-top: 0.15rem;
-    text-align: left;
-}
-
-.weapon-skills-card__description-details summary {
-    cursor: pointer;
-    font-size: 0.74rem;
-    font-weight: 700;
-    color: #ffb347;
-    list-style: none;
-}
-
-.weapon-skills-card__description-details summary::-webkit-details-marker {
-    display: none;
-}
-
-.weapon-skills-card__description-full {
-    margin-top: 0.45rem;
-    max-height: 12rem;
-    overflow-y: auto;
-    padding-right: 0.25rem;
-    font-size: 0.76rem;
-    line-height: 1.35;
-    color: rgba(255, 245, 235, 0.86);
-}
-
-.weapon-skills-cards--attack-choice .weapon-skills-card__open {
-    width: 100%;
-}
-
-.weapon-skills-cards--attack-choice {
-    gap: 0.9rem;
-}
-
-.weapon-skills-cards--attack-choice .weapon-skills-card {
-    flex: 0 0 196px;
-    width: 196px;
-    min-width: 196px;
-}
-
-.weapon-skills-cards--attack-choice .weapon-skills-card__open {
-    width: 100%;
-    grid-template-rows: 120px minmax(2.4em, auto);
-}
-
-.weapon-skills-cards--attack-choice .weapon-skills-card__art {
-    width: 120px;
-    height: 120px;
-}
-
-.weapon-skills-card--choice {
-    padding: 0.7rem;
-}
-
-.weapon-skills-card__description-shell {
-    position: relative;
-    width: 100%;
-    min-height: 6.2rem;
-    margin-top: 0.25rem;
-}
-
-.weapon-skills-card__description-preview {
-    font-size: 0.84rem;
-    line-height: 1.4;
-    -webkit-line-clamp: 4;
-    transition: opacity 180ms ease, transform 180ms ease;
-}
-
-.weapon-skills-card__description-details summary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.76rem;
-    transition: transform 180ms ease, opacity 180ms ease;
-}
-
-.weapon-skills-card__description-details summary::after {
-    content: "\25be";
-    font-size: 0.72rem;
-    transition: transform 180ms ease;
-}
-
-.weapon-skills-card__description-details[open] {
-    position: absolute;
-    inset: 0 0 auto 0;
-    margin-top: 0;
-    padding-top: 0.05rem;
-    background: color-mix(in srgb, var(--color-bg-option) 94%, rgba(0, 0, 0, 0.22));
-}
-
-.weapon-skills-card__description-shell:has(.weapon-skills-card__description-details[open]) .weapon-skills-card__description-preview {
-    opacity: 0;
-    transform: translateY(-0.35rem);
-    pointer-events: none;
-}
-
-.weapon-skills-card__description-details[open] summary {
-    transform: translateY(0.25rem);
-    opacity: 0.92;
-}
-
-.weapon-skills-card__description-details[open] summary::after {
-    transform: rotate(180deg);
-}
-
-.weapon-skills-card__description-full {
-    margin-top: 0.55rem;
-    max-height: 15rem;
-    font-size: 0.82rem;
-    line-height: 1.45;
-    animation: weapon-skill-description-reveal 180ms ease;
-}
-
-@keyframes weapon-skill-description-reveal {
-    from {
-        opacity: 0;
-        transform: translateY(-0.35rem);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 .weapon-skills-cards--attack-choice {
     align-items: flex-start;
@@ -912,4 +765,5 @@
   align-items: center;
   gap: 0.35rem;
 }
+
 

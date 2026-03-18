@@ -1,4 +1,5 @@
 import { cloneAttachedWeaponSkillsToActor } from '../util/weaponSkillAttachment.js';
+import { ITEM_TYPES } from '../util/constants.js';
 
 export async function wrapAddItem(wrapped, addItem, numberOfItem, forcecreate = false) {
     const beforeIds = new Set(this.items.map(item => item.id));
@@ -6,7 +7,7 @@ export async function wrapAddItem(wrapped, addItem, numberOfItem, forcecreate = 
 
     const result = await wrapped(addItem, numberOfItem, forcecreate);
 
-    if (addItem?.type !== 'weapon') {
+    if (addItem?.type !== ITEM_TYPES.WEAPON) {
         return result;
     }
 
@@ -16,9 +17,10 @@ export async function wrapAddItem(wrapped, addItem, numberOfItem, forcecreate = 
             ?? this.items.find(item => item.name == addItem?.name && item.type == addItem?.type);
 
     if (targetWeapon) {
-        console.log(addItem, targetWeapon)
         await cloneAttachedWeaponSkillsToActor(addItem, this, targetWeapon);
     }
 
     return result;
 }
+
+
