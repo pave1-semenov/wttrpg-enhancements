@@ -28,7 +28,10 @@ export function createWeaponSkillTypeState(damageTypes = []) {
         slashing: selectedTypes.includes('slashing'),
         piercing: selectedTypes.includes('piercing'),
         bludgeoning: selectedTypes.includes('bludgeoning'),
-        elemental: selectedTypes.includes('elemental')
+        elemental: selectedTypes.includes('elemental'),
+        electricity: selectedTypes.includes('electricity'),
+        fire: selectedTypes.includes('fire'),
+        ice: selectedTypes.includes('ice')
     };
 
     const labels = [];
@@ -36,6 +39,9 @@ export function createWeaponSkillTypeState(damageTypes = []) {
     if (typeState.piercing) labels.push(game.i18n.localize('WITCHER.DamageType.piercing'));
     if (typeState.bludgeoning) labels.push(game.i18n.localize('WITCHER.DamageType.bludgeoning'));
     if (typeState.elemental) labels.push(game.i18n.localize('WITCHER.DamageType.elemental'));
+    if (typeState.electricity) labels.push(game.i18n.localize('WITCHER.DamageType.electricity'));
+    if (typeState.fire) labels.push(game.i18n.localize('WITCHER.DamageType.fire'));
+    if (typeState.ice) labels.push(game.i18n.localize('WITCHER.DamageType.ice'));
     typeState.text = labels.join(', ');
 
     return typeState;

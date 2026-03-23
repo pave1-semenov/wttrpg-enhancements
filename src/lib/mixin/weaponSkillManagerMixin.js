@@ -107,6 +107,7 @@ export const WeaponSkillManagerMixin = Superclass =>
                     weaponSystem.damageProperties ?? sourceData.system?.damageProperties ?? {}
                 ),
                 defenseOptions: this.toPlainArray(weaponSystem.defenseOptions, sourceData.system?.defenseOptions ?? []),
+                additionalDefenseSkills: foundry.utils.deepClone(sourceData.system?.additionalDefenseSkills ?? []),
                 defenseProperties: foundry.utils.deepClone(
                     weaponSystem.defenseProperties ?? sourceData.system?.defenseProperties ?? {}
                 ),
@@ -122,6 +123,7 @@ export const WeaponSkillManagerMixin = Superclass =>
                 attackOptions: this.toPlainArray(sourceData.system?.attackOptions, []),
                 damageType: foundry.utils.deepClone(sourceData.system?.damageType ?? []),
                 defenseOptions: this.toPlainArray(sourceData.system?.defenseOptions, []),
+                additionalDefenseSkills: foundry.utils.deepClone(sourceData.system?.additionalDefenseSkills ?? []),
                 damageProperties: foundry.utils.deepClone(sourceData.system?.damageProperties ?? {}),
                 defenseProperties: foundry.utils.deepClone(sourceData.system?.defenseProperties ?? {}),
                 enhancementItemIds: foundry.utils.deepClone(sourceData.system?.enhancementItemIds ?? []),

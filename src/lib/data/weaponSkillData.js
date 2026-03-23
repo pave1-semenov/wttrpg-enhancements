@@ -28,6 +28,18 @@ export default function getWeaponSkillDataModel() {
                     initial: [],
                     label: 'WITCHER.Dialog.damageType'
                 }),
+                targetLocations: new fields.ArrayField(new fields.StringField({ initial: '' }), {
+                    initial: [],
+                    label: 'WTTRPGEnhancements.WeaponSkill.TargetLocationsLabel'
+                }),
+                allowedStrikes: new fields.ArrayField(new fields.StringField({ initial: '' }), {
+                    initial: [],
+                    label: 'WTTRPGEnhancements.WeaponSkill.AllowedStrikesLabel'
+                }),
+                additionalDefenseSkills: new fields.ArrayField(new fields.StringField({ initial: '' }), {
+                    initial: [],
+                    label: 'WTTRPGEnhancements.WeaponSkill.AdditionalDefenseSkillsLabel'
+                }),
                 attackSkillOverrideMode: new fields.StringField({
                     initial: ATTACK_SKILL_OVERRIDE_MODES.NONE,
                     label: 'WTTRPGEnhancements.WeaponSkill.AttackSkillOverrideLabel'
@@ -40,6 +52,9 @@ export default function getWeaponSkillDataModel() {
             super.prepareDerivedData();
 
             if (!Array.isArray(this.damageType)) this.damageType = [];
+            if (!Array.isArray(this.targetLocations)) this.targetLocations = [];
+            if (!Array.isArray(this.allowedStrikes)) this.allowedStrikes = [];
+            if (!Array.isArray(this.additionalDefenseSkills)) this.additionalDefenseSkills = [];
             if (!Array.isArray(this.defenseOptions)) this.defenseOptions = Array.from(this.defenseOptions ?? []);
             if (!(this.attackOptions instanceof Set)) this.attackOptions = new Set(this.attackOptions ?? []);
             if (!this.attackSkillOverrideMode) this.attackSkillOverrideMode = ATTACK_SKILL_OVERRIDE_MODES.NONE;
@@ -79,7 +94,11 @@ export default function getWeaponSkillDataModel() {
             this.type.piercing = derivedType.piercing;
             this.type.bludgeoning = derivedType.bludgeoning;
             this.type.elemental = derivedType.elemental;
+            this.type.electricity = derivedType.electricity;
+            this.type.fire = derivedType.fire;
+            this.type.ice = derivedType.ice;
         }
+
     };
 
     return weaponSkillDataModelClass;

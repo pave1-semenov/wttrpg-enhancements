@@ -136,6 +136,12 @@
                                                    "AttackSkillOverrideLabel":  "Attack Skill",
                                                    "AttackSkillOverrideDefault":  "Use weapon skill default",
                                                    "AttackSkillOverrideHint":  "Optional: replace the normal melee or ranged attack skill with any selected standard system skill.",
+                                                   "TargetLocationsLabel":  "Allowed Target Locations",
+                                                   "TargetLocationsHint":  "Optional: if any locations are selected here, the attack dialog will only allow those specific body locations and will exclude random targeting.",
+                                                   "AllowedStrikesLabel":  "Allowed Strike Types",
+                                                   "AllowedStrikesHint":  "Optional: if any strike types are selected here, the attack dialog will only allow those strike options.",
+                                                   "AdditionalDefenseSkillsLabel":  "Additional Defense Skills",
+                                                   "AdditionalDefenseSkillsHint":  "Optional: these standard skills are added as extra defense buttons when this weapon skill is the source of the incoming attack.",
                                                    "AttackRollModifierLabel":  "Attack Roll Modifier",
                                                    "AttackRollModifierHint":  "Applied to the attack roll formula exactly like weapon accuracy. Can be positive or negative."
                                                },
@@ -183,6 +189,8 @@
                            }
               }
 }
+
+
 
 
 

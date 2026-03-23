@@ -3,6 +3,7 @@ import { addActiveEffectEnhanceOption, addItemButtonAppV2 } from "./lib/hooks/bu
 import { addEnhancedDamageContextOption } from "./lib/hooks/chat.js";
 import { wrapDamageRoll } from "./lib/flows/damageRollFlow.js";
 import { wrapWeaponAttack } from "./lib/flows/weaponAttackFlow.js";
+import { wrapPrepareAndExecuteDefense } from "./lib/flows/defenseFlow.js";
 import { wrapAddItem } from "./lib/flows/addItemFlow.js";
 import { EnhancementRoll } from "./lib/roll/enhancementRoll.js";
 import { MODULE, TEMPLATE_PATHS } from "./lib/util/constants.js";
@@ -17,6 +18,7 @@ Hooks.once('init', function () {
 Hooks.once('ready', async function () {
     libWrapper.register(MODULE.ID, "CONFIG.Item.documentClass.prototype.rollDamage", wrapDamageRoll, 'WRAPPER')
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.weaponAttack", wrapWeaponAttack, 'WRAPPER')
+    libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.prepareAndExecuteDefense", wrapPrepareAndExecuteDefense, 'WRAPPER')
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.addItem", wrapAddItem, 'WRAPPER')
     registerCombatHooks()
 })
