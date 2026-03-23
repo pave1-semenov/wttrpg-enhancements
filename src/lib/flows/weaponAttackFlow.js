@@ -8,6 +8,79 @@ import {
 
 const { DialogV2 } = foundry.applications.api;
 
+function getAllowedTargetLocations(skill) {
+    const allowedLocations = Array.isArray(skill?.system?.targetLocations)
+        ? skill.system.targetLocations
+        : Array.from(skill?.system?.targetLocations ?? []);
+
+    return allowedLocations.filter(Boolean);
+}
+
+function getAllowedDamageTypes(skill) {
+    const allowedDamageTypes = Array.isArray(skill?.system?.damageType)
+        ? skill.system.damageType
+        : Array.from(skill?.system?.damageType ?? []);
+
+    return allowedDamageTypes.filter(Boolean);
+}
+
+function getAllowedStrikes(skill) {
+    const allowedStrikes = Array.isArray(skill?.system?.allowedStrikes)
+        ? skill.system.allowedStrikes
+        : Array.from(skill?.system?.allowedStrikes ?? []);
+
+    return allowedStrikes.filter(Boolean);
+}
+
+function applySelectFilter(dialog, selectName, allowedValues) {
+    if (!allowedValues.length) return;
+
+    const select = dialog.element.querySelector(`select[name="${selectName}"]`);
+    if (!select) return;
+
+    const allowedSet = new Set(allowedValues);
+    Array.from(select.options).forEach(option => {
+        if (!allowedSet.has(option.value)) {
+            option.remove();
+        }
+    });
+
+    if (select.options.length > 0 && !allowedSet.has(select.value)) {
+        select.value = select.options[0].value;
+    }
+}
+
+function applyDamageTypeFilterToDialog(dialog, allowedDamageTypes) {
+    if (!allowedDamageTypes.length) return;
+
+    const select = dialog.element.querySelector('select[name="damageType"]');
+    if (!select) return;
+
+    const damageTypeOptions = allowedDamageTypes
+        .map(type => CONFIG.WITCHER?.damageTypes?.find(option => option.value === type))
+        .filter(Boolean);
+
+    if (!damageTypeOptions.length) return;
+
+    const currentValue = allowedDamageTypes.includes(select.value) ? select.value : damageTypeOptions[0].value;
+    select.innerHTML = '';
+    for (const option of damageTypeOptions) {
+        const element = document.createElement('option');
+        element.value = option.value;
+        element.textContent = game.i18n.localize(option.label);
+        if (option.value === currentValue) element.selected = true;
+        select.appendChild(element);
+    }
+}
+
+function applyLocationFilterToDialog(dialog, allowedLocations) {
+    applySelectFilter(dialog, 'location', allowedLocations);
+}
+
+function applyStrikeFilterToDialog(dialog, allowedStrikes) {
+    applySelectFilter(dialog, 'strike', allowedStrikes);
+}
+
 function formatBoolean(value) {
     return game.i18n.localize(value ? 'WTTRPGEnhancements.WeaponSkillAttack.Yes' : 'WTTRPGEnhancements.WeaponSkillAttack.No');
 }
@@ -149,6 +222,35 @@ async function showWeaponSkillInfoDialog(skillUuid) {
     }).render({ force: true });
 }
 
+async function withFilteredWeaponAttackDialog(skill, callback) {
+    const allowedLocations = getAllowedTargetLocations(skill);
+    const allowedDamageTypes = getAllowedDamageTypes(skill);
+    const allowedStrikes = getAllowedStrikes(skill);
+    if (!allowedLocations.length && !allowedStrikes.length && !allowedDamageTypes.length) {
+        return callback();
+    }
+
+    const originalPrompt = DialogV2.prompt.bind(DialogV2);
+    DialogV2.prompt = function patchedPrompt(config = {}) {
+        const originalRender = config.render;
+        return originalPrompt({
+            ...config,
+            render: (event, dialog) => {
+                applyDamageTypeFilterToDialog(dialog, allowedDamageTypes);
+                applyLocationFilterToDialog(dialog, allowedLocations);
+                applyStrikeFilterToDialog(dialog, allowedStrikes);
+                return originalRender?.(event, dialog);
+            }
+        });
+    };
+
+    try {
+        return await callback();
+    } finally {
+        DialogV2.prompt = originalPrompt;
+    }
+}
+
 export async function wrapWeaponAttack(wrapped, weapon, options = {}) {
     if (!weapon || isWeaponSkill(weapon) || options.skipWeaponSkillChooser) {
         return wrapped(weapon, options);
@@ -166,10 +268,12 @@ export async function wrapWeaponAttack(wrapped, weapon, options = {}) {
 
     const chosenSkill = attachedSkills.find(skill => skill.id === choice.skillId);
 
-    return withWeaponSkillNativeAttackOverride(chosenSkill ?? weapon, activeWeapon => {
-        return wrapped(activeWeapon, {
-            ...options,
-            skipWeaponSkillChooser: true
+    return withFilteredWeaponAttackDialog(chosenSkill, () => {
+        return withWeaponSkillNativeAttackOverride(chosenSkill ?? weapon, activeWeapon => {
+            return wrapped(activeWeapon, {
+                ...options,
+                skipWeaponSkillChooser: true
+            });
         });
     });
 }

@@ -12,6 +12,10 @@ const LOCATIONS = {
     TAIL_WING: { value: 'tailWing', label: 'WITCHER.Dialog.attackTail' },
 }
 
+export function getSpecificLocationOptions() {
+    return [...LOCATIONS.DEFAULT, LOCATIONS.TAIL_WING];
+}
+
 export function getAttackLocationOptions(isMonster) {
     let options = []
     if (isMonster) {

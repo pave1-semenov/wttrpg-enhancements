@@ -93,6 +93,30 @@
             </select>
             <p class="hint">{{localize "WTTRPGEnhancements.WeaponSkill.AttackSkillOverrideHint"}}</p>
         </div>
+        <div class="form-group stacked">
+            <label>{{localize "WTTRPGEnhancements.WeaponSkill.TargetLocationsLabel"}}</label>
+            <div class="checkbox-group weapon-skill-sheet__checkbox-group">
+                {{#each targetLocations}}
+                <label class="checkbox">
+                    <input type="checkbox" name="system.targetLocations" value="{{this.value}}" {{checked this.checked}}>
+                    <span>{{localize this.label}}</span>
+                </label>
+                {{/each}}
+            </div>
+            <p class="hint">{{localize "WTTRPGEnhancements.WeaponSkill.TargetLocationsHint"}}</p>
+        </div>
+        <div class="form-group stacked">
+            <label>{{localize "WTTRPGEnhancements.WeaponSkill.AllowedStrikesLabel"}}</label>
+            <div class="checkbox-group weapon-skill-sheet__checkbox-group">
+                {{#each allowedStrikes}}
+                <label class="checkbox">
+                    <input type="checkbox" name="system.allowedStrikes" value="{{this.value}}" {{checked this.checked}}>
+                    <span>{{localize this.label}}</span>
+                </label>
+                {{/each}}
+            </div>
+            <p class="hint">{{localize "WTTRPGEnhancements.WeaponSkill.AllowedStrikesHint"}}</p>
+        </div>
     </fieldset>
 
     <fieldset>
@@ -130,6 +154,18 @@
                 </label>
                 {{/each}}
             </div>
+        </div>
+        <div class="form-group stacked">
+            <label>{{localize "WTTRPGEnhancements.WeaponSkill.AdditionalDefenseSkillsLabel"}}</label>
+            <div class="checkbox-group weapon-skill-sheet__checkbox-group">
+                {{#each additionalDefenseSkills}}
+                <label class="checkbox">
+                    <input type="checkbox" name="system.additionalDefenseSkills" value="{{this.value}}" {{checked this.checked}}>
+                    <span>{{this.label}}</span>
+                </label>
+                {{/each}}
+            </div>
+            <p class="hint">{{localize "WTTRPGEnhancements.WeaponSkill.AdditionalDefenseSkillsHint"}}</p>
         </div>
     </fieldset>
 </section>

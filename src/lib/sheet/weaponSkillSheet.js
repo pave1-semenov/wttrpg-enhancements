@@ -1,6 +1,7 @@
 import { getWeaponSkillParentWeapon } from '../util/weaponSkill.js';
 import { ATTACK_MODES, ATTACK_SKILL_OVERRIDE_MODES, FLAG_KEYS, MODULE, TEMPLATE_PATHS, WEAPON_SKILL_DEFAULTS } from '../util/constants.js';
 import { LifeStealMixin } from '../mixin/lifestealMixin.js';
+import { getSpecificLocationOptions } from '../util/location.js';
 
 const { ItemSheetV2 } = foundry.applications.sheets;
 const { HandlebarsApplicationMixin } = foundry.applications.api;
@@ -137,11 +138,14 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
                 parentWeaponUuid: systemData.parentWeaponUuid ?? this.document.system.parentWeaponUuid ?? '',
                 damage: systemData.damage ?? this.document.system.damage ?? '',
                 damageType: WeaponSkillSheet.normalizeArrayValue(systemData.damageType),
+                targetLocations: WeaponSkillSheet.normalizeArrayValue(systemData.targetLocations),
+                allowedStrikes: WeaponSkillSheet.normalizeArrayValue(systemData.allowedStrikes),
                 attackOptions: [attackMode],
                 meleeAttackSkill: systemData.meleeAttackSkill ?? this.document.system.meleeAttackSkill ?? '',
                 rangedAttackSkill: isRanged ? (systemData.rangedAttackSkill ?? this.document.system.rangedAttackSkill ?? '') : '',
                 attackSkillOverrideMode: attackSkillOverride.mode,
                 attackSkillOverrideKey: attackSkillOverride.key,
+                additionalDefenseSkills: WeaponSkillSheet.normalizeArrayValue(systemData.additionalDefenseSkills),
                 applyMeleeBonus: attackMode === ATTACK_MODES.MELEE ? !!systemData.applyMeleeBonus : false,
                 isThrowable: WEAPON_SKILL_DEFAULTS.IS_THROWABLE,
                 quantity: WEAPON_SKILL_DEFAULTS.QUANTITY,
@@ -209,7 +213,7 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
     async _prepareContext(options) {
         const context = await super._prepareContext(options);
         const parentWeapon = getWeaponSkillParentWeapon(this.document.system, this.document);
-        const supportedDamageTypes = new Set(['slashing', 'piercing', 'bludgeoning', 'elemental']);
+        const supportedDamageTypes = new Set(['slashing', 'piercing', 'bludgeoning', 'elemental', 'electricity', 'fire', 'ice']);
         const damageTypes = (CONFIG.WITCHER?.damageTypes ?? [])
             .filter(type => supportedDamageTypes.has(type.value))
             .map(type => ({
@@ -220,6 +224,15 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
             ...option,
             checked: (this.document.system.defenseOptions ?? []).includes(option.value)
         }));
+        const defaultDefenseSkills = new Set(['dodge', 'athletics', 'resistmagic']);
+        const additionalDefenseSkills = Object.values(CONFIG.WITCHER?.skillMap ?? {})
+            .filter(skill => !defaultDefenseSkills.has(skill.name))
+            .map(skill => ({
+                value: skill.name,
+                label: game.i18n.localize(skill.label),
+                checked: (this.document.system.additionalDefenseSkills ?? []).includes(skill.name)
+            }))
+            .sort((a, b) => a.label.localeCompare(b.label));
         const selectedAttackMode = Array.from(this.document.system.attackOptions ?? [])[0] ?? ATTACK_MODES.MELEE;
         const attackOptions = (CONFIG.WITCHER?.attackOptions ?? [])
             .filter(option => [ATTACK_MODES.MELEE, ATTACK_MODES.RANGED].includes(option.value))
@@ -227,6 +240,15 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
                 ...option,
                 checked: selectedAttackMode === option.value
             }));
+        const targetLocations = getSpecificLocationOptions().map(location => ({
+            ...location,
+            checked: (this.document.system.targetLocations ?? []).includes(location.value)
+        }));
+        const allowedStrikes = Object.entries(CONFIG.WITCHER?.weapon?.attacks ?? {}).map(([value, strike]) => ({
+            value,
+            label: strike.label,
+            checked: (this.document.system.allowedStrikes ?? []).includes(value)
+        }));
         const meleeAttackSkills = (CONFIG.WITCHER?.meleeSkills ?? []).map(skill => CONFIG.WITCHER.skillMap?.[skill]).filter(Boolean);
         const rangedAttackSkills = (CONFIG.WITCHER?.rangedSkills ?? []).map(skill => CONFIG.WITCHER.skillMap?.[skill]).filter(Boolean);
         const systemPropertiesConfiguration = this.getSystemPropertiesConfiguration();
@@ -244,7 +266,10 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
             : [];
         context.damageTypes = damageTypes;
         context.defenseOptions = defenseOptions;
+        context.additionalDefenseSkills = additionalDefenseSkills;
         context.attackOptions = attackOptions;
+        context.targetLocations = targetLocations;
+        context.allowedStrikes = allowedStrikes;
         context.attackSkillOverrideOptions = this.buildAttackSkillOverrideOptions();
         context.selectedAttackMode = selectedAttackMode;
         context.meleeAttackSkills = meleeAttackSkills;
@@ -303,4 +328,5 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         }
     }
 }
+
 
