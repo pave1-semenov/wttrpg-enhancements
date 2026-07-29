@@ -121,6 +121,9 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
                             lifestealData.flatPercentage,
                             this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.flatPercentage ?? 100
                         ),
+                        attribute: lifestealData.attribute
+                            ?? this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.attribute
+                            ?? 'default',
                         storeOverheal: !!lifestealData.storeOverheal,
                         overhealPercentage: WeaponSkillSheet.toNumber(
                             lifestealData.overhealPercentage,
@@ -129,7 +132,10 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
                         overhealThreshold: WeaponSkillSheet.toNumber(
                             lifestealData.overhealThreshold,
                             this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.overhealThreshold ?? 0
-                        )
+                        ),
+                        condition: lifestealData.condition
+                            ?? this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.condition
+                            ?? ''
                     }
                 }
             },

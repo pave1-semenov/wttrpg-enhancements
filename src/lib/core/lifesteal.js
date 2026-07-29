@@ -1,27 +1,27 @@
 import { ChatMessageData } from '../roll/chatMessageData.js';
-import { ATTRIBUTES, TEMPLATE_PATHS } from '../util/constants.js';
+import { ATTRIBUTES, LIFESTEAL_ATTRIBUTES, TEMPLATE_PATHS } from '../util/constants.js';
 import { EnhancementRoll } from '../roll/enhancementRoll.js';
 import { evaluateCondition } from '../util/condition.js';
 
-export function initLifestealContext(source, actor, stat, flags, damage = {}) {
+export function initLifestealContext(source, actor, damageStat, flags, damage = {}) {
     return {
         flags: flags,
         attacker: source.actor,
         source: source,
         actor: actor,
-        stat: stat,
-        statBeforeDmg: actor.system.derivedStats[stat].value,
+        damageStat: damageStat,
+        statBeforeDmg: actor.system.derivedStats[damageStat].value,
         damage: damage,
     }
 }
 
 export async function applyLifesteal(context) {
-    const { actor, source, attacker, stat, statBeforeDmg, flags, damage } = context;
+    const { actor, source, attacker, damageStat, statBeforeDmg, flags, damage } = context;
 
 
     if (!flags?.enabled) return;
 
-    const attributeAfter = actor.system.derivedStats[stat].value;
+    const attributeAfter = actor.system.derivedStats[damageStat].value;
     const totalDamageDealt = statBeforeDmg - attributeAfter;
     const conditionMatches = evaluateCondition(flags.condition, {
         attacker,
@@ -30,6 +30,7 @@ export async function applyLifesteal(context) {
     })
 
     if (totalDamageDealt > 0 && conditionMatches) {
+        const stat = getLifestealAttribute(flags.attribute, damageStat);
         const attributeBefore = attacker.system.derivedStats[stat].value;
         const lifestealAttribute = attacker.system.derivedStats[stat].value;
         const maxAttribute = attacker.system.derivedStats[stat].max;
@@ -95,6 +96,12 @@ export async function applyLifesteal(context) {
 
         await roll.toMessage(messageData);
     }
+}
+
+function getLifestealAttribute(configuredAttribute, damageStat) {
+    if (configuredAttribute === LIFESTEAL_ATTRIBUTES.HP) return ATTRIBUTES.HP;
+    if (configuredAttribute === LIFESTEAL_ATTRIBUTES.STA) return ATTRIBUTES.STA;
+    return damageStat;
 }
 
 function getAttributeLabel(stat) {

@@ -11,6 +11,14 @@
                 <td colspan="2"><input name="lifesteal.flatPercentage" type="number" value="{{data.lifesteal.flatPercentage}}"></td>
             </tr>
             <tr class="item-header-tablerow">
+                <td colspan="2">{{localize "WTTRPGEnhancements.Sheet.Lifesteal.Attribute"}}</td>
+                <td colspan="2">
+                    <select name="lifesteal.attribute">
+                        {{selectOptions data.lifesteal.attributeOptions selected=data.lifesteal.attribute localize=true}}
+                    </select>
+                </td>
+            </tr>
+            <tr class="item-header-tablerow">
                 <td colspan="2">{{localize "WTTRPGEnhancements.Sheet.Lifesteal.StoreOverheal"}}</td>
                 <td colspan="2"><input name="lifesteal.storeOverheal" type="checkbox" {{checked data.lifesteal.storeOverheal}}></td>
             </tr>

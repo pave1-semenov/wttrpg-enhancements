@@ -60,6 +60,12 @@ export const ATTRIBUTES = {
     STA: 'sta',
     SHIELD: 'shield'
 }
+export const LIFESTEAL_ATTRIBUTES = {
+    DEFAULT: 'default',
+    HP: ATTRIBUTES.HP,
+    STA: ATTRIBUTES.STA
+}
+
 export const DOCUMENT_TYPES = {
     ITEM: 'Item'
 }

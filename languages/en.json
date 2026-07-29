@@ -64,6 +64,8 @@
                                                                "Title":  "Lifesteal settings",
                                                                "Enabled":  "Enabled",
                                                                "FlatPercentage":  "Flat lifesteal percentage",
+                                                               "Attribute":  "Leech attribute",
+                                                               "AttributeDefault":  "Default (HP for lethal, Stamina for non-lethal)",
                                                                "StoreOverheal":  "Store overheal",
                                                                "OverhealPercentage":  "Overheal percentage",
                                                                "OverhealThreshold":  "Overheal shield threshold",
