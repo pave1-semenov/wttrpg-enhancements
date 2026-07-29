@@ -10,6 +10,15 @@
                                "Buttons":  {
                                                "Title":  "WTTRPG enhancements"
                                            },
+                               "ApplyDamage":  {
+                                                    "Title":  "Apply damage",
+                                                    "RolledAmount":  "Rolled amount",
+                                                    "ModifierType":  "Modify applied amount",
+                                                    "NoModifier":  "No modifier",
+                                                    "FixedAmount":  "Fixed amount",
+                                                    "Percentage":  "Percentage",
+                                                    "Modifier":  "Modifier (+/-)"
+                                                },
                                "Chat":  {
                                             "Dot":  {
                                                         "Title":  "Damage Over Time",
@@ -50,13 +59,15 @@
                                                           }
                                         },
                                "Sheet":  {
+                                             "ConditionHint":  "Optional expression using actor (or attacker), target, and damage. Supports property paths, comparisons, arithmetic, &&, ||, !, and parentheses.",
                                              "Lifesteal":  {
                                                                "Title":  "Lifesteal settings",
                                                                "Enabled":  "Enabled",
                                                                "FlatPercentage":  "Flat lifesteal percentage",
                                                                "StoreOverheal":  "Store overheal",
                                                                "OverhealPercentage":  "Overheal percentage",
-                                                               "OverhealThreshold":  "Overheal shield threshold"
+                                                               "OverhealThreshold":  "Overheal shield threshold",
+                                                               "Condition":  "Condition"
                                                            },
                                              "Dot":  {
                                                          "Title":  "Dot settings",
@@ -76,7 +87,8 @@
                                                                "Enabled":  "Enabled",
                                                                "DamageType":  "Damage type",
                                                                "Multiplier":  "Multiplicative amplifier",
-                                                               "VariableFormula":  "Variable amplifier formula"
+                                                               "VariableFormula":  "Variable amplifier formula",
+                                                               "Condition":  "Condition"
                                                            },
                                              "DamageProperties":  {
                                                                       "Title":  "Damage properties",
@@ -140,6 +152,10 @@
                                                    "TargetLocationsHint":  "Optional: if any locations are selected here, the attack dialog will only allow those specific body locations and will exclude random targeting.",
                                                    "AllowedStrikesLabel":  "Allowed Strike Types",
                                                    "AllowedStrikesHint":  "Optional: if any strike types are selected here, the attack dialog will only allow those strike options.",
+                                                   "AttackCountLabel":  "Number of Attacks",
+                                                   "AttackCountHint":  "Set to 0 to use native strike types. A configured count uses the special Skill Attack strike and disables every standard strike type.",
+                                                   "StaminaCostLabel":  "Stamina Cost",
+                                                   "StaminaCostHint":  "Stamina spent once when this skill is used. Set to 0 for no cost.",
                                                    "AdditionalDefenseSkillsLabel":  "Additional Defense Skills",
                                                    "AdditionalDefenseSkillsHint":  "Optional: these standard skills are added as extra defense buttons when this weapon skill is the source of the incoming attack.",
                                                    "AttackRollModifierLabel":  "Attack Roll Modifier",
@@ -176,6 +192,8 @@
                                                          "InfoStats":  "Combat Stats",
                                                          "CloseInfo":  "Close",
                                                          "NoDescription":  "No description available.",
+                                                         "NativeStrikeCount":  "Native strike count",
+                                                         "FixedCountStrike":  "Skill Attack",
                                                          "Yes":  "Yes",
                                                          "No":  "No"
                                                      },

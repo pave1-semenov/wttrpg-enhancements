@@ -7,6 +7,7 @@ import {
 } from '../util/weaponSkill.js';
 
 const { DialogV2 } = foundry.applications.api;
+const FIXED_COUNT_STRIKE_KEY = 'wttrpgEnhancementsSkillAttack';
 
 function getAllowedTargetLocations(skill) {
     const allowedLocations = Array.isArray(skill?.system?.targetLocations)
@@ -24,12 +25,43 @@ function getAllowedDamageTypes(skill) {
     return allowedDamageTypes.filter(Boolean);
 }
 
+function getSkillAttackCount(skill) {
+    return Math.max(0, Math.trunc(Number(skill?.system?.attackCount) || 0));
+}
+
 function getAllowedStrikes(skill) {
+    if (getSkillAttackCount(skill) > 0) return [FIXED_COUNT_STRIKE_KEY];
+
     const allowedStrikes = Array.isArray(skill?.system?.allowedStrikes)
         ? skill.system.allowedStrikes
         : Array.from(skill?.system?.allowedStrikes ?? []);
-
     return allowedStrikes.filter(Boolean);
+}
+
+function getSkillStaminaCost(skill) {
+    return Math.max(0, Math.trunc(Number(skill?.system?.staminaCost) || 0));
+}
+
+async function withSkillAttackCount(skill, callback) {
+    const attackCount = getSkillAttackCount(skill);
+    if (attackCount === 0) return callback();
+
+    const configuredStrikes = CONFIG.WITCHER?.weapon?.attacks ?? {};
+    const originalStrike = configuredStrikes[FIXED_COUNT_STRIKE_KEY];
+    configuredStrikes[FIXED_COUNT_STRIKE_KEY] = {
+        label: 'WTTRPGEnhancements.WeaponSkillAttack.FixedCountStrike',
+        attackNumber: attackCount
+    };
+
+    try {
+        return await callback();
+    } finally {
+        if (originalStrike === undefined) {
+            delete configuredStrikes[FIXED_COUNT_STRIKE_KEY];
+        } else {
+            configuredStrikes[FIXED_COUNT_STRIKE_KEY] = originalStrike;
+        }
+    }
 }
 
 function applySelectFilter(dialog, selectName, allowedValues) {
@@ -147,6 +179,16 @@ function buildSkillStats(skill) {
         {
             label: game.i18n.localize('WTTRPGEnhancements.WeaponSkill.AttackRollModifierLabel'),
             value: `${skill.system?.accuracy ?? 0}`
+        },
+        {
+            label: game.i18n.localize('WTTRPGEnhancements.WeaponSkill.AttackCountLabel'),
+            value: getSkillAttackCount(skill) > 0
+                ? `${getSkillAttackCount(skill)}`
+                : game.i18n.localize('WTTRPGEnhancements.WeaponSkillAttack.NativeStrikeCount')
+        },
+        {
+            label: game.i18n.localize('WTTRPGEnhancements.WeaponSkill.StaminaCostLabel'),
+            value: `${getSkillStaminaCost(skill)}`
         },
         {
             label: game.i18n.localize('WITCHER.Weapon.Range'),
@@ -267,15 +309,38 @@ export async function wrapWeaponAttack(wrapped, weapon, options = {}) {
     }
 
     const chosenSkill = attachedSkills.find(skill => skill.id === choice.skillId);
+    if (!chosenSkill) {
+        return wrapped(weapon, {
+            ...options,
+            skipWeaponSkillChooser: true
+        });
+    }
 
-    return withFilteredWeaponAttackDialog(chosenSkill, () => {
-        return withWeaponSkillNativeAttackOverride(chosenSkill ?? weapon, activeWeapon => {
-            return wrapped(activeWeapon, {
-                ...options,
-                skipWeaponSkillChooser: true
+    const staminaCost = getSkillStaminaCost(chosenSkill);
+    const actor = weapon.actor;
+    const currentStamina = Number(actor?.system?.derivedStats?.sta?.value);
+    if (staminaCost > 0 && (!Number.isFinite(currentStamina) || currentStamina < staminaCost)) {
+        return ui.notifications.error(game.i18n.localize('WITCHER.Spell.notEnoughSta'));
+    }
+
+    const result = await withSkillAttackCount(chosenSkill, () => {
+        return withFilteredWeaponAttackDialog(chosenSkill, () => {
+            return withWeaponSkillNativeAttackOverride(chosenSkill, activeWeapon => {
+                return wrapped(activeWeapon, {
+                    ...options,
+                    skipWeaponSkillChooser: true
+                });
             });
         });
     });
+
+    if (staminaCost > 0) {
+        await actor.update({
+            'system.derivedStats.sta.value': currentStamina - staminaCost
+        });
+    }
+
+    return result;
 }
 
 async function promptWeaponSkillChoice(weapon, attachedSkills) {

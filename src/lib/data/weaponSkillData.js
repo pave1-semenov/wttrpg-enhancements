@@ -36,6 +36,16 @@ export default function getWeaponSkillDataModel() {
                     initial: [],
                     label: 'WTTRPGEnhancements.WeaponSkill.AllowedStrikesLabel'
                 }),
+                attackCount: new fields.NumberField({
+                    initial: 0,
+                    min: 0,
+                    label: 'WTTRPGEnhancements.WeaponSkill.AttackCountLabel'
+                }),
+                staminaCost: new fields.NumberField({
+                    initial: 0,
+                    min: 0,
+                    label: 'WTTRPGEnhancements.WeaponSkill.StaminaCostLabel'
+                }),
                 additionalDefenseSkills: new fields.ArrayField(new fields.StringField({ initial: '' }), {
                     initial: [],
                     label: 'WTTRPGEnhancements.WeaponSkill.AdditionalDefenseSkillsLabel'
@@ -55,6 +65,8 @@ export default function getWeaponSkillDataModel() {
             if (!Array.isArray(this.targetLocations)) this.targetLocations = [];
             if (!Array.isArray(this.allowedStrikes)) this.allowedStrikes = [];
             if (!Array.isArray(this.additionalDefenseSkills)) this.additionalDefenseSkills = [];
+            this.attackCount = Math.max(0, Math.trunc(Number(this.attackCount) || 0));
+            this.staminaCost = Math.max(0, Math.trunc(Number(this.staminaCost) || 0));
             if (!Array.isArray(this.defenseOptions)) this.defenseOptions = Array.from(this.defenseOptions ?? []);
             if (!(this.attackOptions instanceof Set)) this.attackOptions = new Set(this.attackOptions ?? []);
             if (!this.attackSkillOverrideMode) this.attackSkillOverrideMode = ATTACK_SKILL_OVERRIDE_MODES.NONE;

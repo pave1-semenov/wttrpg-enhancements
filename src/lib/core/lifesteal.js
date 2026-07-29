@@ -1,8 +1,9 @@
 import { ChatMessageData } from '../roll/chatMessageData.js';
 import { ATTRIBUTES, TEMPLATE_PATHS } from '../util/constants.js';
 import { EnhancementRoll } from '../roll/enhancementRoll.js';
+import { evaluateCondition } from '../util/condition.js';
 
-export function initLifestealContext(source, actor, stat, flags) {
+export function initLifestealContext(source, actor, stat, flags, damage = {}) {
     return {
         flags: flags,
         attacker: source.actor,
@@ -10,19 +11,25 @@ export function initLifestealContext(source, actor, stat, flags) {
         actor: actor,
         stat: stat,
         statBeforeDmg: actor.system.derivedStats[stat].value,
+        damage: damage,
     }
 }
 
 export async function applyLifesteal(context) {
-    const { actor, source, attacker, stat, statBeforeDmg, flags } = context;
+    const { actor, source, attacker, stat, statBeforeDmg, flags, damage } = context;
 
 
     if (!flags?.enabled) return;
 
     const attributeAfter = actor.system.derivedStats[stat].value;
     const totalDamageDealt = statBeforeDmg - attributeAfter;
+    const conditionMatches = evaluateCondition(flags.condition, {
+        attacker,
+        target: actor,
+        damage: { ...damage, amount: totalDamageDealt }
+    })
 
-    if (totalDamageDealt > 0) {
+    if (totalDamageDealt > 0 && conditionMatches) {
         const attributeBefore = attacker.system.derivedStats[stat].value;
         const lifestealAttribute = attacker.system.derivedStats[stat].value;
         const maxAttribute = attacker.system.derivedStats[stat].max;

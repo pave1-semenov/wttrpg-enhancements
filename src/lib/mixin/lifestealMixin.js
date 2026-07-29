@@ -8,7 +8,8 @@ export const LifeStealMixin = (Superclass) => class extends Superclass {
             flatPercentage: 100,
             storeOverheal: false,
             overhealPercentage: 100,
-            overhealThreshold: 0
+            overhealThreshold: 0,
+            condition: ''
         }
 
         if (!context.data) context.data = {}

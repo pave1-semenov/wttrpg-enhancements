@@ -22,6 +22,14 @@
                 <td colspan="2">{{localize "WTTRPGEnhancements.Sheet.Lifesteal.OverhealThreshold"}}</td>
                 <td colspan="2"><input name="lifesteal.overhealThreshold" type="number" value="{{data.lifesteal.overhealThreshold}}"></td>
             </tr>
+            <tr class="item-header-tablerow">
+                <td colspan="2">
+                    {{localize "WTTRPGEnhancements.Sheet.Lifesteal.Condition"}}
+                    <i class="fas fa-circle-info" data-tooltip="{{localize "WTTRPGEnhancements.Sheet.ConditionHint"}}"></i>
+                </td>
+                <td colspan="2"><input name="lifesteal.condition" type="text" value="{{data.lifesteal.condition}}"
+                        placeholder="damage.amount >= 10 && target.type === 'monster'"></td>
+            </tr>
         </tbody>
     </table>
 </section>
