@@ -1,154 +1,85 @@
 # WTTRPG Enhancements
-## TBA, Readme is AI-generated
 
-Enhancements for the **The Witcher TRPG** Foundry system focused on:
-- Active Effect over-time mechanics (DOT/HOT)
-- Lifesteal automation and chat feedback
-- Damage amplification from active effects
+**WTTRPG Enhancements** adds flexible combat tools to *The Witcher TRPG* system for Foundry VTT. It helps GMs create ongoing effects, special weapon techniques, lifesteal, conditional damage bonuses, and more controlled damage application while keeping the system's normal combat flow.
 
-## Compatibility
+## What the module adds
 
-- Foundry VTT: v12-v13 (module manifest verifies v13)
-- System: `TheWitcherTRPG`
-- Dependency: `lib-wrapper`
+### Ongoing damage and healing
 
-## What This Module Adds
+Active Effects can deal damage or restore health automatically when a character's turn begins.
 
-### 1. Active Effect Enhancement Sheet
+- Create poison, bleeding, burning, regeneration, and similar effects.
+- Choose the roll formula, damage type, hit location, and armor-related properties.
+- Apply damage automatically or leave it as a chat roll for the GM to resolve.
+- Show clear chat cards for every damage or healing tick.
 
-On any Active Effect sheet (GM), a header button opens an enhancement sheet with tabs:
-- `DOT`
-- `HOT`
-- `Lifesteal`
-- `Amplifier`
+**Example:** A poison effect deals `2d6` damage to the torso at the start of each affected character's turn, while a regeneration potion restores `1d6` HP per turn.
 
-### 2. Weapon Lifesteal Sheet
+### Lifesteal and overheal
 
-On weapon item sheets (GM), a header button opens a Lifesteal configuration tab.
+Weapons, spells, weapon skills, and damaging ongoing effects can return part of the damage they deal to the attacker.
 
-### 3. Combat Turn Processing (DOT + HOT)
+- Restore HP, Stamina, or the same attribute that was damaged.
+- Turn excess HP recovery into a shield.
+- Set a maximum shield value.
+- Add conditions so lifesteal only works in specific situations.
 
-On combat updates, the module checks the current combatant's effects and processes enabled timed effects:
-- DOT effects 
-- HOT effects 
+**Example:** A vampiric sword restores 25% of the HP damage it deals. If its wielder is already at full HP, half of that excess healing becomes a shield, up to a chosen limit.
 
-Only GM executes these flows.
+### Conditional damage bonuses
 
-### 4. Enhanced Damage Apply from Chat
+Active Effects can increase an attacker's damage for one damage type or for all damage.
 
-Adds a context option on damage chat cards to apply damage which respects the lifesteal flow
+- Add extra dice or a flat bonus to a damage roll.
+- Multiply the final damage.
+- Limit the bonus with conditions based on the attacker, target, or damage dealt.
+- Apply the same bonuses to ongoing damage where appropriate.
 
-### 5. Damage Amplifier
+**Example:** A monster-hunting oil adds `1d6` damage against monsters, while a vulnerability effect doubles slashing damage.
 
-Modifies the damage formula per damage type using different amplification mechanisms:
-- additive variable formula
-- multiplicative modifier
+### More control when applying damage
 
-## Settings and Behavior
+An enhanced **Apply Damage** option is available from damage messages in chat.
 
-## DOT Tab (Active Effect)
+- Adjust the rolled amount by a fixed number or percentage before applying it.
+- Choose the hit location.
+- Mark the damage as non-lethal.
+- Account for vulnerability, weapon oils, and monster resistances.
+- Trigger any lifesteal attached to the attack.
 
-| Setting | What it does |
-|---|---|
-| `enabled` | Enables DOT processing for this effect on turn updates. |
-| `formula` | Damage roll formula used each tick. |
-| `damageType` | Damage type sent to system damage application. |
-| `location` | Hit location used for applied damage logic. |
-| `autoApply` | If enabled, damage is auto-applied to current actor; otherwise only chat roll/card is posted. |
-| `damageProperties.*` | Overrides or inherits damage properties used by Witcher damage application. Includes SP damage support. |
+**Example:** The GM can reduce an incoming hit by 50% for a special resistance, move it to the arm, or add a small flat bonus without editing the original roll.
 
-### DOT runtime flow
-1. Build damage object (formula/type/location/properties).
-2. Apply amplifier modifications to formula.
-3. Roll and post styled chat card.
-4. Store damage payload on message flag for later chat-based apply flow.
-5. If `autoApply`, call `actor.applyDamage(...)`.
-6. If effect/item lifesteal is enabled, lifesteal triggers after damage application.
+### Weapon skills and special attacks
 
-## HOT Tab (Active Effect)
+A weapon can have several alternate techniques attached to it. Whenever that weapon attacks, the player can use its normal attack or choose one of those techniques.
 
-| Setting | What it does |
-|---|---|
-| `enabled` | Enables HOT processing for this effect on turn updates. |
-| `formula` | Healing roll formula used each tick. |
+Each weapon skill can have its own:
 
-### HOT runtime flow
-1. Roll formula.
-2. Call `actor.calculateHealValue(roll.total)`.
-3. Update actor HP using returned healing amount.
-4. Always post styled chat card with:
-   - healer
-   - target
-   - heal applied (shown only if > 0)
-   - HP change row (or clear no-benefit text when nothing was healed)
+- Damage formula and damage types.
+- Melee or ranged attack mode.
+- Attack skill and roll modifier.
+- Stamina cost and number of attacks.
+- Allowed strike types and target locations.
+- Range, ammunition use, and damage properties.
+- Defense options available to the target.
+- Lifesteal and Active Effects.
 
-## Lifesteal Tab (Active Effect or Weapon)
+Skills can be created directly on a weapon or copied from reusable templates. An attached copy can inherit the weapon's properties or keep the template's own values.
 
-| Setting | What it does |
-|---|---|
-| `enabled` | Enables lifesteal processing after successful damage application. |
-| `flatPercentage` | Percent of damage dealt converted into lifesteal. |
-| `storeOverheal` | If enabled and stealing HP, overflow can be converted to shield. |
-| `overhealPercentage` | Percent of overflow HP converted into shield. |
-| `overhealThreshold` | Optional shield cap for overheal storage (0 means no cap). |
+**Example:** A *Pommel Strike* may cost 3 Stamina, deal bludgeoning damage, use a different attack skill, and allow the defender an additional defense option. A *Whirl* technique may make a fixed number of attacks with its own accuracy penalty.
 
-### Lifesteal runtime flow
-1. Compute total damage dealt from target attribute delta.
-2. Compute lifesteal amount.
-3. Heal attacker's affected attribute (`hp` or `sta` based on context).
-4. If enabled and stat is HP, convert overflow to shield.
-5. Post styled chat card including:
-   - attacker and target
-   - damage dealt
-   - lifesteal result
-   - attribute change row (only when that attribute changed)
-   - shield gain row (only when shield actually increased)
-   - clear no-benefit reason when capped/full conditions block gains
+## Where to find the features
 
-## Amplifier Tab (Active Effect)
+The GM can open **WTTRPG Enhancements** from the header of:
 
-| Setting | What it does |
-|---|---|
-| `enabled` | Enables this amplifier effect. |
-| `damageType` | Applies only to matching type, or `all`. |
-| `multiplier` | Multiplicative factor applied to final formula. |
-| `variableFormula` | Additive formula fragment appended before multiplication. |
+- An **Active Effect** to configure ongoing damage, ongoing healing, lifesteal, or damage amplification.
+- A **weapon or spell** to configure lifesteal.
+- A **weapon** to create, attach, and manage weapon skills.
 
-### Amplifier details
-- Pulls all enabled amplifier effects from actor applied effects.
-- Applies variable formulas first, then multipliers.
-- Honors system setting `displayRollsDetails` for labeled roll fragments.
+Damage messages gain an enhanced **Apply Damage** entry in their context menu. Timed effects are processed by the GM during combat.
 
-## Chat UX
+## Requirements
 
-Enhancement rolls use a custom roll class and custom roll/tooltip templates:
-- unified visual style for card + roll + tooltip
-- dark-theme-friendly tooltip text
-- wrapper styling on matching chat message container
-
-Applies to DOT, HOT, and Lifesteal messages.
-
-## Data Model (Flags)
-
-Stored under `flags.wttrpg-enhancements`:
-- `dot`
-- `hot`
-- `lifesteal`
-- `amp`
-
-Message payloads:
-- Damage payload stored on chat messages under `flags.TheWitcherTRPG.damage` for enhanced apply flow.
-
-## Typical In-Game Setup
-
-1. Create or open an Active Effect.
-2. Open enhancement sheet via header button.
-3. Configure `DOT` and/or `HOT`.
-4. Optionally configure `Lifesteal`.
-5. (Optional) Add `Amplifier` effects for formula scaling.
-6. Start combat; module processes timed effects on active combatant updates.
-
-## Notes
-
-- Most automation is GM-side by design.
-- Existing system mechanics remain authoritative (`applyDamage`, `calculateHealValue`, etc); this module orchestrates and enriches those flows.
+- Foundry VTT 13 or 14
+- *The Witcher TRPG* system 14.2.1 or newer
+- [libWrapper](https://foundryvtt.com/packages/lib-wrapper)
