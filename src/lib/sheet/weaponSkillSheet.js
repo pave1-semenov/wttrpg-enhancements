@@ -121,6 +121,9 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
                             lifestealData.flatPercentage,
                             this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.flatPercentage ?? 100
                         ),
+                        attribute: lifestealData.attribute
+                            ?? this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.attribute
+                            ?? 'default',
                         storeOverheal: !!lifestealData.storeOverheal,
                         overhealPercentage: WeaponSkillSheet.toNumber(
                             lifestealData.overhealPercentage,
@@ -129,7 +132,10 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
                         overhealThreshold: WeaponSkillSheet.toNumber(
                             lifestealData.overhealThreshold,
                             this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.overhealThreshold ?? 0
-                        )
+                        ),
+                        condition: lifestealData.condition
+                            ?? this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.condition
+                            ?? ''
                     }
                 }
             },
@@ -140,6 +146,14 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
                 damageType: WeaponSkillSheet.normalizeArrayValue(systemData.damageType),
                 targetLocations: WeaponSkillSheet.normalizeArrayValue(systemData.targetLocations),
                 allowedStrikes: WeaponSkillSheet.normalizeArrayValue(systemData.allowedStrikes),
+                attackCount: Math.max(0, Math.trunc(WeaponSkillSheet.toNumber(
+                    systemData.attackCount,
+                    this.document.system.attackCount ?? 0
+                ))),
+                staminaCost: Math.max(0, Math.trunc(WeaponSkillSheet.toNumber(
+                    systemData.staminaCost,
+                    this.document.system.staminaCost ?? 0
+                ))),
                 attackOptions: [attackMode],
                 meleeAttackSkill: systemData.meleeAttackSkill ?? this.document.system.meleeAttackSkill ?? '',
                 rangedAttackSkill: isRanged ? (systemData.rangedAttackSkill ?? this.document.system.rangedAttackSkill ?? '') : '',
@@ -244,11 +258,20 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
             ...location,
             checked: (this.document.system.targetLocations ?? []).includes(location.value)
         }));
-        const allowedStrikes = Object.entries(CONFIG.WITCHER?.weapon?.attacks ?? {}).map(([value, strike]) => ({
-            value,
-            label: strike.label,
-            checked: (this.document.system.allowedStrikes ?? []).includes(value)
-        }));
+        const hasFixedAttackCount = (this.document.system.attackCount ?? 0) > 0;
+        const allowedStrikes = hasFixedAttackCount
+            ? [{
+                  value: 'wttrpgEnhancementsSkillAttack',
+                  label: 'WTTRPGEnhancements.WeaponSkillAttack.FixedCountStrike',
+                  checked: true,
+                  disabled: true
+              }]
+            : Object.entries(CONFIG.WITCHER?.weapon?.attacks ?? {}).map(([value, strike]) => ({
+                  value,
+                  label: strike.label,
+                  checked: (this.document.system.allowedStrikes ?? []).includes(value),
+                  disabled: false
+              }));
         const meleeAttackSkills = (CONFIG.WITCHER?.meleeSkills ?? []).map(skill => CONFIG.WITCHER.skillMap?.[skill]).filter(Boolean);
         const rangedAttackSkills = (CONFIG.WITCHER?.rangedSkills ?? []).map(skill => CONFIG.WITCHER.skillMap?.[skill]).filter(Boolean);
         const systemPropertiesConfiguration = this.getSystemPropertiesConfiguration();

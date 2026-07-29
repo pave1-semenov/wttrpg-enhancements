@@ -1,15 +1,19 @@
 import { FLAG_KEYS, MODULE } from '../util/constants.js';
+import { evaluateCondition } from '../util/condition.js';
 
-export function getAmplifiedDamageFormula(actor, damage) {
+export function getAmplifiedDamageFormula(actor, damage, target = null) {
     const effects = actor?.appliedEffects ?? []
     const displayRollDetails = game.settings.get('TheWitcherTRPG', 'displayRollsDetails')
+    const conditionContext = { attacker: actor, target, damage }
 
     let formula = damage.formula
 
     const amplifiers = effects.filter(e => {
         const flags = e.flags[MODULE.FLAGS_KEY]?.[FLAG_KEYS.AMP]
         const damageType = flags?.damageType
-        return flags?.enabled && (damageType === damage.type || damageType === 'all')
+        return flags?.enabled
+            && (damageType === damage.type || damageType === 'all')
+            && evaluateCondition(flags.condition, conditionContext)
     }).map(e => [e.name, e.flags[MODULE.FLAGS_KEY][FLAG_KEYS.AMP]])
 
     amplifiers.filter(([name, amp]) => amp.variableFormula).forEach(([name, amp]) => {

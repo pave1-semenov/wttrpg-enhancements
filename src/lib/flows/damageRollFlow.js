@@ -11,7 +11,8 @@ export async function wrapDamageRoll(wrapped, damage) {
     const originalFormula = damage.formula;
 
     if (resolvedSource?.actor) {
-        damage.formula = getAmplifiedDamageFormula(resolvedSource.actor, damage);
+        const target = game.user.targets.first()?.actor ?? null;
+        damage.formula = getAmplifiedDamageFormula(resolvedSource.actor, damage, target);
     }
 
     await wrapped.call(resolvedSource ?? this, damage);

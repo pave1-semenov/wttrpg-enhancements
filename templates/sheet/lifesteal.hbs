@@ -11,6 +11,14 @@
                 <td colspan="2"><input name="lifesteal.flatPercentage" type="number" value="{{data.lifesteal.flatPercentage}}"></td>
             </tr>
             <tr class="item-header-tablerow">
+                <td colspan="2">{{localize "WTTRPGEnhancements.Sheet.Lifesteal.Attribute"}}</td>
+                <td colspan="2">
+                    <select name="lifesteal.attribute">
+                        {{selectOptions data.lifesteal.attributeOptions selected=data.lifesteal.attribute localize=true}}
+                    </select>
+                </td>
+            </tr>
+            <tr class="item-header-tablerow">
                 <td colspan="2">{{localize "WTTRPGEnhancements.Sheet.Lifesteal.StoreOverheal"}}</td>
                 <td colspan="2"><input name="lifesteal.storeOverheal" type="checkbox" {{checked data.lifesteal.storeOverheal}}></td>
             </tr>
@@ -21,6 +29,14 @@
             <tr class="item-header-tablerow">
                 <td colspan="2">{{localize "WTTRPGEnhancements.Sheet.Lifesteal.OverhealThreshold"}}</td>
                 <td colspan="2"><input name="lifesteal.overhealThreshold" type="number" value="{{data.lifesteal.overhealThreshold}}"></td>
+            </tr>
+            <tr class="item-header-tablerow">
+                <td colspan="2">
+                    {{localize "WTTRPGEnhancements.Sheet.Lifesteal.Condition"}}
+                    <i class="fas fa-circle-info" data-tooltip="{{localize "WTTRPGEnhancements.Sheet.ConditionHint"}}"></i>
+                </td>
+                <td colspan="2"><input name="lifesteal.condition" type="text" value="{{data.lifesteal.condition}}"
+                        placeholder="damage.amount >= 10 && target.type === 'monster'"></td>
             </tr>
         </tbody>
     </table>

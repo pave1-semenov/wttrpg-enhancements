@@ -17,7 +17,7 @@ Hooks.once('init', function () {
 })
 Hooks.once('ready', async function () {
     libWrapper.register(MODULE.ID, "CONFIG.Item.documentClass.prototype.rollDamage", wrapDamageRoll, 'WRAPPER')
-    libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.weaponAttack", wrapWeaponAttack, 'WRAPPER')
+    libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.weaponAttack", wrapWeaponAttack, 'MIXED')
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.prepareAndExecuteDefense", wrapPrepareAndExecuteDefense, 'WRAPPER')
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.addItem", wrapAddItem, 'WRAPPER')
     registerCombatHooks()

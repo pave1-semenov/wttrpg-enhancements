@@ -152,7 +152,8 @@ export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((Defa
             enabled: false,
             damageType: '',
             multiplier: 0,
-            variableFormula: ''
+            variableFormula: '',
+            condition: ''
         }
         data.damageTypes = [{ label: 'All', value: 'all' }, ...CONFIG.WITCHER.damageTypes]
         if (!context.data) context.data = {}

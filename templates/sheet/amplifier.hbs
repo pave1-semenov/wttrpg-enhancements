@@ -22,6 +22,15 @@
                 <td><input name="amp.variableFormula" type="text" value="{{data.amp.variableFormula}}">
                 </td>
             </tr>
+            <tr class="item-header-tablerow">
+                <td>
+                    {{localize "WTTRPGEnhancements.Sheet.Amplifier.Condition"}}
+                    <i class="fas fa-circle-info" data-tooltip="{{localize "WTTRPGEnhancements.Sheet.ConditionHint"}}"></i>
+                </td>
+                <td><input name="amp.condition" type="text" value="{{data.amp.condition}}"
+                        placeholder="attacker.system.stats.ref.value > 5 && target.type === 'monster'">
+                </td>
+            </tr>
         </tbody>
     </table>
 </section>

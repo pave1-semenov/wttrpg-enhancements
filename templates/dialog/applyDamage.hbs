@@ -1,6 +1,24 @@
 <div class="apply-damage-dialog">
-    <h1>Apply damage</h1>
+    <h1>{{localize "WTTRPGEnhancements.ApplyDamage.Title"}}</h1>
     <table class="apply-damage-table">
+        <tr>
+            <td><label>{{localize "WTTRPGEnhancements.ApplyDamage.RolledAmount"}}</label></td>
+            <td><b>{{totalDamage}}</b></td>
+        </tr>
+        <tr>
+            <td><label for="damage-modifier-type">{{localize "WTTRPGEnhancements.ApplyDamage.ModifierType"}}</label></td>
+            <td>
+                <select id="damage-modifier-type" name="damageModifierType">
+                    <option value="none">{{localize "WTTRPGEnhancements.ApplyDamage.NoModifier"}}</option>
+                    <option value="fixed">{{localize "WTTRPGEnhancements.ApplyDamage.FixedAmount"}}</option>
+                    <option value="percentage">{{localize "WTTRPGEnhancements.ApplyDamage.Percentage"}}</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="damage-modifier">{{localize "WTTRPGEnhancements.ApplyDamage.Modifier"}}</label></td>
+            <td><input id="damage-modifier" type="number" name="damageModifier" value="0" step="any" /></td>
+        </tr>
         <tr>
             <td>
                 <label>{{localize "WITCHER.Damage.damageType" }}</label>
