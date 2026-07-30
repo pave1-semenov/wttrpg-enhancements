@@ -59,7 +59,7 @@
                                                           }
                                         },
                                "Sheet":  {
-                                             "ConditionHint":  "Optional expression using actor (or attacker), target, and damage. Supports property paths, comparisons, arithmetic, &&, ||, !, and parentheses.",
+                                             "ConditionHint":  "Optional expression using actor (or attacker), target, and damage. Helpers include hp(), sta(), shield(), stat(), armor(), hasActiveEffect(), and getActiveEffect().",
                                              "Lifesteal":  {
                                                                "Title":  "Lifesteal settings",
                                                                "Enabled":  "Enabled",

@@ -36,7 +36,7 @@
                     <i class="fas fa-circle-info" data-tooltip="{{localize "WTTRPGEnhancements.Sheet.ConditionHint"}}"></i>
                 </td>
                 <td colspan="2"><input name="lifesteal.condition" type="text" value="{{data.lifesteal.condition}}"
-                        placeholder="damage.amount >= 10 && target.type === 'monster'"></td>
+                        placeholder="damage.amount >= 10 && hp(target) < maxHp(target)"></td>
             </tr>
         </tbody>
     </table>

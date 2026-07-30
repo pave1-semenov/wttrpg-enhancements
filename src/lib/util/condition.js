@@ -1,4 +1,33 @@
 const FORBIDDEN_PROPERTIES = new Set(['__proto__', 'prototype', 'constructor'])
+const CONDITION_ROOTS = new Set(['actor', 'attacker', 'target', 'damage'])
+const RESOURCE_HELPERS = new Map([
+    ['hp', ['derivedStats', 'hp', 'value']],
+    ['maxHp', ['derivedStats', 'hp', 'max']],
+    ['sta', ['derivedStats', 'sta', 'value']],
+    ['maxSta', ['derivedStats', 'sta', 'max']],
+    ['shield', ['derivedStats', 'shield', 'value']],
+    ['maxShield', ['derivedStats', 'shield', 'max']],
+    ['focus', ['derivedStats', 'focus', 'value']],
+    ['maxFocus', ['derivedStats', 'focus', 'max']],
+    ['resolve', ['derivedStats', 'resolve', 'value']],
+    ['maxResolve', ['derivedStats', 'resolve', 'max']],
+    ['vigor', ['derivedStats', 'vigor', 'value']],
+    ['maxVigor', ['derivedStats', 'vigor', 'max']],
+    ['luck', ['stats', 'luck', 'value']],
+    ['maxLuck', ['stats', 'luck', 'max']],
+    ['toxicity', ['stats', 'toxicity', 'value']],
+    ['maxToxicity', ['stats', 'toxicity', 'max']]
+])
+const ARMOR_LOCATIONS = new Map([
+    ['head', 'head'],
+    ['torso', 'torso'],
+    ['body', 'torso'],
+    ['leftarm', 'leftArm'],
+    ['rightarm', 'rightArm'],
+    ['leftleg', 'leftLeg'],
+    ['rightleg', 'rightLeg'],
+    ['tailwing', 'tailWing']
+])
 
 export function evaluateCondition(expression, context) {
     if (!expression?.trim()) return true
@@ -23,14 +52,21 @@ function tokenize(expression) {
             continue
         }
 
-        const operator = remaining.match(/^(&&|\|\||===|!==|==|!=|>=|<=|[()!><+\-*/%])/)
+        const previousToken = tokens.at(-1)
+        const canStartDecimal = !previousToken
+            || (previousToken.type === 'operator' && ![')', ']'].includes(previousToken.value))
+        const operator = canStartDecimal && /^\.\d/.test(remaining)
+            ? null
+            : remaining.match(/^(&&|\|\||===|!==|==|!=|>=|<=|[()[\],.!><+\-*/%])/)
         if (operator) {
             tokens.push({ type: 'operator', value: operator[0] })
             offset += operator[0].length
             continue
         }
 
-        const number = remaining.match(/^(?:\d+(?:\.\d*)?|\.\d+)/)
+        const number = previousToken?.value === '.'
+            ? remaining.match(/^\d+/)
+            : remaining.match(/^(?:\d+(?:\.\d*)?|\.\d+)/)
         if (number) {
             tokens.push({ type: 'literal', value: Number(number[0]) })
             offset += number[0].length
@@ -44,7 +80,7 @@ function tokenize(expression) {
             continue
         }
 
-        const identifier = remaining.match(/^[A-Za-z_$][\w$]*(?:\.(?:[A-Za-z_$][\w$]*|\d+))*/)
+        const identifier = remaining.match(/^[A-Za-z_$][\w$]*/)
         if (identifier) {
             const keywords = { true: true, false: false, null: null, undefined: undefined }
             const value = identifier[0]
@@ -124,33 +160,153 @@ class ConditionParser {
     parsePrimary() {
         const token = this.consume()
         if (!token) throw new Error('Expected a value')
-        if (token.type === 'literal') return token.value
-        if (token.type === 'identifier') return resolvePath(token.value, this.context)
-        if (token.value === '(') {
-            const value = this.parseOr()
+
+        let value
+        if (token.type === 'literal') {
+            value = token.value
+        } else if (token.type === 'identifier') {
+            value = this.peek()?.value === '('
+                ? this.parseHelperCall(token.value)
+                : resolveRoot(token.value, this.context)
+        } else if (token.value === '(') {
+            value = this.parseOr()
             if (this.consume()?.value !== ')') throw new Error('Expected closing parenthesis')
-            return value
+        } else {
+            throw new Error(`Expected a value, received "${token.value}"`)
         }
-        throw new Error(`Expected a value, received "${token.value}"`)
+
+        return this.parseMembers(value)
+    }
+
+    parseHelperCall(name) {
+        this.consume()
+        const args = []
+
+        if (this.peek()?.value !== ')') {
+            while (true) {
+                args.push(this.parseOr())
+                if (this.peek()?.value !== ',') break
+                this.consume()
+            }
+        }
+
+        if (this.consume()?.value !== ')') throw new Error('Expected closing parenthesis')
+        return callHelper(name, args, this.context)
+    }
+
+    parseMembers(initialValue) {
+        let value = initialValue
+
+        while (this.peek()?.value === '.' || this.peek()?.value === '[') {
+            const accessor = this.consume().value
+            let property
+
+            if (accessor === '.') {
+                const token = this.consume()
+                const isProperty = token?.type === 'identifier'
+                    || (token?.type === 'literal' && Number.isInteger(token.value))
+                if (!isProperty) throw new Error('Expected a property name')
+                property = token.value
+            } else {
+                property = this.parseOr()
+                if (this.consume()?.value !== ']') throw new Error('Expected closing bracket')
+            }
+
+            value = resolveProperty(value, property)
+        }
+
+        return value
     }
 
     peek() { return this.tokens[this.position] }
     consume() { return this.tokens[this.position++] }
 }
 
-function resolvePath(path, context) {
-    const [root, ...properties] = path.split('.')
-    if (!['actor', 'attacker', 'target', 'damage'].includes(root)) {
-        throw new Error(`Unknown condition root "${root}"`)
-    }
+function resolveRoot(root, context) {
+    if (!CONDITION_ROOTS.has(root)) throw new Error(`Unknown condition root "${root}"`)
+    return root === 'actor' ? context?.attacker : context?.[root]
+}
 
-    let value = root === 'actor' ? context?.attacker : context?.[root]
+function resolveProperty(value, property) {
+    const key = String(property)
+    if (FORBIDDEN_PROPERTIES.has(key)) throw new Error(`Property "${key}" is not allowed`)
+    if (value == null) return undefined
+    return value[key]
+}
+
+function callHelper(name, args, context) {
+    const resourcePath = RESOURCE_HELPERS.get(name)
+    if (resourcePath) return getActorProperty(args[0] ?? context?.attacker, ['system', ...resourcePath])
+
+    switch (name) {
+        case 'attribute':
+            return getAttribute(args[0], args[1] ?? context?.attacker, 'value')
+        case 'maxAttribute':
+            return getAttribute(args[0], args[1] ?? context?.attacker, 'max')
+        case 'stat':
+            return getActorProperty(args[1] ?? context?.attacker, ['system', 'stats', args[0], 'value'])
+        case 'hasActiveEffect':
+            return Boolean(findActiveEffect(args[0], args[1] ?? context?.attacker))
+        case 'getActiveEffect':
+            return findActiveEffect(args[0], args[1] ?? context?.attacker)
+        case 'armor':
+            return getArmor(args, context)
+        default:
+            throw new Error(`Unknown condition helper "${name}"`)
+    }
+}
+
+function getAttribute(name, actor, property) {
+    if (typeof name !== 'string') return undefined
+    const derived = getActorProperty(actor, ['system', 'derivedStats', name, property])
+    return derived ?? getActorProperty(actor, ['system', 'stats', name, property])
+}
+
+function getActorProperty(actor, properties) {
+    let value = actor
     for (const property of properties) {
-        if (FORBIDDEN_PROPERTIES.has(property)) throw new Error(`Property "${property}" is not allowed`)
-        if (value == null) return undefined
-        value = value[property]
+        value = resolveProperty(value, property)
     }
     return value
+}
+
+function findActiveEffect(name, actor) {
+    if (typeof name !== 'string' || !actor) return undefined
+    const expectedName = name.trim().toLocaleLowerCase()
+    if (!expectedName) return undefined
+
+    const effects = actor.appliedEffects ?? actor.effects ?? []
+    return Array.from(effects).find(effect => {
+        const isActive = !effect.disabled
+            && !effect.isDisabled
+            && !effect.isSuppressed
+            && effect.active !== false
+        return isActive && effect.name?.trim().toLocaleLowerCase() === expectedName
+    })
+}
+
+function getArmor(args, context) {
+    let [location, actor] = args
+    if (location?.system) {
+        actor = location
+        location = undefined
+    }
+
+    actor ??= context?.target ?? context?.attacker
+    location ??= context?.damage?.location
+    const locationName = normalizeArmorLocation(location)
+    if (!actor || !locationName || typeof actor.getLocationArmor !== 'function') return undefined
+
+    const locationData = typeof location === 'object'
+        ? { ...location, name: locationName }
+        : { name: locationName, value: locationName }
+    return actor.getLocationArmor(locationData, context?.damage?.properties ?? {})?.totalSP
+}
+
+function normalizeArmorLocation(location) {
+    const value = location?.name ?? location?.value ?? location
+    if (typeof value !== 'string') return undefined
+    return ARMOR_LOCATIONS.get(value.replace(/[\s_-]/g, '').toLocaleLowerCase())
 }
 
 function applyOperator(operator, left, right) {
