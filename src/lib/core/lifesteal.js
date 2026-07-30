@@ -26,7 +26,8 @@ export async function applyLifesteal(context) {
     const conditionMatches = evaluateCondition(flags.condition, {
         attacker,
         target: actor,
-        damage: { ...damage, amount: totalDamageDealt }
+        damage: { ...damage, amount: totalDamageDealt },
+        source
     })
 
     if (totalDamageDealt > 0 && conditionMatches) {

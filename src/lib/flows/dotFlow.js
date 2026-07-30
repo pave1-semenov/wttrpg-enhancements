@@ -69,7 +69,7 @@ async function prepareDamageObject(source, actor, dotFlags) {
         },
     };
 
-    damage.formula = getAmplifiedDamageFormula(source.actor, damage, actor)
+    damage.formula = getAmplifiedDamageFormula(source.actor, damage, actor, source)
     damage.properties = dotFlags?.damageProperties?.inherit ? source.system.damageProperties : dotFlags.damageProperties
 
     return damage
