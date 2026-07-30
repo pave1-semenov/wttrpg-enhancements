@@ -17,7 +17,8 @@
                                                     "NoModifier":  "No modifier",
                                                     "FixedAmount":  "Fixed amount",
                                                     "Percentage":  "Percentage",
-                                                    "Modifier":  "Modifier (+/-)"
+                                                    "Modifier":  "Modifier (+/-)",
+                                                    "TemporarySpBonus":  "Temporary SP bonus"
                                                 },
                                "Chat":  {
                                             "Dot":  {

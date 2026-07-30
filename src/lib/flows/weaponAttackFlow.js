@@ -304,7 +304,11 @@ export async function wrapWeaponAttack(wrapped, weapon, options = {}) {
     }
 
     const choice = await promptWeaponSkillChoice(weapon, attachedSkills);
-    if (!choice || choice.mode === 'standard') {
+    if (!choice) {
+        return;
+    }
+
+    if (choice.mode === 'standard') {
         return wrapped(weapon, options);
     }
 
@@ -347,6 +351,10 @@ async function promptWeaponSkillChoice(weapon, attachedSkills) {
     const content = await foundry.applications.handlebars.renderTemplate(
         TEMPLATE_PATHS.DIALOG_WEAPON_SKILL_ATTACK_CHOICE,
         {
+            weapon: {
+                name: weapon.name,
+                img: weapon.img
+            },
             attachedSkills: attachedSkills.map((skill, index) => ({
                 id: skill.id,
                 uuid: skill.uuid,
@@ -382,20 +390,18 @@ async function promptWeaponSkillChoice(weapon, attachedSkills) {
         },
         buttons: [
             {
-                action: 'useSkill',
-                label: game.i18n.localize('WTTRPGEnhancements.WeaponSkillAttack.UseSkill'),
+                action: 'attack',
+                label: game.i18n.localize('WITCHER.Attack.name'),
                 default: true,
-                callback: (event, button) => ({
-                    mode: 'skill',
-                    skillId: button.form.elements.selectedSkill.value
-                })
-            },
-            {
-                action: 'standard',
-                label: game.i18n.localize('WTTRPGEnhancements.WeaponSkillAttack.StandardAttack'),
-                callback: () => ({
-                    mode: 'standard'
-                })
+                callback: (event, button) => {
+                    const selectedAttack = button.form.elements.selectedAttack.value;
+                    return selectedAttack === 'standard'
+                        ? { mode: 'standard' }
+                        : {
+                              mode: 'skill',
+                              skillId: selectedAttack
+                          };
+                }
             }
         ],
         rejectClose: false

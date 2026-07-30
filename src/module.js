@@ -6,6 +6,7 @@ import { wrapWeaponAttack } from "./lib/flows/weaponAttackFlow.js";
 import { wrapPrepareAndExecuteDefense } from "./lib/flows/defenseFlow.js";
 import { wrapAddItem } from "./lib/flows/addItemFlow.js";
 import { EnhancementRoll } from "./lib/roll/enhancementRoll.js";
+import { wrapGetLocationArmor } from "./lib/core/temporarySp.js";
 import { MODULE, TEMPLATE_PATHS } from "./lib/util/constants.js";
 import { registerItemTypes } from "./lib/setup/itemTypeRegistration.js";
 Hooks.once('init', function () {
@@ -20,6 +21,7 @@ Hooks.once('ready', async function () {
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.weaponAttack", wrapWeaponAttack, 'MIXED')
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.prepareAndExecuteDefense", wrapPrepareAndExecuteDefense, 'WRAPPER')
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.addItem", wrapAddItem, 'WRAPPER')
+    libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.getLocationArmor", wrapGetLocationArmor, 'WRAPPER')
     registerCombatHooks()
 })
 Hooks.on('getHeaderControlsApplicationV2', addActiveEffectEnhanceOption)
