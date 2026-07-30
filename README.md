@@ -37,6 +37,27 @@ Active Effects can increase an attacker's damage for one damage type or for all 
 
 **Example:** A monster-hunting oil adds `1d6` damage against monsters, while a vulnerability effect doubles slashing damage.
 
+#### Condition expressions
+
+Conditions can use `actor` (an alias for `attacker`), `attacker`, `target`, and `damage`, including their full property paths. The expression parser supports comparisons, arithmetic, `&&`, `||`, `!`, and parentheses.
+
+Common values have shorter helper functions:
+
+- `hp()`, `sta()`, `shield()`, `focus()`, `resolve()`, `vigor()`, `luck()`, and `toxicity()` return the attacker's current value. Pass an actor to read another actor, such as `hp(target)`.
+- The matching maximum helpers are `maxHp()`, `maxSta()`, `maxShield()`, `maxFocus()`, `maxResolve()`, `maxVigor()`, `maxLuck()`, and `maxToxicity()`.
+- `attribute('name', actor?)` and `maxAttribute('name', actor?)` read any derived stat or regular stat. `stat('ref', actor?)` is a shortcut for a regular stat.
+- `hasActiveEffect('name', actor?)` checks for a non-disabled, non-suppressed Active Effect by name. `getActiveEffect('name', actor?)` returns that effect so its data can be used in an expression.
+- `armor(location?, actor?)` returns total stopping power. It defaults to the current target and damage location; for example, `armor('head')` or `armor('torso', attacker)`.
+
+Examples:
+
+```text
+hp(target) < maxHp(target) / 2
+stat('ref') > 5 && hasActiveEffect('Monster Oil')
+getActiveEffect('Blood Frenzy').system.changes[0].value * 2 > damage.amount
+armor() < 10 && damage.type === 'slashing'
+```
+
 ### More control when applying damage
 
 An enhanced **Apply Damage** option is available from damage messages in chat.

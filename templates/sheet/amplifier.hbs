@@ -28,7 +28,7 @@
                     <i class="fas fa-circle-info" data-tooltip="{{localize "WTTRPGEnhancements.Sheet.ConditionHint"}}"></i>
                 </td>
                 <td><input name="amp.condition" type="text" value="{{data.amp.condition}}"
-                        placeholder="attacker.system.stats.ref.value > 5 && target.type === 'monster'">
+                        placeholder="stat('ref') > 5 && hasActiveEffect('Oil')">
                 </td>
             </tr>
         </tbody>
