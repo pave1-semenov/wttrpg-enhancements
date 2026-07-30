@@ -11,6 +11,13 @@
                 <td colspan="2"><input name="lifesteal.flatPercentage" type="number" value="{{data.lifesteal.flatPercentage}}"></td>
             </tr>
             <tr class="item-header-tablerow">
+                <td colspan="2">
+                    {{localize "WTTRPGEnhancements.Sheet.Lifesteal.LifestealThreshold"}}
+                    <i class="fas fa-circle-info" data-tooltip="{{localize "WTTRPGEnhancements.Sheet.Lifesteal.LifestealThresholdHint"}}"></i>
+                </td>
+                <td colspan="2"><input name="lifesteal.lifestealThreshold" type="number" min="0" step="1" value="{{data.lifesteal.lifestealThreshold}}"></td>
+            </tr>
+            <tr class="item-header-tablerow">
                 <td colspan="2">{{localize "WTTRPGEnhancements.Sheet.Lifesteal.Attribute"}}</td>
                 <td colspan="2">
                     <select name="lifesteal.attribute">

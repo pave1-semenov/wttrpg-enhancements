@@ -121,6 +121,10 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
                             lifestealData.flatPercentage,
                             this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.flatPercentage ?? 100
                         ),
+                        lifestealThreshold: Math.max(0, Math.trunc(WeaponSkillSheet.toNumber(
+                            lifestealData.lifestealThreshold,
+                            this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.lifestealThreshold ?? 0
+                        ))),
                         attribute: lifestealData.attribute
                             ?? this.document.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]?.attribute
                             ?? 'default',

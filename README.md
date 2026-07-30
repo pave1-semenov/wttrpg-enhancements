@@ -20,6 +20,7 @@ Active Effects can deal damage or restore health automatically when a character'
 Weapons, spells, weapon skills, and damaging ongoing effects can return part of the damage they deal to the attacker.
 
 - Restore HP, Stamina, or the same attribute that was damaged.
+- Limit how much can be stolen by a single attack.
 - Turn excess HP recovery into a shield.
 - Set a maximum shield value.
 - Add conditions so lifesteal only works in specific situations.

@@ -6,6 +6,7 @@ export const LifeStealMixin = (Superclass) => class extends Superclass {
         const data = {
             enabled: false,
             flatPercentage: 100,
+            lifestealThreshold: 0,
             attribute: LIFESTEAL_ATTRIBUTES.DEFAULT,
             storeOverheal: false,
             overhealPercentage: 100,

@@ -65,6 +65,8 @@
                                                                "Title":  "Lifesteal settings",
                                                                "Enabled":  "Enabled",
                                                                "FlatPercentage":  "Flat lifesteal percentage",
+                                                               "LifestealThreshold":  "Lifesteal threshold",
+                                                               "LifestealThresholdHint":  "Maximum amount stolen by one attack. Set to 0 for no limit.",
                                                                "Attribute":  "Leech attribute",
                                                                "AttributeDefault":  "Default (HP for lethal, Stamina for non-lethal)",
                                                                "StoreOverheal":  "Store overheal",
