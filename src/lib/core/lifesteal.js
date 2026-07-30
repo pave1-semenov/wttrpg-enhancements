@@ -26,7 +26,8 @@ export async function applyLifesteal(context) {
     const conditionMatches = evaluateCondition(flags.condition, {
         attacker,
         target: actor,
-        damage: { ...damage, amount: totalDamageDealt }
+        damage: { ...damage, amount: totalDamageDealt },
+        source
     })
 
     if (totalDamageDealt > 0 && conditionMatches) {
@@ -39,6 +40,7 @@ export async function applyLifesteal(context) {
         const lifestealResult = computeLifestealResult({
             totalDamageDealt,
             lifestealPercent: flags.flatPercentage,
+            lifestealThreshold: flags.lifestealThreshold,
             lifestealAttribute,
             maxAttribute,
             storeOverheal: flags.storeOverheal,
@@ -120,6 +122,7 @@ function getAttributeLabel(stat) {
 function computeLifestealResult({
     totalDamageDealt,
     lifestealPercent,
+    lifestealThreshold,
     lifestealAttribute,
     maxAttribute,
     storeOverheal,
@@ -128,7 +131,11 @@ function computeLifestealResult({
     currentShield,
     stat
 }) {
-    const flatLifesteal = Math.round(totalDamageDealt * (lifestealPercent / 100))
+    const calculatedLifesteal = Math.round(totalDamageDealt * (lifestealPercent / 100))
+    const threshold = Math.max(0, Math.trunc(Number(lifestealThreshold) || 0))
+    const flatLifesteal = threshold > 0
+        ? Math.min(calculatedLifesteal, threshold)
+        : calculatedLifesteal
     const toHeal = flatLifesteal
     const afterLifesteal = lifestealAttribute + toHeal
     const updatedAttribute = Math.min(afterLifesteal, maxAttribute)

@@ -20,6 +20,7 @@ Active Effects can deal damage or restore health automatically when a character'
 Weapons, spells, weapon skills, and damaging ongoing effects can return part of the damage they deal to the attacker.
 
 - Restore HP, Stamina, or the same attribute that was damaged.
+- Limit how much can be stolen by a single attack.
 - Turn excess HP recovery into a shield.
 - Set a maximum shield value.
 - Add conditions so lifesteal only works in specific situations.
@@ -39,7 +40,7 @@ Active Effects can increase an attacker's damage for one damage type or for all 
 
 #### Condition expressions
 
-Conditions can use `actor` (an alias for `attacker`), `attacker`, `target`, and `damage`, including their full property paths. The expression parser supports comparisons, arithmetic, `&&`, `||`, `!`, and parentheses.
+Conditions can use `actor` (an alias for `attacker`), `attacker`, `target`, `damage`, `source`, and `professionTree`, including their full property paths. `source` is the Item that produced the attack, so a weapon skill remains distinguishable from its parent weapon. `professionTree` is the attacker's profession system data. The expression parser supports comparisons, arithmetic, `&&`, `||`, `!`, and parentheses.
 
 Common values have shorter helper functions:
 
@@ -48,6 +49,9 @@ Common values have shorter helper functions:
 - `attribute('name', actor?)` and `maxAttribute('name', actor?)` read any derived stat or regular stat. `stat('ref', actor?)` is a shortcut for a regular stat.
 - `hasActiveEffect('name', actor?)` checks for a non-disabled, non-suppressed Active Effect by name. `getActiveEffect('name', actor?)` returns that effect so its data can be used in an expression.
 - `armor(location?, actor?)` returns total stopping power. It defaults to the current target and damage location; for example, `armor('head')` or `armor('torso', attacker)`.
+- `isSourceAWeaponSkill(name?)` and `isSourceAWeapon(name?)` check the attack source, optionally matching its name without regard to case.
+- `professionTree(actor?)` returns the complete profession system data. `professionSkill('name', actor?)` returns a profession ability so any of its properties can be inspected.
+- `professionSkillRank('name', actor?)` returns an ability's rank, or `0` if it is absent. `hasProfessionSkill('name', minimumRank?, actor?)` checks that it has been raised to at least the requested rank (rank `1` by default).
 
 Examples:
 
@@ -56,6 +60,8 @@ hp(target) < maxHp(target) / 2
 stat('ref') > 5 && hasActiveEffect('Monster Oil')
 getActiveEffect('Blood Frenzy').system.changes[0].value * 2 > damage.amount
 armor() < 10 && damage.type === 'slashing'
+isSourceAWeaponSkill('Whirl') && professionSkillRank('Fury') >= 5
+isSourceAWeapon() && professionSkill('Tactical Awareness').thresholds.hasThresholds
 ```
 
 ### More control when applying damage

@@ -69,7 +69,7 @@ async function prepareDamageObject(source, actor, dotFlags) {
         },
     };
 
-    damage.formula = getAmplifiedDamageFormula(source.actor, damage, actor)
+    damage.formula = getAmplifiedDamageFormula(source.actor, damage, actor, source)
     damage.properties = dotFlags?.damageProperties?.inherit ? source.system.damageProperties : dotFlags.damageProperties
 
     return damage
@@ -82,7 +82,8 @@ function getDamageTypeLabel(type) {
 }
 
 async function applyDotDamage(source, actor, dotFlags, flags, roll, damage) {
-    const damageAttribute = dotFlags.nonLethal ? ATTRIBUTES.STA : ATTRIBUTES.HP
+    const nonLethal = Boolean(damage?.properties?.isNonLethal)
+    const damageAttribute = nonLethal ? ATTRIBUTES.STA : ATTRIBUTES.HP
     const lifestealContext = initLifestealContext(
         source,
         actor,
@@ -96,7 +97,7 @@ async function applyDotDamage(source, actor, dotFlags, flags, roll, damage) {
         location: dotFlags.location,
         isVulnerable: false,
         addOilDmg: false,
-        nonLethal: dotFlags.nonLethal
+        nonLethal
     }
 
     await actor.applyDamage(enemyData, Math.round(roll.total), damage, damageAttribute)

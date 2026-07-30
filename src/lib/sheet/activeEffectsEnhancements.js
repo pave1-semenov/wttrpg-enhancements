@@ -63,6 +63,12 @@ export default class ActiveEffectsEnhancementsSheet extends LifeStealMixin((Defa
    */
     static async handleEnancements(event, form, formData) {
         const update = await this._prepareUpdateData(formData)
+        const system = this.document.system
+        update.system = {
+            ...(update.system ?? {}),
+            applyAfterCalculations: system?.applyAfterCalculations ?? false,
+            changes: foundry.utils.deepClone(Array.from(system?.changes ?? []))
+        }
 
         await this.document.update(update)
     }

@@ -1,10 +1,10 @@
 import { FLAG_KEYS, MODULE } from '../util/constants.js';
 import { evaluateCondition } from '../util/condition.js';
 
-export function getAmplifiedDamageFormula(actor, damage, target = null) {
+export function getAmplifiedDamageFormula(actor, damage, target = null, source = null) {
     const effects = actor?.appliedEffects ?? []
     const displayRollDetails = game.settings.get('TheWitcherTRPG', 'displayRollsDetails')
-    const conditionContext = { attacker: actor, target, damage }
+    const conditionContext = { attacker: actor, target, damage, source: source ?? damage?.item }
 
     let formula = damage.formula
 

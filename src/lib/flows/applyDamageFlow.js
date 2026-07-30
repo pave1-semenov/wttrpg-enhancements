@@ -1,6 +1,7 @@
 import { DamageInstance } from '/systems/TheWitcherTRPG/module/scripts/damageInstance.js';
 import { getRollSourceItem } from '../util/weaponSkillAttachment.js';
 import { applyLifesteal, initLifestealContext } from '../core/lifesteal.js';
+import { applyTemporarySpBonus } from '../core/temporarySp.js';
 import { getAttackLocationOptions } from '../util/location.js';
 import { ATTRIBUTES, CHAT_FLAGS, FLAG_KEYS, MODULE, SYSTEM, TEMPLATE_PATHS } from '../util/constants.js';
 
@@ -12,6 +13,7 @@ export async function applyEnhancedDamage(actor, totalDamage, messageId) {
     const appliedDamage = getModifiedDamage(totalDamage, dialogData.damageModifierType, dialogData.damageModifier)
 
     damage.location = actor.getLocationObject(dialogData.location)
+    applyTemporarySpBonus(damage, dialogData.temporarySpBonus)
 
     if (dialogData.addOilDmg) {
         damage.properties.oilEffect = actor.system.category;
@@ -69,7 +71,8 @@ async function createApplyDamageDialog(actor, damage, totalDamage) {
         isVulnerable,
         addOilDmg,
         damageModifierType,
-        damageModifier
+        damageModifier,
+        temporarySpBonus
     } =
         await DialogV2.prompt({
             window: { title: `${game.i18n.localize('WITCHER.Context.applyDmg')}` },
@@ -85,7 +88,8 @@ async function createApplyDamageDialog(actor, damage, totalDamage) {
                         isVulnerable: button.form.elements.vulnerable?.checked,
                         addOilDmg: button.form.elements.oilDmg?.checked,
                         damageModifierType: button.form.elements.damageModifierType?.value,
-                        damageModifier: button.form.elements.damageModifier?.value
+                        damageModifier: button.form.elements.damageModifier?.value,
+                        temporarySpBonus: button.form.elements.temporarySpBonus?.value
                     };
                 }
             }
@@ -99,7 +103,8 @@ async function createApplyDamageDialog(actor, damage, totalDamage) {
         addOilDmg,
         nonLethal,
         damageModifierType,
-        damageModifier
+        damageModifier,
+        temporarySpBonus
     };
 }
 
