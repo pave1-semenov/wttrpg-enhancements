@@ -5,21 +5,10 @@ import {
     getWeaponSkillParentWeapon,
     withWeaponSkillNativeAttackOverride
 } from '../util/weaponSkill.js';
-import { evaluateCondition } from '../util/condition.js';
+import { getCurrentTargetActor, isWeaponSkillAvailable } from '../util/weaponSkillAvailability.js';
 
 const { DialogV2 } = foundry.applications.api;
 const FIXED_COUNT_STRIKE_KEY = 'wttrpgEnhancementsSkillAttack';
-
-function getCurrentTargetActor() {
-    return Array.from(game.user?.targets ?? [])[0]?.actor ?? null;
-}
-
-function isWeaponSkillAvailable(skill, actor, target) {
-    return evaluateCondition(skill?.system?.condition ?? '', {
-        attacker: actor,
-        target
-    });
-}
 
 function updateConditionalSkillDisplay(dialog, showAllSkills) {
     dialog.element.querySelectorAll('.weapon-skills-card--conditional').forEach(card => {
