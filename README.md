@@ -52,6 +52,7 @@ Common values have shorter helper functions:
 - `isSourceAWeaponSkill(name?)` and `isSourceAWeapon(name?)` check the attack source, optionally matching its name without regard to case.
 - `professionTree(actor?)` returns the complete profession system data. `professionSkill('name', actor?)` returns a profession ability so any of its properties can be inspected.
 - `professionSkillRank('name', actor?)` returns an ability's rank, or `0` if it is absent. `hasProfessionSkill('name', minimumRank?, actor?)` checks that it has been raised to at least the requested rank (rank `1` by default).
+- `professionSkillPoints(actor?)` returns the total points invested in the defining skill and all nine profession path skills.
 
 Examples:
 
@@ -61,6 +62,7 @@ stat('ref') > 5 && hasActiveEffect('Monster Oil')
 getActiveEffect('Blood Frenzy').system.changes[0].value * 2 > damage.amount
 armor() < 10 && damage.type === 'slashing'
 isSourceAWeaponSkill('Whirl') && professionSkillRank('Fury') >= 5
+professionSkillPoints() >= 20
 isSourceAWeapon() && professionSkill('Tactical Awareness').thresholds.hasThresholds
 ```
 
@@ -97,7 +99,7 @@ Each weapon skill can have its own:
 
 Skills can be created directly on a weapon or copied from reusable templates. An attached copy can inherit the weapon's properties or keep the template's own values.
 
-The attack picker shows the weapon's normal attack alongside its skills. Skill conditions use `actor` (the weapon's owner) and `target` (the first currently targeted actor). Skills whose conditions are not met remain visible in a separate dimmed group and cannot be selected. The player can ignore conditions for the current attack to make every skill available; if no skill is available, the standard weapon attack is selected automatically.
+The attack picker shows the weapon's normal attack alongside its skills. Skill conditions use `actor` (the weapon's owner) and `target` (the first currently targeted actor). Skills whose conditions are not met are hidden by default. The player can show and use every attached skill for the current attack with the Show all skills option; if no skill is available, the standard weapon attack is selected automatically.
 
 **Example:** A *Pommel Strike* may cost 3 Stamina, deal bludgeoning damage, use a different attack skill, and allow the defender an additional defense option. A *Whirl* technique may make a fixed number of attacks with its own accuracy penalty.
 

@@ -509,10 +509,6 @@
     min-width: 0;
 }
 
-.weapon-skill-attack-dialog__skill-group--unavailable {
-    padding-top: 0.75rem;
-    border-top: 1px solid color-mix(in srgb, var(--color-border-light-primary) 45%, transparent);
-}
 
 .weapon-skill-attack-dialog__group-title {
     margin: 0 0 0.45rem;
@@ -523,50 +519,16 @@
     text-transform: uppercase;
 }
 
-.weapon-skill-attack-dialog__skill-group--unavailable .weapon-skill-attack-dialog__group-title {
-    color: color-mix(in srgb, var(--color-text-primary) 48%, transparent);
+.weapon-skill-attack-dialog__condition-controls {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 0.65rem;
 }
 
-.weapon-skills-card--unavailable {
-    cursor: not-allowed;
-    border-color: color-mix(in srgb, var(--color-border-light-primary) 28%, transparent);
-    background: color-mix(in srgb, var(--color-bg-option) 36%, transparent);
-    box-shadow: none;
-}
-
-.weapon-skills-card--choice.weapon-skills-card--unavailable:hover {
-    border-color: color-mix(in srgb, var(--color-border-light-primary) 38%, transparent);
-    background: color-mix(in srgb, var(--color-bg-option) 42%, transparent);
-}
-
-.weapon-skills-card--unavailable .weapon-skills-card__open {
-    cursor: not-allowed;
-}
-
-.weapon-skills-card--choice.weapon-skills-card--unavailable:hover .weapon-skills-card__open {
-    transform: none;
-}
-
-.weapon-skills-card--choice.weapon-skills-card--unavailable:hover .weapon-skills-card__art {
-    border-color: color-mix(in srgb, var(--color-border-light-primary) 45%, transparent);
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
-        color-mix(in srgb, var(--color-bg-option) 48%, transparent);
-    box-shadow: none;
-    transform: none;
-}
-
-.weapon-skills-card--unavailable .weapon-skills-card__art,
-.weapon-skills-card--unavailable .weapon-skills-card__name {
-    opacity: 0.4;
-    filter: grayscale(1) brightness(0.72);
-}
-
-.weapon-skill-attack-dialog__ignore-conditionals {
+.weapon-skill-attack-dialog__condition-control {
     display: flex;
     align-items: flex-start;
     gap: 0.65rem;
-    margin-top: 0.65rem;
     padding: 0.7rem 0.85rem;
     border: 1px solid color-mix(in srgb, var(--color-border-light-primary) 55%, transparent);
     border-radius: 8px;
@@ -574,18 +536,18 @@
     cursor: pointer;
 }
 
-.weapon-skill-attack-dialog__ignore-conditionals input {
+.weapon-skill-attack-dialog__condition-control input {
     flex: 0 0 auto;
     margin-top: 0.15rem;
 }
 
-.weapon-skill-attack-dialog__ignore-conditionals span {
+.weapon-skill-attack-dialog__condition-control span {
     display: flex;
     flex-direction: column;
     gap: 0.15rem;
 }
 
-.weapon-skill-attack-dialog__ignore-conditionals small {
+.weapon-skill-attack-dialog__condition-control small {
     color: color-mix(in srgb, var(--color-text-primary) 62%, transparent);
     font-weight: 400;
 }
