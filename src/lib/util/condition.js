@@ -292,6 +292,8 @@ function callHelper(name, args, context) {
             return findProfessionSkill(args[0], args[1] ?? context?.attacker)
         case 'professionSkillRank':
             return getProfessionSkillRank(args[0], args[1] ?? context?.attacker)
+        case 'professionSkillPoints':
+            return getProfessionSkillPoints(args[0] ?? context?.attacker)
         case 'hasProfessionSkill':
             return hasProfessionSkill(args, context)
         default:
@@ -322,23 +324,43 @@ function findProfessionSkill(name, actor) {
     const expectedName = normalizeName(name)
     if (!expectedName) return undefined
 
-    const professionTree = getProfessionTree(actor)
-    if (!professionTree) return undefined
+    return getProfessionSkills(actor).find(skill => normalizeName(skill?.skillName) === expectedName)
+}
 
-    const skills = [
+function getProfessionSkills(actor) {
+    const professionTree = getProfessionTree(actor)
+    if (!professionTree) return []
+
+    return [
         professionTree.definingSkill,
         ...['skillPath1', 'skillPath2', 'skillPath3'].flatMap(path => {
             const skillPath = professionTree[path]
             return [skillPath?.skill1, skillPath?.skill2, skillPath?.skill3]
         })
     ]
-
-    return skills.find(skill => normalizeName(skill?.skillName) === expectedName)
 }
 
 function getProfessionSkillRank(name, actor) {
     const skill = findProfessionSkill(name, actor)
     return skill ? Number(skill.level) || 0 : 0
+}
+
+function getProfessionSkillPoints(actor) {
+    if (!actor) return 0
+
+    if (typeof actor.calc_total_skills_profession === 'function') {
+        try {
+            const total = Number(actor.calc_total_skills_profession())
+            if (Number.isFinite(total)) return total
+        } catch {
+            // Fall back to the profession item data below.
+        }
+    }
+
+    return getProfessionSkills(actor).reduce((total, skill) => {
+        const level = Number(skill?.level)
+        return total + (Number.isFinite(level) ? level : 0)
+    }, 0)
 }
 
 function hasProfessionSkill(args, context) {

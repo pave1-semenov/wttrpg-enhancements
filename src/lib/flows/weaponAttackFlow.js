@@ -21,35 +21,14 @@ function isWeaponSkillAvailable(skill, actor, target) {
     });
 }
 
-function sortWeaponSkillCards(container) {
-    const cards = Array.from(container.querySelectorAll('.weapon-skills-card--conditional'));
-    cards
-        .sort((left, right) => Number(left.dataset.skillIndex) - Number(right.dataset.skillIndex))
-        .forEach(card => container.appendChild(card));
-}
-
-function updateConditionalSkillDisplay(dialog, ignoreConditionals) {
-    const availableContainer = dialog.element.querySelector('[data-available-skills]');
-    const unavailableContainer = dialog.element.querySelector('[data-unavailable-skills]');
-    const unavailableGroup = dialog.element.querySelector('[data-unavailable-skills-group]');
-    if (!availableContainer || !unavailableContainer || !unavailableGroup) return;
-
+function updateConditionalSkillDisplay(dialog, showAllSkills) {
     dialog.element.querySelectorAll('.weapon-skills-card--conditional').forEach(card => {
         const conditionMatches = card.dataset.conditionMatches === 'true';
-        const isAvailable = conditionMatches || ignoreConditionals;
+        const isAvailable = conditionMatches || showAllSkills;
         const radio = card.querySelector('.weapon-skills-card__radio');
-        const label = card.querySelector('.weapon-skills-card__open');
         radio.disabled = !isAvailable;
-        label.title = isAvailable
-            ? card.dataset.skillName
-            : game.i18n.localize('WTTRPGEnhancements.WeaponSkillAttack.ConditionNotMet');
-        card.classList.toggle('weapon-skills-card--unavailable', !isAvailable);
-        (isAvailable ? availableContainer : unavailableContainer).appendChild(card);
+        card.hidden = !isAvailable;
     });
-
-    sortWeaponSkillCards(availableContainer);
-    sortWeaponSkillCards(unavailableContainer);
-    unavailableGroup.hidden = ignoreConditionals || !unavailableContainer.children.length;
 
     const selectedRadio = dialog.element.querySelector('input[name="selectedAttack"]:checked');
     if (selectedRadio?.disabled) {
@@ -398,16 +377,14 @@ export async function wrapWeaponAttack(wrapped, weapon, options = {}) {
 
 async function promptWeaponSkillChoice(weapon, attachedSkills) {
     const target = getCurrentTargetActor();
-    const skillChoices = attachedSkills.map((skill, index) => ({
+    const skillChoices = attachedSkills.map(skill => ({
         id: skill.id,
         uuid: skill.uuid,
         name: skill.name,
         img: skill.img,
-        index,
         available: isWeaponSkillAvailable(skill, weapon.actor, target)
     }));
     const availableSkills = skillChoices.filter(skill => skill.available);
-    const unavailableSkills = skillChoices.filter(skill => !skill.available);
     if (availableSkills.length) availableSkills[0].checked = true;
 
     const content = await foundry.applications.handlebars.renderTemplate(
@@ -418,8 +395,7 @@ async function promptWeaponSkillChoice(weapon, attachedSkills) {
                 img: weapon.img,
                 checked: availableSkills.length === 0
             },
-            availableSkills,
-            unavailableSkills
+            skillChoices
         }
     );
 
@@ -436,8 +412,8 @@ async function promptWeaponSkillChoice(weapon, attachedSkills) {
         },
         content,
         render: (_event, dialog) => {
-            const ignoreConditionals = dialog.element.querySelector('[data-ignore-conditionals]');
-            ignoreConditionals?.addEventListener('change', event => {
+            const showAllSkills = dialog.element.querySelector('[data-show-all-skills]');
+            showAllSkills?.addEventListener('change', event => {
                 updateConditionalSkillDisplay(dialog, event.currentTarget.checked);
             });
 

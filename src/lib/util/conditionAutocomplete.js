@@ -95,6 +95,7 @@ const HELPER_COMPLETIONS = [
     createCompletion("armor('|', actor)", 'WTTRPGEnhancements.ConditionAutocomplete.ActorArmor', { priority: 30 }),
     createCompletion("professionSkill('|')", 'WTTRPGEnhancements.ConditionAutocomplete.ProfessionSkill', { priority: 30 }),
     createCompletion("professionSkillRank('|')", 'WTTRPGEnhancements.ConditionAutocomplete.ProfessionSkillRank', { priority: 30 }),
+    createCompletion('professionSkillPoints()', 'WTTRPGEnhancements.ConditionAutocomplete.ProfessionSkillPoints', { priority: 30 }),
     createCompletion("hasProfessionSkill('|', 1)", 'WTTRPGEnhancements.ConditionAutocomplete.HasProfessionSkill', { priority: 30 }),
     createCompletion('professionTree(actor)', 'WTTRPGEnhancements.ConditionAutocomplete.ProfessionTreeHelper', { priority: 30 }),
     createCompletion("isSourceAWeaponSkill('|')", 'WTTRPGEnhancements.ConditionAutocomplete.SourceWeaponSkill', {
