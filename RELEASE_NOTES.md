@@ -1,5 +1,15 @@
 # WTTRPG Enhancements release notes
 
+## 0.0.14
+
+### Optional Argon Combat HUD integration
+
+- Added optional support for [Enhanced Combat HUD for The Witcher TRPG](https://github.com/pedroaugustobt/enhancedcombathud-thewitchertrpg). The module remains fully functional without Argon installed.
+- Available attached weapon skills now appear as direct Argon HUD buttons around their weapon, using the same actor-and-target condition checks as the attack picker. Left-click to make that skill's attack; right-click to open its sheet.
+- Weapon-skill buttons use larger icons arranged around the weapon: the first three on the lower edge, the next three on the upper edge, and additional rows growing upward.
+- Monsters now show all non-ammunition weapons in Argon when none are equipped. Player characters retain Argon's equipped-weapon behavior.
+- Added client settings to hide Argon's Brawling actions, Verbal Combat, or Special Attacks independently.
+
 ## 0.0.13
 
 ### Weapon skill availability

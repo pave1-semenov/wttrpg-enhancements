@@ -1,5 +1,6 @@
 import { ITEM_TYPES, MODULE, SETTINGS, WEAPON_SKILL_ATTACK_OPTIONS } from '../util/constants.js';
 import { getAttachedWeaponSkillsSync, isWeaponSkill } from '../util/weaponSkillAttachment.js';
+import { getCurrentTargetActor, isWeaponSkillAvailable } from '../util/weaponSkillAvailability.js';
 
 const ARGON_CORE_MODULE_ID = 'enhancedcombathud';
 const ARGON_WITCHER_MODULE_ID = 'enhancedcombathud-TheWitcherTRPG';
@@ -140,7 +141,9 @@ function addWeaponSkillIcons(itemButton, element) {
     const weapon = itemButton?.item;
     if (weapon?.type !== ITEM_TYPES.WEAPON || !weapon.actor) return;
 
-    const skills = getAttachedWeaponSkillsSync(weapon);
+    const target = getCurrentTargetActor();
+    const skills = getAttachedWeaponSkillsSync(weapon)
+        .filter(skill => isWeaponSkillAvailable(skill, weapon.actor, target));
     if (!skills.length) return;
 
     const overlay = document.createElement('div');
@@ -172,12 +175,23 @@ function refreshWeaponButtons(item) {
     if (!isArgonWitcherActive() || !isWeaponSkill(item)) return;
     if (item.parent !== ui.ARGON?._actor) return;
 
+    refreshArgonWeaponButtons(item.parent);
+}
+
+function refreshArgonWeaponButtons(actor) {
+    if (!actor) return;
+
     for (const itemButton of ui.ARGON.itemButtons ?? []) {
         const weapon = itemButton?.item;
-        if (weapon?.type === ITEM_TYPES.WEAPON && weapon.actor === item.parent) {
-            itemButton.render();
+        if (weapon?.type === ITEM_TYPES.WEAPON && weapon.actor === actor) {
+            void itemButton.render();
         }
     }
+}
+
+function refreshWeaponButtonsForTarget(user) {
+    if (user !== game.user || !isArgonWitcherActive()) return;
+    refreshArgonWeaponButtons(ui.ARGON?._actor);
 }
 
 export function registerArgonCombatHudIntegration() {
@@ -192,4 +206,5 @@ export function registerArgonCombatHudIntegration() {
     Hooks.on('createItem', refreshWeaponButtons);
     Hooks.on('updateItem', refreshWeaponButtons);
     Hooks.on('deleteItem', refreshWeaponButtons);
+    Hooks.on('targetToken', refreshWeaponButtonsForTarget);
 }

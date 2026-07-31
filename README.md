@@ -109,7 +109,7 @@ The attack picker shows the weapon's normal attack alongside its skills. Skill c
 
 When the Argon core and Witcher integration modules are active:
 
-- Attached weapon skills appear as direct action buttons around their weapon. The first three occupy the lower edge, the next three occupy the upper edge, and additional rows grow upward.
+- Available attached weapon skills appear as direct action buttons around their weapon, using the same actor-and-target condition checks as the attack picker. The first three occupy the lower edge, the next three occupy the upper edge, and additional rows grow upward.
 - Left-clicking a skill performs that skill's attack directly. Right-clicking opens its item sheet.
 - Monsters without equipped weapons still receive HUD buttons for all of their non-ammunition weapons. Player characters continue to use Argon's equipped-weapon behavior.
 - Client settings can independently hide Brawling actions, Verbal Combat, and Special Attacks from the HUD.
