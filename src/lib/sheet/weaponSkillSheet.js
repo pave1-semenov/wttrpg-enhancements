@@ -148,7 +148,8 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
                 description: systemData.description ?? this.document.system.description ?? '',
                 parentWeaponUuid: systemData.parentWeaponUuid ?? this.document.system.parentWeaponUuid ?? '',
                 condition: systemData.condition ?? this.document.system.condition ?? '',
-                damage: systemData.damage ?? this.document.system.damage ?? '',
+                inheritDamage: !!systemData.inheritDamage,
+                damage: systemData.damage ?? this.document._source.system.damage ?? '',
                 damageType: WeaponSkillSheet.normalizeArrayValue(systemData.damageType),
                 targetLocations: WeaponSkillSheet.normalizeArrayValue(systemData.targetLocations),
                 allowedStrikes: WeaponSkillSheet.normalizeArrayValue(systemData.allowedStrikes),
@@ -305,6 +306,7 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         context.rangedAttackSkills = rangedAttackSkills;
         context.hasMeleeAttack = selectedAttackMode === ATTACK_MODES.MELEE;
         context.hasRangedAttack = selectedAttackMode === ATTACK_MODES.RANGED;
+        context.inheritDamage = !!this.document.system.inheritDamage;
         context.enrichedText = {
             description: {
                 enriched: await foundry.applications.ux.TextEditor.implementation.enrichHTML(
