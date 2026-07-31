@@ -7,6 +7,12 @@ export const SYSTEM = {
     ID: 'TheWitcherTRPG'
 }
 
+export const SETTINGS = {
+    ARGON_SHOW_BRAWLING_ACTIONS: 'argonShowBrawlingActions',
+    ARGON_SHOW_VERBAL_COMBAT: 'argonShowVerbalCombat',
+    ARGON_SHOW_SPECIAL_ATTACKS: 'argonShowSpecialAttacks'
+}
+
 export const ENHANCEMENT_KEYS = {
     DOT: 'dot',
     HOT: 'hot',
@@ -78,6 +84,10 @@ export const ITEM_TYPES = {
 export const ATTACK_MODES = {
     MELEE: 'melee',
     RANGED: 'ranged'
+}
+
+export const WEAPON_SKILL_ATTACK_OPTIONS = {
+    DIRECT_SKILL_ID: 'wttrpgEnhancementsWeaponSkillId'
 }
 
 export const ATTACK_SKILL_OVERRIDE_MODES = {

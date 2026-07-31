@@ -983,4 +983,74 @@
   gap: 0.35rem;
 }
 
+/* Optional Argon Combat HUD integration */
+.extended-combat-hud .action-hud .wttrpg-enhancements-argon-weapon {
+  overflow: visible;
+}
 
+.extended-combat-hud .wttrpg-enhancements-argon-skills {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.extended-combat-hud .wttrpg-enhancements-argon-skills__rail {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  width: 136px;
+  flex-wrap: wrap-reverse;
+  justify-content: center;
+  align-content: flex-end;
+  gap: 6px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.extended-combat-hud .wttrpg-enhancements-argon-skills__rail--bottom {
+  bottom: -20px;
+}
+
+.extended-combat-hud .wttrpg-enhancements-argon-skills__rail--top {
+  bottom: calc(100% - 20px);
+}
+
+.extended-combat-hud .wttrpg-enhancements-argon-skill {
+  display: block;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  margin: 0;
+  padding: 2px;
+  overflow: hidden;
+  border: 1px solid var(--ech-mainAction-base-border);
+  border-radius: 6px;
+  background: var(--ech-mainAction-base-background);
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.5);
+  backdrop-filter: var(--ech-blur-amount);
+  cursor: pointer;
+  pointer-events: all;
+  transition: filter 120ms ease, transform 120ms ease;
+}
+
+.extended-combat-hud .wttrpg-enhancements-argon-skill:hover,
+.extended-combat-hud .wttrpg-enhancements-argon-skill:focus-visible {
+  filter: brightness(135%);
+  outline: 2px solid var(--ech-mainAction-hover-border);
+  transform: scale(1.08);
+}
+
+.extended-combat-hud .wttrpg-enhancements-argon-skill:disabled {
+  cursor: wait;
+  filter: grayscale(0.65) brightness(0.75);
+}
+
+.extended-combat-hud .wttrpg-enhancements-argon-skill img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 4px;
+  object-fit: cover;
+}

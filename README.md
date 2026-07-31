@@ -103,6 +103,17 @@ The attack picker shows the weapon's normal attack alongside its skills. Skill c
 
 **Example:** A *Pommel Strike* may cost 3 Stamina, deal bludgeoning damage, use a different attack skill, and allow the defender an additional defense option. A *Whirl* technique may make a fixed number of attacks with its own accuracy penalty.
 
+### Optional Argon Combat HUD integration
+
+[Enhanced Combat HUD for The Witcher TRPG](https://github.com/pedroaugustobt/enhancedcombathud-thewitchertrpg) is supported as a soft dependency. WTTRPG Enhancements continues to work normally when it is not installed.
+
+When the Argon core and Witcher integration modules are active:
+
+- Attached weapon skills appear as direct action buttons around their weapon. The first three occupy the lower edge, the next three occupy the upper edge, and additional rows grow upward.
+- Left-clicking a skill performs that skill's attack directly. Right-clicking opens its item sheet.
+- Monsters without equipped weapons still receive HUD buttons for all of their non-ammunition weapons. Player characters continue to use Argon's equipped-weapon behavior.
+- Client settings can independently hide Brawling actions, Verbal Combat, and Special Attacks from the HUD.
+
 ## Where to find the features
 
 The GM can open **WTTRPG Enhancements** from the header of:
@@ -118,3 +129,7 @@ Damage messages gain an enhanced **Apply Damage** entry in their context menu. T
 - Foundry VTT 13 or 14
 - *The Witcher TRPG* system 14.2.1 or newer
 - [libWrapper](https://foundryvtt.com/packages/lib-wrapper)
+
+Optional:
+
+- [Argon - Combat HUD](https://foundryvtt.com/packages/enhancedcombathud) with [Enhanced Combat HUD for The Witcher TRPG](https://github.com/pedroaugustobt/enhancedcombathud-thewitchertrpg)

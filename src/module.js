@@ -9,9 +9,13 @@ import { EnhancementRoll } from "./lib/roll/enhancementRoll.js";
 import { wrapGetLocationArmor } from "./lib/core/temporarySp.js";
 import { MODULE, TEMPLATE_PATHS } from "./lib/util/constants.js";
 import { registerItemTypes } from "./lib/setup/itemTypeRegistration.js";
+import { registerSettings } from "./lib/setup/settings.js";
+import { registerArgonCombatHudIntegration } from "./lib/integrations/argonCombatHud.js";
 Hooks.once('init', function () {
     console.log('The Witcher TRPG Enhancements | Initializing module')
     registerItemTypes()
+    registerSettings()
+    registerArgonCombatHudIntegration()
     registerCustomRollClasses()
     preloadTemplates()
     console.log('The Witcher TRPG Enhancements | Module initialized')

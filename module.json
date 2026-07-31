@@ -38,6 +38,17 @@
         "compatibility": {}
       }
     ],
+    "recommends": [
+      {
+        "id": "enhancedcombathud-TheWitcherTRPG",
+        "type": "module",
+        "manifest": "https://github.com/pedroaugustobt/enhancedcombathud-thewitchertrpg/releases/latest/download/module.json",
+        "reason": "Displays attached weapon-skill icons around weapon buttons in Argon Combat HUD.",
+        "compatibility": {
+          "minimum": "1.0.3"
+        }
+      }
+    ],
     "conflicts": []
   },
   "esmodules": [

@@ -10,6 +10,22 @@
                                "Buttons":  {
                                                "Title":  "WTTRPG enhancements"
                                            },
+                               "Settings":  {
+                                                "Argon":  {
+                                                               "ShowBrawlingActions":  {
+                                                                                           "Name":  "Argon HUD: Show brawling actions",
+                                                                                           "Hint":  "Show the Brawling action button in Argon Combat HUD."
+                                                                                       },
+                                                               "ShowVerbalCombat":  {
+                                                                                        "Name":  "Argon HUD: Show verbal combat",
+                                                                                        "Hint":  "Show the Verbal Combat action button in Argon Combat HUD."
+                                                                                    },
+                                                               "ShowSpecialAttacks":  {
+                                                                                          "Name":  "Argon HUD: Show special attacks",
+                                                                                          "Hint":  "Show the Special Attacks action button in Argon Combat HUD."
+                                                                                    }
+                                                           }
+                                            },
                                "ApplyDamage":  {
                                                     "Title":  "Apply damage",
                                                     "RolledAmount":  "Rolled amount",
@@ -235,6 +251,7 @@
                                                          "NoDescription":  "No description available.",
                                                          "NativeStrikeCount":  "Native strike count",
                                                          "FixedCountStrike":  "Skill Attack",
+                                                         "Unavailable":  "{skill} is not currently available.",
                                                          "Yes":  "Yes",
                                                          "No":  "No"
                                                      },
