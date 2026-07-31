@@ -5,9 +5,58 @@ import {
     getWeaponSkillParentWeapon,
     withWeaponSkillNativeAttackOverride
 } from '../util/weaponSkill.js';
+import { evaluateCondition } from '../util/condition.js';
 
 const { DialogV2 } = foundry.applications.api;
 const FIXED_COUNT_STRIKE_KEY = 'wttrpgEnhancementsSkillAttack';
+
+function getCurrentTargetActor() {
+    return Array.from(game.user?.targets ?? [])[0]?.actor ?? null;
+}
+
+function isWeaponSkillAvailable(skill, actor, target) {
+    return evaluateCondition(skill?.system?.condition ?? '', {
+        attacker: actor,
+        target
+    });
+}
+
+function sortWeaponSkillCards(container) {
+    const cards = Array.from(container.querySelectorAll('.weapon-skills-card--conditional'));
+    cards
+        .sort((left, right) => Number(left.dataset.skillIndex) - Number(right.dataset.skillIndex))
+        .forEach(card => container.appendChild(card));
+}
+
+function updateConditionalSkillDisplay(dialog, ignoreConditionals) {
+    const availableContainer = dialog.element.querySelector('[data-available-skills]');
+    const unavailableContainer = dialog.element.querySelector('[data-unavailable-skills]');
+    const unavailableGroup = dialog.element.querySelector('[data-unavailable-skills-group]');
+    if (!availableContainer || !unavailableContainer || !unavailableGroup) return;
+
+    dialog.element.querySelectorAll('.weapon-skills-card--conditional').forEach(card => {
+        const conditionMatches = card.dataset.conditionMatches === 'true';
+        const isAvailable = conditionMatches || ignoreConditionals;
+        const radio = card.querySelector('.weapon-skills-card__radio');
+        const label = card.querySelector('.weapon-skills-card__open');
+        radio.disabled = !isAvailable;
+        label.title = isAvailable
+            ? card.dataset.skillName
+            : game.i18n.localize('WTTRPGEnhancements.WeaponSkillAttack.ConditionNotMet');
+        card.classList.toggle('weapon-skills-card--unavailable', !isAvailable);
+        (isAvailable ? availableContainer : unavailableContainer).appendChild(card);
+    });
+
+    sortWeaponSkillCards(availableContainer);
+    sortWeaponSkillCards(unavailableContainer);
+    unavailableGroup.hidden = ignoreConditionals || !unavailableContainer.children.length;
+
+    const selectedRadio = dialog.element.querySelector('input[name="selectedAttack"]:checked');
+    if (selectedRadio?.disabled) {
+        const fallback = dialog.element.querySelector('input[name="selectedAttack"]:not(:disabled)');
+        if (fallback) fallback.checked = true;
+    }
+}
 
 function getAllowedTargetLocations(skill) {
     const allowedLocations = Array.isArray(skill?.system?.targetLocations)
@@ -348,20 +397,29 @@ export async function wrapWeaponAttack(wrapped, weapon, options = {}) {
 }
 
 async function promptWeaponSkillChoice(weapon, attachedSkills) {
+    const target = getCurrentTargetActor();
+    const skillChoices = attachedSkills.map((skill, index) => ({
+        id: skill.id,
+        uuid: skill.uuid,
+        name: skill.name,
+        img: skill.img,
+        index,
+        available: isWeaponSkillAvailable(skill, weapon.actor, target)
+    }));
+    const availableSkills = skillChoices.filter(skill => skill.available);
+    const unavailableSkills = skillChoices.filter(skill => !skill.available);
+    if (availableSkills.length) availableSkills[0].checked = true;
+
     const content = await foundry.applications.handlebars.renderTemplate(
         TEMPLATE_PATHS.DIALOG_WEAPON_SKILL_ATTACK_CHOICE,
         {
             weapon: {
                 name: weapon.name,
-                img: weapon.img
+                img: weapon.img,
+                checked: availableSkills.length === 0
             },
-            attachedSkills: attachedSkills.map((skill, index) => ({
-                id: skill.id,
-                uuid: skill.uuid,
-                name: skill.name,
-                img: skill.img,
-                checked: index === 0
-            }))
+            availableSkills,
+            unavailableSkills
         }
     );
 
@@ -378,6 +436,11 @@ async function promptWeaponSkillChoice(weapon, attachedSkills) {
         },
         content,
         render: (_event, dialog) => {
+            const ignoreConditionals = dialog.element.querySelector('[data-ignore-conditionals]');
+            ignoreConditionals?.addEventListener('change', event => {
+                updateConditionalSkillDisplay(dialog, event.currentTarget.checked);
+            });
+
             dialog.element.querySelectorAll('.weapon-skills-card__info').forEach(button => {
                 if (button.dataset.boundInfo === 'true') return;
                 button.dataset.boundInfo = 'true';

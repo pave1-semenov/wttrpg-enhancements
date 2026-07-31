@@ -27,6 +27,21 @@
     </fieldset>
 
     <fieldset>
+        <legend>{{localize "WTTRPGEnhancements.WeaponSkill.Availability"}}</legend>
+        <div class="form-group">
+            <label>{{localize "WTTRPGEnhancements.WeaponSkill.ConditionLabel"}}</label>
+            <input
+                name="system.condition"
+                type="text"
+                value="{{item.system.condition}}"
+                data-condition-autocomplete
+                data-condition-context="weapon-skill"
+            >
+            <p class="hint">{{localize "WTTRPGEnhancements.WeaponSkill.ConditionHint"}}</p>
+        </div>
+    </fieldset>
+
+    <fieldset>
         <legend>{{localize "WTTRPGEnhancements.WeaponSkill.DamageSettings"}}</legend>
         <div class="form-group">
             <label>{{localize "WTTRPGEnhancements.WeaponSkill.DamageFormula"}}</label>

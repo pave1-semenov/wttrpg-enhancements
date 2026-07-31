@@ -24,6 +24,10 @@ export default function getWeaponSkillDataModel() {
                     initial: '',
                     label: 'WTTRPGEnhancements.WeaponSkill.ParentWeaponUuid'
                 }),
+                condition: new fields.StringField({
+                    initial: '',
+                    label: 'WTTRPGEnhancements.WeaponSkill.ConditionLabel'
+                }),
                 damageType: new fields.ArrayField(new fields.StringField({ initial: '' }), {
                     initial: [],
                     label: 'WITCHER.Dialog.damageType'
