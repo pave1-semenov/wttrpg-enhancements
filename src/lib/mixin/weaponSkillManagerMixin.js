@@ -83,7 +83,7 @@ export const WeaponSkillManagerMixin = Superclass =>
             return {
                 ...sourceData.system,
                 description: weaponSystem.description ?? sourceData.system?.description ?? '',
-                damage: weaponSystem.damage ?? sourceData.system?.damage ?? '',
+                inheritDamage: true,
                 damageType: this.getWeaponDamageTypes(weaponSystem, sourceData.system?.damageType ?? []),
                 type: foundry.utils.deepClone(weaponSystem.type ?? sourceData.system?.type ?? {}),
                 quantity: WEAPON_SKILL_DEFAULTS.QUANTITY,
@@ -118,6 +118,7 @@ export const WeaponSkillManagerMixin = Superclass =>
         buildTemplateSkillData(sourceData) {
             return {
                 ...foundry.utils.deepClone(sourceData.system ?? {}),
+                inheritDamage: false,
                 quantity: WEAPON_SKILL_DEFAULTS.QUANTITY,
                 isThrowable: WEAPON_SKILL_DEFAULTS.IS_THROWABLE,
                 attackOptions: this.toPlainArray(sourceData.system?.attackOptions, []),

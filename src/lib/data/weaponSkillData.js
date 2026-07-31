@@ -28,6 +28,10 @@ export default function getWeaponSkillDataModel() {
                     initial: '',
                     label: 'WTTRPGEnhancements.WeaponSkill.ConditionLabel'
                 }),
+                inheritDamage: new fields.BooleanField({
+                    initial: true,
+                    label: 'WTTRPGEnhancements.WeaponSkill.InheritDamage'
+                }),
                 damageType: new fields.ArrayField(new fields.StringField({ initial: '' }), {
                     initial: [],
                     label: 'WITCHER.Dialog.damageType'
@@ -78,6 +82,10 @@ export default function getWeaponSkillDataModel() {
             this.isThrowable = WEAPON_SKILL_DEFAULTS.IS_THROWABLE;
 
             const parentWeapon = getWeaponSkillParentWeapon(this, this.parent)?.system;
+            if (this.inheritDamage && parentWeapon) {
+                this.damage = parentWeapon.damage ?? '';
+            }
+
             if (!this.attackOptions.size) {
                 const parentAttackOptions = parentWeapon?.attackOptions;
                 this.attackOptions = new Set(

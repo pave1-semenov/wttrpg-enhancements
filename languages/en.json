@@ -173,6 +173,8 @@
                                                    "ParentWeaponUuid":  "Parent Weapon UUID",
                                                    "DamageSettings":  "Damage Settings",
                                                    "DamageFormula":  "Damage Formula",
+                                                   "InheritDamage":  "Inherit Damage",
+                                                   "InheritDamageHint":  "Use the parent weapon's damage formula and update automatically when it changes.",
                                                    "DamageTypes":  "Damage Types",
                                                    "GeneralSettings":  "General Settings",
                                                    "Availability":  "Availability",
@@ -265,9 +267,6 @@
                            }
               }
 }
-
-
-
 
 
 

@@ -44,8 +44,13 @@
     <fieldset>
         <legend>{{localize "WTTRPGEnhancements.WeaponSkill.DamageSettings"}}</legend>
         <div class="form-group">
+            <label>{{localize "WTTRPGEnhancements.WeaponSkill.InheritDamage"}}</label>
+            <input name="system.inheritDamage" type="checkbox" {{checked item.system.inheritDamage}}>
+            <p class="hint">{{localize "WTTRPGEnhancements.WeaponSkill.InheritDamageHint"}}</p>
+        </div>
+        <div class="form-group">
             <label>{{localize "WTTRPGEnhancements.WeaponSkill.DamageFormula"}}</label>
-            <input name="system.damage" type="text" value="{{item.system.damage}}">
+            <input name="system.damage" type="text" value="{{item.system.damage}}" {{#if inheritDamage}}disabled{{/if}}>
         </div>
         <div class="form-group stacked">
             <label>{{localize "WITCHER.Dialog.damageType"}}</label>
