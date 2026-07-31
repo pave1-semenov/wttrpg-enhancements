@@ -1,5 +1,5 @@
 import { getAttachedWeaponSkillsSync, isWeaponSkill } from '../util/weaponSkillAttachment.js';
-import { ATTACK_MODES, TEMPLATE_PATHS } from '../util/constants.js';
+import { ATTACK_MODES, TEMPLATE_PATHS, WEAPON_SKILL_ATTACK_OPTIONS } from '../util/constants.js';
 import {
     getWeaponSkillEffectiveAttackSkill,
     getWeaponSkillParentWeapon,
@@ -331,16 +331,27 @@ export async function wrapWeaponAttack(wrapped, weapon, options = {}) {
         return wrapped(weapon, options);
     }
 
-    const choice = await promptWeaponSkillChoice(weapon, attachedSkills);
-    if (!choice) {
-        return;
-    }
+    const requestedSkillId = options[WEAPON_SKILL_ATTACK_OPTIONS.DIRECT_SKILL_ID];
+    let chosenSkill;
 
-    if (choice.mode === 'standard') {
-        return wrapped(weapon, options);
-    }
+    if (requestedSkillId) {
+        chosenSkill = attachedSkills.find(skill => skill.id === requestedSkillId);
+        if (!chosenSkill) return wrapped(weapon, options);
 
-    const chosenSkill = attachedSkills.find(skill => skill.id === choice.skillId);
+        const target = getCurrentTargetActor();
+        if (!isWeaponSkillAvailable(chosenSkill, weapon.actor, target)) {
+            return ui.notifications.warn(game.i18n.format(
+                'WTTRPGEnhancements.WeaponSkillAttack.Unavailable',
+                { skill: chosenSkill.name }
+            ));
+        }
+    } else {
+        const choice = await promptWeaponSkillChoice(weapon, attachedSkills);
+        if (!choice) return;
+        if (choice.mode === 'standard') return wrapped(weapon, options);
+
+        chosenSkill = attachedSkills.find(skill => skill.id === choice.skillId);
+    }
     if (!chosenSkill) {
         return wrapped(weapon, {
             ...options,
