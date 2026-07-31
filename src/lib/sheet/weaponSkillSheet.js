@@ -2,6 +2,7 @@ import { getWeaponSkillParentWeapon } from '../util/weaponSkill.js';
 import { ATTACK_MODES, ATTACK_SKILL_OVERRIDE_MODES, FLAG_KEYS, MODULE, TEMPLATE_PATHS, WEAPON_SKILL_DEFAULTS } from '../util/constants.js';
 import { LifeStealMixin } from '../mixin/lifestealMixin.js';
 import { getSpecificLocationOptions } from '../util/location.js';
+import { bindConditionAutocomplete } from '../util/conditionAutocomplete.js';
 
 const { ItemSheetV2 } = foundry.applications.sheets;
 const { HandlebarsApplicationMixin } = foundry.applications.api;
@@ -146,6 +147,7 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
             system: {
                 description: systemData.description ?? this.document.system.description ?? '',
                 parentWeaponUuid: systemData.parentWeaponUuid ?? this.document.system.parentWeaponUuid ?? '',
+                condition: systemData.condition ?? this.document.system.condition ?? '',
                 damage: systemData.damage ?? this.document.system.damage ?? '',
                 damageType: WeaponSkillSheet.normalizeArrayValue(systemData.damageType),
                 targetLocations: WeaponSkillSheet.normalizeArrayValue(systemData.targetLocations),
@@ -322,6 +324,11 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         context.tabs = this._prepareTabs('primary');
 
         return context;
+    }
+
+    _onRender(context, options) {
+        super._onRender(context, options);
+        bindConditionAutocomplete(this.element);
     }
 
     _onChangeForm(formConfig, event) {

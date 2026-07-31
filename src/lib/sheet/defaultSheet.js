@@ -1,8 +1,14 @@
 import { MODULE } from '../util/constants.js';
+import { bindConditionAutocomplete } from '../util/conditionAutocomplete.js';
 
 const { DocumentSheetV2, HandlebarsApplicationMixin } = foundry.applications.api
 
 export default class DefauldDocumentSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
+    _onRender(context, options) {
+        super._onRender(context, options);
+        bindConditionAutocomplete(this.element);
+    }
+
     async _fillUpdateData(formData, updateData, prefixes) {
         for (const [key, value] of Object.entries(formData.object)) {
             for (const { prefix, target } of prefixes) {

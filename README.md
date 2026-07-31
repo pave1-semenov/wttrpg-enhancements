@@ -20,7 +20,7 @@ Active Effects can deal damage or restore health automatically when a character'
 Weapons, spells, weapon skills, and damaging ongoing effects can return part of the damage they deal to the attacker.
 
 - Restore HP, Stamina, or the same attribute that was damaged.
-- Limit how much can be stolen by a single attack.
+- Limit how much can be stolen by a single attack; set the limit to `0` for no cap.
 - Turn excess HP recovery into a shield.
 - Set a maximum shield value.
 - Add conditions so lifesteal only works in specific situations.
@@ -64,17 +64,20 @@ isSourceAWeaponSkill('Whirl') && professionSkillRank('Fury') >= 5
 isSourceAWeapon() && professionSkill('Tactical Awareness').thresholds.hasThresholds
 ```
 
+Condition fields on amplifier, lifesteal, and weapon-skill sheets offer context-aware autocomplete while typing. Use the arrow keys to move through suggestions, `Enter` or `Tab` to insert one, and `Escape` to close the list.
+
 ### More control when applying damage
 
 An enhanced **Apply Damage** option is available from damage messages in chat.
 
 - Adjust the rolled amount by a fixed number or percentage before applying it.
 - Choose the hit location.
+- Add temporary stopping power to that location for this damage application without changing the actor's armor.
 - Mark the damage as non-lethal.
 - Account for vulnerability, weapon oils, and monster resistances.
 - Trigger any lifesteal attached to the attack.
 
-**Example:** The GM can reduce an incoming hit by 50% for a special resistance, move it to the arm, or add a small flat bonus without editing the original roll.
+**Example:** The GM can reduce an incoming hit by 50% for a special resistance, move it to the arm, add a small flat bonus, or grant temporary stopping power without editing the original roll or armor.
 
 ### Weapon skills and special attacks
 
@@ -90,8 +93,11 @@ Each weapon skill can have its own:
 - Range, ammunition use, and damage properties.
 - Defense options available to the target.
 - Lifesteal and Active Effects.
+- An availability condition based on the attacking actor and current target.
 
 Skills can be created directly on a weapon or copied from reusable templates. An attached copy can inherit the weapon's properties or keep the template's own values.
+
+The attack picker shows the weapon's normal attack alongside its skills. Skill conditions use `actor` (the weapon's owner) and `target` (the first currently targeted actor). Skills whose conditions are not met remain visible in a separate dimmed group and cannot be selected. The player can ignore conditions for the current attack to make every skill available; if no skill is available, the standard weapon attack is selected automatically.
 
 **Example:** A *Pommel Strike* may cost 3 Stamina, deal bludgeoning damage, use a different attack skill, and allow the defender an additional defense option. A *Whirl* technique may make a fixed number of attacks with its own accuracy penalty.
 

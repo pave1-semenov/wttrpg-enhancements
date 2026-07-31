@@ -9,6 +9,7 @@
                         name="selectedAttack"
                         id="weapon-attack-choice-standard"
                         value="standard"
+                        {{checked weapon.checked}}
                     >
                     <label
                         class="weapon-skills-card__open"
@@ -30,34 +31,101 @@
                 <span>{{localize "WTTRPGEnhancements.WeaponSkillAttack.Or"}}</span>
             </div>
 
-            <div class="weapon-skills-cards weapon-skills-cards--attack-choice weapon-skill-attack-dialog__skill-choices">
-                {{#each attachedSkills}}
-                <article class="weapon-skills-card weapon-skills-card--choice">
-                    <input
-                        class="weapon-skills-card__radio"
-                        type="radio"
-                        name="selectedAttack"
-                        id="weapon-skill-choice-{{this.id}}"
-                        value="{{this.id}}"
-                        {{checked this.checked}}
-                    >
-                    <label class="weapon-skills-card__open" for="weapon-skill-choice-{{this.id}}" title="{{this.name}}">
-                        <span class="weapon-skills-card__art">
-                            <img class="weapon-skills-card__image" src="{{this.img}}" alt="{{this.name}}">
-                        </span>
-                        <span class="weapon-skills-card__name">{{this.name}}</span>
-                    </label>
-                    <button
-                        type="button"
-                        class="weapon-skills-card__info"
-                        data-skill-uuid="{{this.uuid}}"
-                        title="{{localize 'WTTRPGEnhancements.WeaponSkillAttack.MoreInfo'}}"
-                    >
-                        <i class="fas fa-circle-info"></i>
-                    </button>
-                </article>
-                {{/each}}
+            <div class="weapon-skill-attack-dialog__skill-groups">
+                <section class="weapon-skill-attack-dialog__skill-group">
+                    <h3 class="weapon-skill-attack-dialog__group-title">
+                        {{localize "WTTRPGEnhancements.WeaponSkillAttack.AvailableSkills"}}
+                    </h3>
+                    <div class="weapon-skills-cards weapon-skills-cards--attack-choice weapon-skill-attack-dialog__skill-choices" data-available-skills>
+                        {{#each availableSkills}}
+                        <article
+                            class="weapon-skills-card weapon-skills-card--choice weapon-skills-card--conditional"
+                            data-condition-matches="true"
+                            data-skill-index="{{this.index}}"
+                            data-skill-name="{{this.name}}"
+                        >
+                            <input
+                                class="weapon-skills-card__radio"
+                                type="radio"
+                                name="selectedAttack"
+                                id="weapon-skill-choice-{{this.id}}"
+                                value="{{this.id}}"
+                                {{checked this.checked}}
+                            >
+                            <label class="weapon-skills-card__open" for="weapon-skill-choice-{{this.id}}" title="{{this.name}}">
+                                <span class="weapon-skills-card__art">
+                                    <img class="weapon-skills-card__image" src="{{this.img}}" alt="{{this.name}}">
+                                </span>
+                                <span class="weapon-skills-card__name">{{this.name}}</span>
+                            </label>
+                            <button
+                                type="button"
+                                class="weapon-skills-card__info"
+                                data-skill-uuid="{{this.uuid}}"
+                                title="{{localize 'WTTRPGEnhancements.WeaponSkillAttack.MoreInfo'}}"
+                            >
+                                <i class="fas fa-circle-info"></i>
+                            </button>
+                        </article>
+                        {{/each}}
+                    </div>
+                </section>
+
+                <section
+                    class="weapon-skill-attack-dialog__skill-group weapon-skill-attack-dialog__skill-group--unavailable"
+                    data-unavailable-skills-group
+                    {{#unless unavailableSkills.length}}hidden{{/unless}}
+                >
+                    <h3 class="weapon-skill-attack-dialog__group-title">
+                        {{localize "WTTRPGEnhancements.WeaponSkillAttack.UnavailableSkills"}}
+                    </h3>
+                    <div class="weapon-skills-cards weapon-skills-cards--attack-choice weapon-skill-attack-dialog__skill-choices" data-unavailable-skills>
+                        {{#each unavailableSkills}}
+                        <article
+                            class="weapon-skills-card weapon-skills-card--choice weapon-skills-card--conditional weapon-skills-card--unavailable"
+                            data-condition-matches="false"
+                            data-skill-index="{{this.index}}"
+                            data-skill-name="{{this.name}}"
+                        >
+                            <input
+                                class="weapon-skills-card__radio"
+                                type="radio"
+                                name="selectedAttack"
+                                id="weapon-skill-choice-{{this.id}}"
+                                value="{{this.id}}"
+                                disabled
+                            >
+                            <label
+                                class="weapon-skills-card__open"
+                                for="weapon-skill-choice-{{this.id}}"
+                                title="{{localize 'WTTRPGEnhancements.WeaponSkillAttack.ConditionNotMet'}}"
+                            >
+                                <span class="weapon-skills-card__art">
+                                    <img class="weapon-skills-card__image" src="{{this.img}}" alt="{{this.name}}">
+                                </span>
+                                <span class="weapon-skills-card__name">{{this.name}}</span>
+                            </label>
+                            <button
+                                type="button"
+                                class="weapon-skills-card__info"
+                                data-skill-uuid="{{this.uuid}}"
+                                title="{{localize 'WTTRPGEnhancements.WeaponSkillAttack.MoreInfo'}}"
+                            >
+                                <i class="fas fa-circle-info"></i>
+                            </button>
+                        </article>
+                        {{/each}}
+                    </div>
+                </section>
             </div>
         </div>
     </section>
+
+    <label class="weapon-skill-attack-dialog__ignore-conditionals">
+        <input type="checkbox" data-ignore-conditionals>
+        <span>
+            <strong>{{localize "WTTRPGEnhancements.WeaponSkillAttack.IgnoreConditionals"}}</strong>
+            <small>{{localize "WTTRPGEnhancements.WeaponSkillAttack.IgnoreConditionalsHint"}}</small>
+        </span>
+    </label>
 </form>
