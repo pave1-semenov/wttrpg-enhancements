@@ -1,0 +1,26 @@
+<section class="weapon-skills-manager situational-bonus-manager scrollable">
+    <div class="weapon-skills-manager__dropzone-section">
+        <div class="weapon-skills-dropzone" data-drop-zone>
+            <div class="weapon-skills-dropzone__icon"><i class="fas fa-sparkles"></i></div>
+            <div class="weapon-skills-dropzone__title">{{localize "WTTRPGEnhancements.SituationalBonus.DropTitle"}}</div>
+            <div class="weapon-skills-dropzone__subtitle">{{localize "WTTRPGEnhancements.SituationalBonus.DropHint" actor=document.name}}</div>
+        </div>
+    </div>
+    <div class="weapon-skills-cards">
+        {{#each bonuses}}
+        <article class="weapon-skills-card">
+            <button type="button" class="weapon-skills-card__open" data-action="openBonus" data-bonus-id="{{this.id}}">
+                <span class="weapon-skills-card__art"><img class="weapon-skills-card__image" src="{{this.img}}" alt="{{this.name}}"></span>
+                <span class="weapon-skills-card__name">{{this.name}}</span>
+            </button>
+            <button type="button" class="weapon-skills-card__remove" data-action="removeBonus" data-bonus-id="{{this.id}}"><i class="fas fa-times"></i></button>
+        </article>
+        {{/each}}
+        <article class="weapon-skills-card weapon-skills-card--create">
+            <button type="button" class="weapon-skills-card__open" data-action="createBonus">
+                <span class="weapon-skills-card__art weapon-skills-card__art--create"><span class="weapon-skills-card__plus"><i class="fas fa-plus"></i></span></span>
+                <span class="weapon-skills-card__name">{{localize "WTTRPGEnhancements.SituationalBonus.NewBonus"}}</span>
+            </button>
+        </article>
+    </div>
+</section>

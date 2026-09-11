@@ -1,5 +1,5 @@
 import { registerCombatHooks } from "./lib/hooks/combat.js";
-import { addActiveEffectEnhanceOption, addItemButtonAppV2 } from "./lib/hooks/buttons.js";
+import { addActiveEffectEnhanceOption, addItemButtonAppV2, addSituationalBonusButton } from "./lib/hooks/buttons.js";
 import { addEnhancedDamageContextOption } from "./lib/hooks/chat.js";
 import { wrapDamageRoll } from "./lib/flows/damageRollFlow.js";
 import { wrapWeaponAttack } from "./lib/flows/weaponAttackFlow.js";
@@ -11,6 +11,8 @@ import { MODULE, TEMPLATE_PATHS } from "./lib/util/constants.js";
 import { registerItemTypes } from "./lib/setup/itemTypeRegistration.js";
 import { registerSettings } from "./lib/setup/settings.js";
 import { registerArgonCombatHudIntegration } from "./lib/integrations/argonCombatHud.js";
+import { wrapCustomSkillCheck, wrapSkillCheck } from "./lib/flows/skillCheckFlow.js";
+import { wrapCastSpell } from "./lib/flows/spellAttackFlow.js";
 Hooks.once('init', function () {
     console.log('The Witcher TRPG Enhancements | Initializing module')
     registerItemTypes()
@@ -26,10 +28,14 @@ Hooks.once('ready', async function () {
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.prepareAndExecuteDefense", wrapPrepareAndExecuteDefense, 'WRAPPER')
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.addItem", wrapAddItem, 'WRAPPER')
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.getLocationArmor", wrapGetLocationArmor, 'WRAPPER')
+    libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.rollSkillCheck", wrapSkillCheck, 'WRAPPER')
+    libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.rollCustomSkillCheck", wrapCustomSkillCheck, 'WRAPPER')
+    libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.castSpell", wrapCastSpell, 'WRAPPER')
     registerCombatHooks()
 })
 Hooks.on('getHeaderControlsApplicationV2', addActiveEffectEnhanceOption)
 Hooks.on('getHeaderControlsApplicationV2', addItemButtonAppV2)
+Hooks.on('getHeaderControlsApplicationV2', addSituationalBonusButton)
 Hooks.on('getChatMessageContextOptions', addEnhancedDamageContextOption)
 function registerCustomRollClasses() {
     if (!Array.isArray(CONFIG.Dice?.rolls)) return
@@ -46,6 +52,10 @@ async function preloadTemplates() {
         TEMPLATE_PATHS.SHEET_DAMAGE_PROPERTIES,
         TEMPLATE_PATHS.SHEET_WEAPON_SKILL,
         TEMPLATE_PATHS.SHEET_WEAPON_SKILL_MANAGER,
+        TEMPLATE_PATHS.SHEET_SITUATIONAL_BONUS,
+        TEMPLATE_PATHS.SHEET_SITUATIONAL_BONUS_MANAGER,
+        TEMPLATE_PATHS.SHEET_ITEM_SITUATIONAL_BONUS_MANAGER,
+        TEMPLATE_PATHS.DIALOG_SITUATIONAL_BONUSES,
         TEMPLATE_PATHS.DIALOG_WEAPON_SKILL_ATTACH_MODE,
         TEMPLATE_PATHS.DIALOG_WEAPON_SKILL_ATTACK_CHOICE,
         TEMPLATE_PATHS.DIALOG_WEAPON_SKILL_INFO,

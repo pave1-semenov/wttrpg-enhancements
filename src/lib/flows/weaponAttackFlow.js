@@ -6,6 +6,8 @@ import {
     withWeaponSkillNativeAttackOverride
 } from '../util/weaponSkill.js';
 import { getCurrentTargetActor, isWeaponSkillAvailable } from '../util/weaponSkillAvailability.js';
+import { SITUATIONAL_BONUS_SCOPES } from '../util/constants.js';
+import { appendFormula, renderSituationalBonusCards, selectedBonusFormula } from '../util/situationalBonus.js';
 
 const { DialogV2 } = foundry.applications.api;
 const FIXED_COUNT_STRIKE_KEY = 'wttrpgEnhancementsSkillAttack';
@@ -285,20 +287,39 @@ async function withFilteredWeaponAttackDialog(skill, callback) {
     const allowedLocations = getAllowedTargetLocations(skill);
     const allowedDamageTypes = getAllowedDamageTypes(skill);
     const allowedStrikes = getAllowedStrikes(skill);
-    if (!allowedLocations.length && !allowedStrikes.length && !allowedDamageTypes.length) {
-        return callback();
-    }
+    const actor = skill?.actor;
+    const bonusCards = await renderSituationalBonusCards(
+        actor,
+        [SITUATIONAL_BONUS_SCOPES.ATTACK, SITUATIONAL_BONUS_SCOPES.DAMAGE],
+        { source: skill, target: getCurrentTargetActor() }
+    );
+    if (!allowedLocations.length && !allowedStrikes.length && !allowedDamageTypes.length && !bonusCards) return callback();
 
     const originalPrompt = DialogV2.prompt.bind(DialogV2);
     DialogV2.prompt = function patchedPrompt(config = {}) {
         const originalRender = config.render;
+        const originalCallback = config.ok?.callback;
         return originalPrompt({
             ...config,
+            content: `${config.content ?? ''}${bonusCards}`,
             render: (event, dialog) => {
                 applyDamageTypeFilterToDialog(dialog, allowedDamageTypes);
                 applyLocationFilterToDialog(dialog, allowedLocations);
                 applyStrikeFilterToDialog(dialog, allowedStrikes);
                 return originalRender?.(event, dialog);
+            },
+            ok: {
+                ...config.ok,
+                callback: async (event, button, dialog) => {
+                    const attackFormula = selectedBonusFormula(button.form, SITUATIONAL_BONUS_SCOPES.ATTACK);
+                    const damageFormula = selectedBonusFormula(button.form, SITUATIONAL_BONUS_SCOPES.DAMAGE);
+                    const result = await originalCallback?.(event, button, dialog);
+                    if (result) {
+                        result.customAtt = appendFormula(result.customAtt, attackFormula);
+                        result.customDmg = appendFormula(result.customDmg, damageFormula);
+                    }
+                    return result;
+                }
             }
         });
     };
@@ -311,13 +332,16 @@ async function withFilteredWeaponAttackDialog(skill, callback) {
 }
 
 export async function wrapWeaponAttack(wrapped, weapon, options = {}) {
-    if (!weapon || isWeaponSkill(weapon) || options.skipWeaponSkillChooser) {
+    if (!weapon || options.skipWeaponSkillChooser) {
         return wrapped(weapon, options);
+    }
+    if (isWeaponSkill(weapon)) {
+        return withFilteredWeaponAttackDialog(weapon, () => wrapped(weapon, { ...options, skipWeaponSkillChooser: true }));
     }
 
     const attachedSkills = getAttachedWeaponSkillsSync(weapon);
     if (!attachedSkills.length) {
-        return wrapped(weapon, options);
+        return withFilteredWeaponAttackDialog(weapon, () => wrapped(weapon, { ...options, skipWeaponSkillChooser: true }));
     }
 
     const requestedSkillId = options[WEAPON_SKILL_ATTACK_OPTIONS.DIRECT_SKILL_ID];
@@ -337,7 +361,9 @@ export async function wrapWeaponAttack(wrapped, weapon, options = {}) {
     } else {
         const choice = await promptWeaponSkillChoice(weapon, attachedSkills);
         if (!choice) return;
-        if (choice.mode === 'standard') return wrapped(weapon, options);
+        if (choice.mode === 'standard') {
+            return withFilteredWeaponAttackDialog(weapon, () => wrapped(weapon, { ...options, skipWeaponSkillChooser: true }));
+        }
 
         chosenSkill = attachedSkills.find(skill => skill.id === choice.skillId);
     }

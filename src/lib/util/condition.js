@@ -276,6 +276,8 @@ function callHelper(name, args, context) {
             return getAttribute(args[0], args[1] ?? context?.attacker, 'max')
         case 'stat':
             return getActorProperty(args[1] ?? context?.attacker, ['system', 'stats', args[0], 'value'])
+        case 'skillLevel':
+            return getSkillLevel(args[0], args[1] ?? context?.attacker)
         case 'hasActiveEffect':
             return Boolean(findActiveEffect(args[0], args[1] ?? context?.attacker))
         case 'getActiveEffect':
@@ -379,6 +381,32 @@ function getAttribute(name, actor, property) {
     if (typeof name !== 'string') return undefined
     const derived = getActorProperty(actor, ['system', 'derivedStats', name, property])
     return derived ?? getActorProperty(actor, ['system', 'stats', name, property])
+}
+
+function getSkillLevel(name, actor) {
+    if (typeof name !== 'string' || !actor) return 0
+    const expected = normalizeName(name)
+    if (!expected) return 0
+
+    const standardSkill = Object.entries(CONFIG.WITCHER?.skillMap ?? {}).find(([key, skill]) => {
+        const localizedLabel = skill?.label ? game.i18n.localize(skill.label) : ''
+        return [key, skill?.name, localizedLabel].some(value => normalizeName(value) === expected)
+    })?.[1]
+
+    if (standardSkill) {
+        return Number(getActorProperty(actor, [
+            'system',
+            'skills',
+            standardSkill.attribute?.name,
+            standardSkill.name,
+            'value'
+        ])) || 0
+    }
+
+    const customSkill = Array.from(actor.items ?? []).find(item =>
+        item?.type === 'skill' && normalizeName(item.name) === expected
+    )
+    return Number(customSkill?.system?.value) || 0
 }
 
 function getActorProperty(actor, properties) {

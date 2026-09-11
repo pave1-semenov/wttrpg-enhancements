@@ -88,6 +88,8 @@ const HELPER_COMPLETIONS = [
     createCompletion("attribute('|')", 'WTTRPGEnhancements.ConditionAutocomplete.Attribute', { priority: 30 }),
     createCompletion("maxAttribute('|')", 'WTTRPGEnhancements.ConditionAutocomplete.MaximumAttribute', { priority: 30 }),
     createCompletion("stat('|')", 'WTTRPGEnhancements.ConditionAutocomplete.Stat', { priority: 30 }),
+    createCompletion("skillLevel('|')", 'WTTRPGEnhancements.ConditionAutocomplete.SkillLevel', { priority: 30 }),
+    createCompletion("skillLevel('|', target)", 'WTTRPGEnhancements.ConditionAutocomplete.TargetSkillLevel', { priority: 30 }),
     createCompletion("hasActiveEffect('|')", 'WTTRPGEnhancements.ConditionAutocomplete.ActiveEffect', { priority: 30 }),
     createCompletion("hasActiveEffect('|', target)", 'WTTRPGEnhancements.ConditionAutocomplete.TargetActiveEffect', { priority: 30 }),
     createCompletion("getActiveEffect('|')", 'WTTRPGEnhancements.ConditionAutocomplete.GetActiveEffect', { priority: 30 }),

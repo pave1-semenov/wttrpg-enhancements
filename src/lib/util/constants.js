@@ -18,7 +18,8 @@ export const ENHANCEMENT_KEYS = {
     HOT: 'hot',
     LIFESTEAL: 'lifesteal',
     AMP: 'amp',
-    WEAPON_SKILL: 'weaponSkill'
+    WEAPON_SKILL: 'weaponSkill',
+    SITUATIONAL_BONUS: 'situationalBonus'
 }
 
 export const FLAG_KEYS = ENHANCEMENT_KEYS
@@ -50,6 +51,10 @@ export const TEMPLATE_PATHS = {
     SHEET_DAMAGE_PROPERTIES: `modules/${MODULE.ID}/templates/sheet/damageProperties.hbs`,
     SHEET_WEAPON_SKILL: `modules/${MODULE.ID}/templates/sheet/weaponSkill.hbs`,
     SHEET_WEAPON_SKILL_MANAGER: `modules/${MODULE.ID}/templates/sheet/weaponSkillManager.hbs`,
+    SHEET_SITUATIONAL_BONUS: `modules/${MODULE.ID}/templates/sheet/situationalBonus.hbs`,
+    SHEET_SITUATIONAL_BONUS_MANAGER: `modules/${MODULE.ID}/templates/sheet/situationalBonusManager.hbs`,
+    SHEET_ITEM_SITUATIONAL_BONUS_MANAGER: `modules/${MODULE.ID}/templates/sheet/itemSituationalBonusManager.hbs`,
+    DIALOG_SITUATIONAL_BONUSES: `modules/${MODULE.ID}/templates/dialog/situationalBonuses.hbs`,
     DIALOG_WEAPON_SKILL_ATTACH_MODE: `modules/${MODULE.ID}/templates/dialog/weaponSkillAttachMode.hbs`,
     DIALOG_WEAPON_SKILL_ATTACK_CHOICE: `modules/${MODULE.ID}/templates/dialog/weaponSkillAttackChoice.hbs`,
     DIALOG_WEAPON_SKILL_INFO: `modules/${MODULE.ID}/templates/dialog/weaponSkillInfo.hbs`,
@@ -78,7 +83,14 @@ export const DOCUMENT_TYPES = {
 
 export const ITEM_TYPES = {
     WEAPON: 'weapon',
-    SKILL: 'skill'
+    SKILL: 'skill',
+    SITUATIONAL_BONUS: `${MODULE.ID}.situational-bonus`
+}
+
+export const SITUATIONAL_BONUS_SCOPES = {
+    SKILL: 'skill',
+    ATTACK: 'attack',
+    DAMAGE: 'damage'
 }
 
 export const ATTACK_MODES = {

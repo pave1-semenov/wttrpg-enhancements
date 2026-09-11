@@ -1,5 +1,6 @@
 import ItemEnhancementSheet from '../sheet/itemEnhancements.js';
 import ActiveEffectsEnhancementsSheet from '../sheet/activeEffectsEnhancements.js';
+import SituationalBonusManager from '../sheet/situationalBonusManager.js';
 
 export function addItemButtonAppV2(sheet, buttons) {
     const enhancaeble = ['spell', 'weapon'].includes(sheet.document?.type);
@@ -17,6 +18,18 @@ export function addItemButtonAppV2(sheet, buttons) {
         });
     }
 
+    return buttons;
+}
+
+export function addSituationalBonusButton(sheet, buttons) {
+    const actor = sheet.document?.documentName === 'Actor' ? sheet.document : null;
+    if (!actor?.isOwner) return buttons;
+    buttons.push({
+        class: 'situational-bonuses',
+        icon: 'fas fa-circle-up',
+        label: 'WTTRPGEnhancements.SituationalBonus.ManagerTitle',
+        onClick: () => new SituationalBonusManager({ document: actor }).render(true)
+    });
     return buttons;
 }
 

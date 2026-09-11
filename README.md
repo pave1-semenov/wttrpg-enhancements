@@ -1,6 +1,6 @@
 # WTTRPG Enhancements
 
-**WTTRPG Enhancements** adds flexible combat tools to *The Witcher TRPG* system for Foundry VTT. It helps GMs create ongoing effects, special weapon techniques, lifesteal, conditional damage bonuses, and more controlled damage application while keeping the system's normal combat flow.
+**WTTRPG Enhancements** adds flexible combat tools to *The Witcher TRPG* system for Foundry VTT. It helps GMs create ongoing effects, special weapon techniques, lifesteal, conditional and situational bonuses, and more controlled damage application while keeping the system's normal combat flow.
 
 ## What the module adds
 
@@ -47,6 +47,7 @@ Common values have shorter helper functions:
 - `hp()`, `sta()`, `shield()`, `focus()`, `resolve()`, `vigor()`, `luck()`, and `toxicity()` return the attacker's current value. Pass an actor to read another actor, such as `hp(target)`.
 - The matching maximum helpers are `maxHp()`, `maxSta()`, `maxShield()`, `maxFocus()`, `maxResolve()`, `maxVigor()`, `maxLuck()`, and `maxToxicity()`.
 - `attribute('name', actor?)` and `maxAttribute('name', actor?)` read any derived stat or regular stat. `stat('ref', actor?)` is a shortcut for a regular stat.
+- `skillLevel('name', actor?)` returns the level of a standard or custom skill, or `0` when the skill is absent. Standard skills can be identified by internal key, name, or localized label; for example, `skillLevel('Athletics') >= 6` or `skillLevel('Swordsmanship', target) < 5`.
 - `hasActiveEffect('name', actor?)` checks for a non-disabled, non-suppressed Active Effect by name. `getActiveEffect('name', actor?)` returns that effect so its data can be used in an expression.
 - `armor(location?, actor?)` returns total stopping power. It defaults to the current target and damage location; for example, `armor('head')` or `armor('torso', attacker)`.
 - `isSourceAWeaponSkill(name?)` and `isSourceAWeapon(name?)` check the attack source, optionally matching its name without regard to case.
@@ -64,9 +65,43 @@ armor() < 10 && damage.type === 'slashing'
 isSourceAWeaponSkill('Whirl') && professionSkillRank('Fury') >= 5
 professionSkillPoints() >= 20
 isSourceAWeapon() && professionSkill('Tactical Awareness').thresholds.hasThresholds
+skillLevel('Athletics') >= 6 && skillLevel('My Custom Skill') > 0
 ```
 
-Condition fields on amplifier, lifesteal, and weapon-skill sheets offer context-aware autocomplete while typing. Use the arrow keys to move through suggestions, `Enter` or `Tab` to insert one, and `Escape` to close the list.
+Condition fields on amplifier, lifesteal, weapon-skill, and situational-bonus sheets offer context-aware autocomplete while typing. Use the arrow keys to move through suggestions, `Enter` or `Tab` to insert one, and `Escape` to close the list.
+
+### Situational bonuses
+
+Actors can carry optional bonuses which a player selects when making a roll. Each situational bonus has a title, description, image, roll formula, and optional availability condition. Its scope determines where it appears:
+
+- **Skill Check** adds its formula to standard or custom skill checks. It can apply to every skill or only selected skills.
+- **Attack** adds its formula to a weapon or spell attack roll.
+- **Damage** adds its formula to weapon or spell damage. Damage bonuses are also available in the enhanced Apply Damage dialog.
+
+Bonuses attached directly to an actor are global and can apply whenever their scope and condition match. Weapons and spells can also have their own bonuses, which only appear while attacking or dealing damage with that specific item. Weapon skills recognize bonuses attached to their parent weapon.
+
+The roll dialog clearly labels every available bonus with:
+
+- Its scope: Skill Check, Attack, or Damage.
+- Its origin: **Actor (Global)** or the name of its weapon or spell.
+- Its formula, title, description, and artwork.
+
+Each bonus has a configurable roll-card image layout:
+
+- **Image on Left** displays a dedicated image panel on the left.
+- **Image on Right** mirrors the panel to the right.
+- **Full Card Cover** stretches the image across the card beneath a readability gradient.
+
+Situational bonuses are Item documents. This means a GM can create reusable world or compendium bonus templates and drag copies into an actor, weapon, or spell manager. Dropping a bonus into the actor manager makes it global; dropping it onto a weapon or spell binds the copy to that item. Item-bound bonuses only support Attack and Damage scopes. When a configured world weapon or spell is added to an actor, its attached bonuses are copied with it.
+
+Conditions use the same safe expression engine and autocomplete as other enhancements. They can inspect the acting actor, current target, attack source, damage context, resources, Active Effects, ordinary skills, and profession abilities.
+
+**Examples:**
+
+- *Higher Ground* adds `+2` to attacks while its condition is true.
+- *Specialized Training* adds `1d6` only to selected skill checks when `skillLevel('Athletics') >= 6`.
+- *Silver Edge* is attached to one sword and adds `1d6` damage only when that sword attacks.
+- *Focused Sign* is attached to one spell and improves only that spell's attack roll.
 
 ### More control when applying damage
 
@@ -121,8 +156,10 @@ The GM can open **WTTRPG Enhancements** from the header of:
 - An **Active Effect** to configure ongoing damage, ongoing healing, lifesteal, or damage amplification.
 - A **weapon or spell** to configure lifesteal.
 - A **weapon** to create, attach, and manage weapon skills.
+- An owned **actor** to create, attach, and manage global situational bonuses.
+- A **weapon or spell** to create, attach, and manage item-specific Attack and Damage bonuses.
 
-Damage messages gain an enhanced **Apply Damage** entry in their context menu. Timed effects are processed by the GM during combat.
+The actor-sheet header uses the standard WTTRPG Enhancements icon to open its situational-bonus manager. Damage messages gain an enhanced **Apply Damage** entry in their context menu. Timed effects are processed by the GM during combat.
 
 ## Requirements
 

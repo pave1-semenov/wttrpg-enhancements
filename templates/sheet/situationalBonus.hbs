@@ -1,0 +1,48 @@
+<section class="situational-bonus-sheet standard-form scrollable">
+    <header class="situational-bonus-sheet__hero">
+        <img src="{{item.img}}" alt="{{item.name}}" data-action="editImage" data-edit="img">
+        <input name="name" type="text" value="{{item.name}}">
+    </header>
+    <fieldset>
+        <legend>{{localize "WTTRPGEnhancements.SituationalBonus.Details"}}</legend>
+        <div class="form-group">
+            <label>{{localize "WTTRPGEnhancements.SituationalBonus.AppliesTo"}}</label>
+            <select name="system.scope">
+                {{selectOptions scopes selected=item.system.scope valueAttr="value" labelAttr="label" localize=true}}
+            </select>
+        </div>
+        {{#if (eq item.system.scope "skill")}}
+        <div class="form-group stacked situational-bonus-sheet__skills">
+            <label>{{localize "WTTRPGEnhancements.SituationalBonus.ApplicableSkills"}}</label>
+            <p class="hint">{{localize "WTTRPGEnhancements.SituationalBonus.ApplicableSkillsHint"}}</p>
+            <div class="situational-bonus-skill-grid">
+                {{#each applicableSkills}}
+                <label class="checkbox" title="{{this.group}}">
+                    <input type="checkbox" name="system.applicableSkills" value="{{this.value}}" {{checked this.checked}}>
+                    <span>{{this.label}}</span>
+                </label>
+                {{/each}}
+            </div>
+        </div>
+        {{/if}}
+        <div class="form-group">
+            <label>{{localize "WTTRPGEnhancements.SituationalBonus.Formula"}}</label>
+            <input name="system.formula" type="text" value="{{item.system.formula}}" placeholder="1d6 + 2">
+        </div>
+        <div class="form-group">
+            <label>{{localize "WTTRPGEnhancements.SituationalBonus.ImageDisplay"}}</label>
+            <select name="system.imageLayout">
+                {{selectOptions imageLayouts selected=item.system.imageLayout valueAttr="value" labelAttr="label" localize=true}}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>{{localize "WTTRPGEnhancements.SituationalBonus.Condition"}}</label>
+            <input name="system.condition" type="text" value="{{item.system.condition}}" data-condition-autocomplete data-condition-context="full">
+            <p class="hint">{{localize "WTTRPGEnhancements.SituationalBonus.ConditionHint"}}</p>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>{{localize "WITCHER.Item.Description"}}</legend>
+        {{formInput item.system.schema.fields.description value=item.system.description enriched=enrichedDescription toggled=true}}
+    </fieldset>
+</section>

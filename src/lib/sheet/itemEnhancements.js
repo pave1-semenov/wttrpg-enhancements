@@ -1,9 +1,10 @@
 import { LifeStealMixin } from '../mixin/lifestealMixin.js';
 import { WeaponSkillManagerMixin } from '../mixin/weaponSkillManagerMixin.js';
+import { ItemSituationalBonusMixin } from '../mixin/itemSituationalBonusMixin.js';
 import { FORM_PREFIXES, ENHANCEMENT_KEYS, TEMPLATE_PATHS } from '../util/constants.js';
 import DefauldDocumentSheet from './defaultSheet.js';
 
-export default class ItemEnhancementSheet extends WeaponSkillManagerMixin(LifeStealMixin(DefauldDocumentSheet)) {
+export default class ItemEnhancementSheet extends ItemSituationalBonusMixin(WeaponSkillManagerMixin(LifeStealMixin(DefauldDocumentSheet))) {
     static DEFAULT_OPTIONS = {
         position: {
             width: 760,
@@ -21,7 +22,10 @@ export default class ItemEnhancementSheet extends WeaponSkillManagerMixin(LifeSt
         actions: {
             createSkill: ItemEnhancementSheet.onCreateSkill,
             openSkill: ItemEnhancementSheet.onOpenSkill,
-            removeSkill: ItemEnhancementSheet.onRemoveSkill
+            removeSkill: ItemEnhancementSheet.onRemoveSkill,
+            createSituationalBonus: ItemEnhancementSheet.onCreateSituationalBonus,
+            openSituationalBonus: ItemEnhancementSheet.onOpenSituationalBonus,
+            removeSituationalBonus: ItemEnhancementSheet.onRemoveSituationalBonus
         }
     };
 
@@ -36,6 +40,10 @@ export default class ItemEnhancementSheet extends WeaponSkillManagerMixin(LifeSt
         [ENHANCEMENT_KEYS.WEAPON_SKILL]: {
             template: TEMPLATE_PATHS.SHEET_WEAPON_SKILL_MANAGER,
             scrollable: ['']
+        },
+        [ENHANCEMENT_KEYS.SITUATIONAL_BONUS]: {
+            template: TEMPLATE_PATHS.SHEET_ITEM_SITUATIONAL_BONUS_MANAGER,
+            scrollable: ['']
         }
     };
 
@@ -43,7 +51,8 @@ export default class ItemEnhancementSheet extends WeaponSkillManagerMixin(LifeSt
         primary: {
             tabs: [
                 { id: ENHANCEMENT_KEYS.LIFESTEAL, icon: 'fas fa-people-robbery' },
-                { id: ENHANCEMENT_KEYS.WEAPON_SKILL, icon: 'fas fa-sword' }
+                { id: ENHANCEMENT_KEYS.WEAPON_SKILL, icon: 'fas fa-sword' },
+                { id: ENHANCEMENT_KEYS.SITUATIONAL_BONUS, icon: 'fas fa-circle-up' }
             ],
             initial: ENHANCEMENT_KEYS.LIFESTEAL,
             labelPrefix: 'WTTRPGEnhancements.Enhancements'
@@ -58,6 +67,7 @@ export default class ItemEnhancementSheet extends WeaponSkillManagerMixin(LifeSt
         if (this.document?.type === 'weapon') { 
             options.parts.push(ENHANCEMENT_KEYS.WEAPON_SKILL)
         }
+        if (['weapon', 'spell'].includes(this.document?.type)) options.parts.push(ENHANCEMENT_KEYS.SITUATIONAL_BONUS)
     };
 
     static async saveData(event, form, formData) {
@@ -79,6 +89,9 @@ export default class ItemEnhancementSheet extends WeaponSkillManagerMixin(LifeSt
         const context = await super._prepareContext(options);
 
         context.document = this.document;
+        context.attachedSituationalBonuses = this.getAttachedSituationalBonuses().map(bonus => ({
+            id: bonus.id, name: bonus.name, img: bonus.img, scope: bonus.system.scope
+        }));
         this._prepareLifestealtContext(context);
 
         if (this.isWeaponDocument()) {
@@ -102,6 +115,10 @@ export default class ItemEnhancementSheet extends WeaponSkillManagerMixin(LifeSt
             }
             delete tabs[ENHANCEMENT_KEYS.WEAPON_SKILL];
         }
+        if (!['weapon', 'spell'].includes(this.document?.type)) {
+            tabs.primary.tabs = tabs.primary.tabs.filter(tab => tab.id !== ENHANCEMENT_KEYS.SITUATIONAL_BONUS);
+            delete tabs[ENHANCEMENT_KEYS.SITUATIONAL_BONUS];
+        }
 
         context.tabs = tabs;
         return context;
@@ -109,6 +126,15 @@ export default class ItemEnhancementSheet extends WeaponSkillManagerMixin(LifeSt
 
     _onRender(context, options) {
         super._onRender(context, options);
+
+        const bonusDropZone = this.element?.querySelector('[data-situational-bonus-drop-zone]');
+        bonusDropZone?.addEventListener('dragover', event => { event.preventDefault(); bonusDropZone.classList.add('dragover'); });
+        bonusDropZone?.addEventListener('dragleave', () => bonusDropZone.classList.remove('dragover'));
+        bonusDropZone?.addEventListener('drop', async event => {
+            event.preventDefault();
+            bonusDropZone.classList.remove('dragover');
+            await this.onDropSituationalBonus(event);
+        });
 
         if (!this.isWeaponDocument()) return;
 
