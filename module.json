@@ -67,7 +67,8 @@
   ],
   "documentTypes": {
     "Item": {
-      "weapon-skill": {}
+      "weapon-skill": {},
+      "situational-bonus": {}
     }
   },
   "readme": "README.md",

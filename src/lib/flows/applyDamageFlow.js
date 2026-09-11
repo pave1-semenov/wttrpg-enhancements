@@ -4,13 +4,20 @@ import { applyLifesteal, initLifestealContext } from '../core/lifesteal.js';
 import { applyTemporarySpBonus } from '../core/temporarySp.js';
 import { getAttackLocationOptions } from '../util/location.js';
 import { ATTRIBUTES, CHAT_FLAGS, FLAG_KEYS, MODULE, SYSTEM, TEMPLATE_PATHS } from '../util/constants.js';
+import { SITUATIONAL_BONUS_SCOPES } from '../util/constants.js';
+import { prepareSituationalBonusCards, selectedBonusFormula } from '../util/situationalBonus.js';
 
 const DialogV2 = foundry.applications.api.DialogV2;
 
 export async function applyEnhancedDamage(actor, totalDamage, messageId) {
     let damage = game.messages.get(messageId).getFlag(SYSTEM.ID, CHAT_FLAGS.DAMAGE)
     let dialogData = await createApplyDamageDialog(actor, damage, totalDamage)
-    const appliedDamage = getModifiedDamage(totalDamage, dialogData.damageModifierType, dialogData.damageModifier)
+    const source = await fromUuid(damage.itemUuid)
+    const bonusRoll = dialogData.situationalBonusFormula
+        ? await new Roll(`0${dialogData.situationalBonusFormula}`, sourceRollData(source)).evaluate()
+        : null
+    const amountWithBonuses = Number(totalDamage) + Number(bonusRoll?.total ?? 0)
+    const appliedDamage = getModifiedDamage(amountWithBonuses, dialogData.damageModifierType, dialogData.damageModifier)
 
     damage.location = actor.getLocationObject(dialogData.location)
     applyTemporarySpBonus(damage, dialogData.temporarySpBonus)
@@ -20,7 +27,6 @@ export async function applyEnhancedDamage(actor, totalDamage, messageId) {
     }
     const attribute = dialogData?.nonLethal ? ATTRIBUTES.STA : ATTRIBUTES.HP
 
-    const source = await fromUuid(damage.itemUuid)
     const rollSource = getRollSourceItem(source)
     const lifestealFlags = source?.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]
         ?? rollSource?.flags?.[MODULE.FLAGS_KEY]?.[FLAG_KEYS.LIFESTEAL]
@@ -53,6 +59,13 @@ function getModifiedDamage(totalDamage, modifierType, modifier) {
 async function createApplyDamageDialog(actor, damage, totalDamage) {
     const isMonster = actor.type === 'monster'
 
+    const source = damage?.item ?? (damage?.itemUuid ? await fromUuid(damage.itemUuid) : null)
+    const bonusActor = source?.actor ?? null
+    const situationalBonuses = await prepareSituationalBonusCards(
+        bonusActor,
+        [SITUATIONAL_BONUS_SCOPES.DAMAGE],
+        { source, target: actor, damage }
+    )
     const content = await renderTemplate(TEMPLATE_PATHS.DIALOG_APPLY_DAMAGE, {
         damageType: `WITCHER.DamageType.${damage.type}`,
         location: damage.location.name,
@@ -61,6 +74,7 @@ async function createApplyDamageDialog(actor, damage, totalDamage) {
         resistNonMeteorite: actor.system.resistantNonMeteorite,
         locations: getAttackLocationOptions(isMonster),
         totalDamage: Math.round(Number(totalDamage) || 0),
+        situationalBonuses
     })
 
     let {
@@ -72,7 +86,8 @@ async function createApplyDamageDialog(actor, damage, totalDamage) {
         addOilDmg,
         damageModifierType,
         damageModifier,
-        temporarySpBonus
+        temporarySpBonus,
+        situationalBonusFormula
     } =
         await DialogV2.prompt({
             window: { title: `${game.i18n.localize('WITCHER.Context.applyDmg')}` },
@@ -89,7 +104,8 @@ async function createApplyDamageDialog(actor, damage, totalDamage) {
                         addOilDmg: button.form.elements.oilDmg?.checked,
                         damageModifierType: button.form.elements.damageModifierType?.value,
                         damageModifier: button.form.elements.damageModifier?.value,
-                        temporarySpBonus: button.form.elements.temporarySpBonus?.value
+                        temporarySpBonus: button.form.elements.temporarySpBonus?.value,
+                        situationalBonusFormula: selectedBonusFormula(button.form, SITUATIONAL_BONUS_SCOPES.DAMAGE)
                     };
                 }
             }
@@ -104,8 +120,13 @@ async function createApplyDamageDialog(actor, damage, totalDamage) {
         nonLethal,
         damageModifierType,
         damageModifier,
-        temporarySpBonus
+        temporarySpBonus,
+        situationalBonusFormula
     };
+}
+
+function sourceRollData(source) {
+    return source?.getRollData?.() ?? source?.actor?.getRollData?.() ?? {};
 }
 
 
