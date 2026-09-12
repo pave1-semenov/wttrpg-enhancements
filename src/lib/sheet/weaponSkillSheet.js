@@ -1,6 +1,7 @@
 import { getWeaponSkillParentWeapon } from '../util/weaponSkill.js';
 import { ATTACK_MODES, ATTACK_SKILL_OVERRIDE_MODES, FLAG_KEYS, MODULE, TEMPLATE_PATHS, WEAPON_SKILL_DEFAULTS } from '../util/constants.js';
 import { LifeStealMixin } from '../mixin/lifestealMixin.js';
+import { ItemSituationalBonusMixin } from '../mixin/itemSituationalBonusMixin.js';
 import { getSpecificLocationOptions } from '../util/location.js';
 import { bindConditionAutocomplete } from '../util/conditionAutocomplete.js';
 
@@ -10,7 +11,7 @@ const { HandlebarsApplicationMixin } = foundry.applications.api;
 /**
  * Sheet for editing weapon skills.
  */
-export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicationMixin(ItemSheetV2)) {
+export default class WeaponSkillSheet extends ItemSituationalBonusMixin(LifeStealMixin(HandlebarsApplicationMixin(ItemSheetV2))) {
     static DEFAULT_OPTIONS = {
         position: {
             width: 820,
@@ -31,7 +32,10 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
             edit: WeaponSkillSheet.onManageActiveEffect,
             delete: WeaponSkillSheet.onManageActiveEffect,
             addEffect: WeaponSkillSheet.onAddDamagePropertyEffect,
-            removeEffect: WeaponSkillSheet.onRemoveDamagePropertyEffect
+            removeEffect: WeaponSkillSheet.onRemoveDamagePropertyEffect,
+            createSituationalBonus: WeaponSkillSheet.onCreateSituationalBonus,
+            openSituationalBonus: WeaponSkillSheet.onOpenSituationalBonus,
+            removeSituationalBonus: WeaponSkillSheet.onRemoveSituationalBonus
         }
     };
 
@@ -45,6 +49,10 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         },
         lifesteal: {
             template: TEMPLATE_PATHS.SHEET_LIFESTEAL,
+            scrollable: ['']
+        },
+        situationalBonus: {
+            template: TEMPLATE_PATHS.SHEET_ITEM_SITUATIONAL_BONUS_MANAGER,
             scrollable: ['']
         },
         damageProperties: {
@@ -62,6 +70,7 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
             tabs: [
                 { id: 'general', icon: 'fas fa-sword' },
                 { id: 'lifesteal', icon: 'fas fa-people-robbery', label: 'WTTRPGEnhancements.Enhancements.lifesteal' },
+                { id: 'situationalBonus', icon: 'fas fa-circle-up', label: 'WTTRPGEnhancements.Enhancements.situationalBonus' },
                 { id: 'damageProperties', icon: 'fas fa-burst' },
                 { id: 'activeEffects', icon: 'fas fa-bolt' }
             ],
@@ -284,6 +293,10 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
         const systemPropertiesConfiguration = this.getSystemPropertiesConfiguration();
 
         context.item = this.document;
+        context.document = this.document;
+        context.attachedSituationalBonuses = this.getAttachedSituationalBonuses().map(bonus => ({
+            id: bonus.id, name: bonus.name, img: bonus.img, scope: bonus.system.scope
+        }));
         this._prepareLifestealtContext(context);
         context.editable = this.isEditable;
         context.config = CONFIG.WITCHER;
@@ -331,6 +344,17 @@ export default class WeaponSkillSheet extends LifeStealMixin(HandlebarsApplicati
     _onRender(context, options) {
         super._onRender(context, options);
         bindConditionAutocomplete(this.element);
+        const bonusDropZone = this.element?.querySelector('[data-situational-bonus-drop-zone]');
+        bonusDropZone?.addEventListener('dragover', event => {
+            event.preventDefault();
+            bonusDropZone.classList.add('dragover');
+        });
+        bonusDropZone?.addEventListener('dragleave', () => bonusDropZone.classList.remove('dragover'));
+        bonusDropZone?.addEventListener('drop', async event => {
+            event.preventDefault();
+            bonusDropZone.classList.remove('dragover');
+            await this.onDropSituationalBonus(event);
+        });
     }
 
     _onChangeForm(formConfig, event) {
