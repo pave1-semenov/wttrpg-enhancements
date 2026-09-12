@@ -11,7 +11,7 @@ import { MODULE, TEMPLATE_PATHS } from "./lib/util/constants.js";
 import { registerItemTypes } from "./lib/setup/itemTypeRegistration.js";
 import { registerSettings } from "./lib/setup/settings.js";
 import { registerArgonCombatHudIntegration } from "./lib/integrations/argonCombatHud.js";
-import { wrapCustomSkillCheck, wrapSkillCheck } from "./lib/flows/skillCheckFlow.js";
+import { wrapCustomSkillCheck, wrapProfessionSkillCheck, wrapSkillCheck } from "./lib/flows/skillCheckFlow.js";
 import { wrapCastSpell } from "./lib/flows/spellAttackFlow.js";
 Hooks.once('init', function () {
     console.log('The Witcher TRPG Enhancements | Initializing module')
@@ -30,6 +30,7 @@ Hooks.once('ready', async function () {
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.getLocationArmor", wrapGetLocationArmor, 'WRAPPER')
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.rollSkillCheck", wrapSkillCheck, 'WRAPPER')
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.rollCustomSkillCheck", wrapCustomSkillCheck, 'WRAPPER')
+    libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.doProfessionSkillRoll", wrapProfessionSkillCheck, 'WRAPPER')
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.castSpell", wrapCastSpell, 'WRAPPER')
     registerCombatHooks()
 })

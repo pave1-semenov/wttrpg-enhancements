@@ -26,7 +26,13 @@ function matchesSource(source, parentItemUuid) {
 
 function matchesSkill(source, filters) {
     if (!source) return false;
-    const identities = new Set([source.name, source.id, source.uuid].filter(Boolean));
+    const identities = new Set([
+        source.name,
+        source.id,
+        source.uuid,
+        source.situationalBonusIdentity,
+        source.skillName ? `profession:${source.skillName}` : null
+    ].filter(Boolean));
     return filters.some(filter => identities.has(filter));
 }
 

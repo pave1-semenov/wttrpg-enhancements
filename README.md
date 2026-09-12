@@ -74,7 +74,7 @@ Condition fields on amplifier, lifesteal, weapon-skill, and situational-bonus sh
 
 Actors can carry optional bonuses which a player selects when making a roll. Each situational bonus has a title, description, image, roll formula, and optional availability condition. Its scope determines where it appears:
 
-- **Skill Check** adds its formula to standard or custom skill checks. It can apply to every skill or only selected skills.
+- **Skill Check** adds its formula to standard, custom, or profession skill checks. It can apply to every skill or only selected skills.
 - **Attack** adds its formula to a weapon or spell attack roll.
 - **Damage** adds its formula to weapon or spell damage. Damage bonuses are also available in the enhanced Apply Damage dialog.
 
