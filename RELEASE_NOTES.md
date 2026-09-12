@@ -1,73 +1,19 @@
 # WTTRPG Enhancements release notes
 
-## Unreleased — Situational Bonuses
+## Unreleased — Profession Skill Support
 
-This release introduces **Situational Bonuses**: flexible, conditional roll modifiers for skill checks, attacks, and damage.
+### Situational bonuses for profession skills
 
-## Situational Bonuses
+- Skill Check situational bonuses can now be restricted to profession-tree abilities.
+- The bonus editor lists an actor's defining profession skill and all nine profession-path skills.
+- Profession skills are stored with distinct identifiers, preventing collisions with standard or custom skills that share the same name.
+- Applicable situational bonuses are displayed and applied when making profession skill rolls.
+- Skill Check bonuses without a specific skill selection continue to apply globally, including to profession skill rolls.
 
-Create reusable bonuses containing:
+### Skill selector organization
 
-- A name, description, and image
-- A dice or numeric roll formula
-- An optional availability condition
-- A Skill Check, Attack, or Damage scope
-
-Players can select applicable bonuses directly from the existing roll dialogs without replacing the system's original templates.
-
-## Global and Item-Specific Bonuses
-
-Situational bonuses can be:
-
-- Attached to an actor as global bonuses
-- Attached to a specific weapon
-- Attached to a specific spell
-
-Weapon- and spell-specific bonuses only appear when rolling with their associated item. Weapon skills also recognize bonuses attached to their parent weapon.
-
-Configured bonuses are copied alongside world weapons and spells when those items are added to an actor.
-
-## Skill-Specific Bonuses
-
-Skill Check bonuses can apply globally or be restricted to selected skills.
-
-Standard WTTRPG skills, actor-specific custom skills, and profession-tree abilities are supported. Leaving the selection empty makes the bonus available for every skill check, including profession skill rolls.
-
-## Conditions
-
-Situational bonuses use the existing safe condition engine and autocomplete system.
-
-A new helper is available:
-
-```js
-skillLevel('Athletics') >= 6
-skillLevel('Swordsmanship', target) < 5
-skillLevel('Custom Skill') > 0
-```
-
-`skillLevel()` supports standard and custom skills and returns `0` when the requested skill is absent.
-
-## Improved Roll Cards
-
-Available bonuses appear as illustrated cards showing:
-
-- Bonus name and description
-- Roll formula
-- Skill Check, Attack, or Damage type
-- Global actor or originating weapon/spell
-- A selection checkbox
-
-Each bonus can configure its artwork as:
-
-- Image on the left
-- Image on the right
-- Full-card cover
-
-## Bonus Management
-
-A new WTTRPG Enhancements button is available from actor sheets for managing global bonuses.
-
-Weapons and spells now include a **Situational Bonuses** tab in their WTTRPG Enhancements window. Bonuses can be created directly or copied from reusable world and compendium templates through drag and drop.
+- The applicable-skill selector is now divided into clearly labeled **Skills** and **Profession Skills** groups.
+- Standard and custom skills remain together in the Skills group, while profession-tree abilities have their own section.
 
 ## 0.0.14
 
