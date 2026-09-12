@@ -33,3 +33,11 @@ export function wrapCustomSkillCheck(wrapped, event) {
     const source = this.items.find(item => item.id === event.currentTarget.closest('.item')?.dataset.itemId);
     return withSkillBonusDialog(this, source, () => wrapped(event));
 }
+
+export function wrapProfessionSkillCheck(wrapped, skill, options) {
+    const source = {
+        ...skill,
+        situationalBonusIdentity: `profession:${skill?.skillName ?? ''}`
+    };
+    return withSkillBonusDialog(this, source, () => wrapped(skill, options));
+}

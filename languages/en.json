@@ -272,6 +272,8 @@
                                                           "ApplicableSkillsHint": "Select the skill checks this bonus applies to. Leave every skill unchecked to allow all skill checks.",
                                                           "StandardSkills": "Standard Skills",
                                                           "CustomSkills": "Custom Skills",
+                                                          "Skills": "Skills",
+                                                          "ProfessionSkills": "Profession Skills",
                                                           "Condition": "Availability Condition",
                                                           "ConditionHint": "Optional condition using actor, target, source, and damage. Leave blank to make this bonus always available.",
                                                           "Available": "Situational Bonuses",

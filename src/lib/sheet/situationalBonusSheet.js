@@ -59,8 +59,36 @@ export default class SituationalBonusSheet extends HandlebarsApplicationMixin(It
                 checked: selectedSkills.has(skill.uuid) || selectedSkills.has(skill.id),
                 group: game.i18n.localize('WTTRPGEnhancements.SituationalBonus.CustomSkills')
             }));
-        context.applicableSkills = [...standardSkills, ...customSkills]
-            .sort((left, right) => left.group.localeCompare(right.group) || left.label.localeCompare(right.label));
+        const profession = Array.from(this.document.actor?.items ?? []).find(item => item.type === 'profession');
+        const professionSystem = profession?.system;
+        const professionSkills = professionSystem ? [
+            professionSystem.definingSkill,
+            ...['skillPath1', 'skillPath2', 'skillPath3'].flatMap(path => [
+                professionSystem[path]?.skill1,
+                professionSystem[path]?.skill2,
+                professionSystem[path]?.skill3
+            ])
+        ].filter(skill => skill?.skillName).map(skill => ({
+            value: `profession:${skill.skillName}`,
+            label: skill.skillName,
+            checked: selectedSkills.has(`profession:${skill.skillName}`),
+            group: game.i18n.localize('WTTRPGEnhancements.SituationalBonus.ProfessionSkills')
+        })) : [];
+        const regularSkills = [...standardSkills, ...customSkills]
+            .sort((left, right) => left.label.localeCompare(right.label));
+        professionSkills.sort((left, right) => left.label.localeCompare(right.label));
+        context.skillGroups = [
+            {
+                id: 'skills',
+                label: game.i18n.localize('WTTRPGEnhancements.SituationalBonus.Skills'),
+                skills: regularSkills
+            },
+            {
+                id: 'profession-skills',
+                label: game.i18n.localize('WTTRPGEnhancements.SituationalBonus.ProfessionSkills'),
+                skills: professionSkills
+            }
+        ].filter(group => group.skills.length);
         context.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(
             this.document.system.description ?? ''
         );

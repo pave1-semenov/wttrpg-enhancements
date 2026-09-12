@@ -407,16 +407,35 @@
     font-weight: 700;
 }
 
-.situational-bonus-skill-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 0.35rem 0.75rem;
+.situational-bonus-skill-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
     max-height: 210px;
     overflow-y: auto;
     padding: 0.6rem;
     border: 1px solid color-mix(in srgb, var(--color-border-light-primary) 65%, transparent);
     border-radius: 10px;
     background: rgba(0, 0, 0, 0.12);
+}
+
+.situational-bonus-skill-group + .situational-bonus-skill-group {
+    padding-top: 0.75rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-border-light-primary) 55%, transparent);
+}
+
+.situational-bonus-skill-group h4 {
+    margin: 0 0 0.45rem;
+    color: var(--color-warm-1);
+    font-size: 0.86rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.situational-bonus-skill-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 0.35rem 0.75rem;
 }
 
 .situational-bonuses-dialog {

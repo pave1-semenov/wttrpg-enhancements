@@ -15,12 +15,19 @@
         <div class="form-group stacked situational-bonus-sheet__skills">
             <label>{{localize "WTTRPGEnhancements.SituationalBonus.ApplicableSkills"}}</label>
             <p class="hint">{{localize "WTTRPGEnhancements.SituationalBonus.ApplicableSkillsHint"}}</p>
-            <div class="situational-bonus-skill-grid">
-                {{#each applicableSkills}}
-                <label class="checkbox" title="{{this.group}}">
-                    <input type="checkbox" name="system.applicableSkills" value="{{this.value}}" {{checked this.checked}}>
-                    <span>{{this.label}}</span>
-                </label>
+            <div class="situational-bonus-skill-groups">
+                {{#each skillGroups}}
+                <section class="situational-bonus-skill-group situational-bonus-skill-group--{{this.id}}">
+                    <h4>{{this.label}}</h4>
+                    <div class="situational-bonus-skill-grid">
+                        {{#each this.skills}}
+                        <label class="checkbox">
+                            <input type="checkbox" name="system.applicableSkills" value="{{this.value}}" {{checked this.checked}}>
+                            <span>{{this.label}}</span>
+                        </label>
+                        {{/each}}
+                    </div>
+                </section>
                 {{/each}}
             </div>
         </div>
