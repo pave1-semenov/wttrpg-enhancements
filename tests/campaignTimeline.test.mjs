@@ -19,12 +19,12 @@ class Base {
 }
 const Widget = createCampaignTimelineWidget(Base);
 
-test("locations and regions support typed attachments on dates and events", async () => {
+test("one drop area groups all Codex sheet types on dates and events", async () => {
     const originalFromUuid = globalThis.fromUuid;
     const originalWarn = ui.notifications.warn;
     let warnings = 0;
     ui.notifications.warn = () => warnings++;
-    globalThis.fromUuid = async uuid => ({ uuid, name: uuid, documentName: "JournalEntry", getFlag: () => uuid.includes("location") ? "location" : "region" });
+    globalThis.fromUuid = async uuid => ({ uuid, name: uuid, documentName: "JournalEntry", getFlag: (_scope, key) => key === "type" ? uuid.split(".")[1] : null });
     try {
         for (const parentId of ["", "date"]) {
             const widget = new Widget();
@@ -32,21 +32,21 @@ test("locations and regions support typed attachments on dates and events", asyn
             const row = { id: "row", events: [] };
             widget.saved.dates = parentId ? [{ id: parentId, events: [row] }] : [row];
             const element = { dataset: { rowId: "row", parentId } };
-            for (const [field, type] of [["locations", "location"], ["regions", "region"]]) {
+            for (const type of ["npc", "location", "region", "quest", "tag", "shop", "group", "journal"]) {
                 const drop = uuid => widget.onDrop({ dataTransfer: { getData: () => JSON.stringify({ uuid }) },
-                    target: { closest: selector => selector === "[data-row-id]" ? element : { dataset: { dropField: field } } } });
-                await drop(`JournalEntry.${type}1`);
-                await drop(`JournalEntry.${type}2`);
-                await drop(`JournalEntry.${type}1`);
-                await drop(`JournalEntry.${type === "location" ? "region" : "location"}Wrong`);
+                    target: { closest: selector => selector === "[data-row-id]" ? element : {} } });
+                await drop(`JournalEntry.${type}.1`);
+                await drop(`JournalEntry.${type}.2`);
+                await drop(`JournalEntry.${type}.1`);
                 const saved = widget.locate(await widget.data(), "row", parentId).row;
-                assert.deepEqual(saved[field], [`JournalEntry.${type}1`, `JournalEntry.${type}2`]);
-                assert.match(await widget.links(saved, field), new RegExp(`title="Related ${field}"`));
-                await widget.onAction({ dataset: { timelineAction: "unlink", field, uuid: `JournalEntry.${type}1` }, closest: () => element });
-                assert.deepEqual(widget.locate(await widget.data(), "row", parentId).row[field], [`JournalEntry.${type}2`]);
+                assert.deepEqual(saved.linkGroups.find(group => group.id === type).uuids, [`JournalEntry.${type}.1`, `JournalEntry.${type}.2`]);
+                await widget.onAction({ dataset: { timelineAction: "unlink", groupId: type, uuid: `JournalEntry.${type}.1` }, closest: () => element });
+                assert.deepEqual(widget.locate(await widget.data(), "row", parentId).row.linkGroups.find(group => group.id === type).uuids, [`JournalEntry.${type}.2`]);
             }
+            const html = await widget.render();
+            assert.equal((html.match(/Drop any Campaign Codex sheet here/g) || []).length, parentId ? 2 : 1);
         }
-        assert.equal(warnings, 4);
+        assert.equal(warnings, 0);
     } finally {
         globalThis.fromUuid = originalFromUuid;
         ui.notifications.warn = originalWarn;
@@ -68,16 +68,16 @@ test("legacy links survive adding multiple entries, deduplication, removal, and 
             await widget.onDrop(drop);
             await widget.onDrop(drop);
             let saved = widget.locate(await widget.data(), "row", parentId).row;
-            assert.deepEqual(saved.entries, ["JournalEntry.old", "JournalEntry.new"]);
+            assert.deepEqual(saved.linkGroups, [{ id: "location", uuids: ["JournalEntry.old", "JournalEntry.new"] }]);
             assert.equal(saved.entry, undefined);
-            await widget.onAction({ dataset: { timelineAction: "unlink", field: "entries", uuid: "JournalEntry.old" }, closest: () => element });
+            await widget.onAction({ dataset: { timelineAction: "unlink", groupId: "location", uuid: "JournalEntry.old" }, closest: () => element });
             const reloaded = new Widget();
             reloaded.saved = structuredClone(widget.saved);
             saved = reloaded.locate(await reloaded.data(), "row", parentId).row;
-            assert.deepEqual(saved.entries, ["JournalEntry.new"]);
-            const html = await reloaded.links(saved, "entries");
-            assert.match(html, /title="Related entries"/);
-            assert.doesNotMatch(html, />\s*Related entries\s*</);
+            assert.deepEqual(saved.linkGroups, [{ id: "location", uuids: ["JournalEntry.new"] }]);
+            const html = await reloaded.links(saved.linkGroups[0]);
+            assert.match(html, /title="Locations"/);
+            assert.doesNotMatch(html, />\s*Locations\s*</);
         }
     } finally {
         globalThis.fromUuid = originalFromUuid;
@@ -93,6 +93,68 @@ test("manual order ignores date labels and preserves nested events", () => {
     assert.deepEqual(items.map(x => x.id), ["a", "b", "c"]);
     moveTimelineItem(items, "missing", "b");
     assert.equal(items.length, 3);
+});
+
+test("attachment and group order persist, with cross-group and cross-row moves blocked", async () => {
+    for (const parentId of ["", "date"]) {
+        const widget = new Widget();
+        widget._editing = true;
+        const row = { id: "row", linkGroups: [{ id: "npc", uuids: ["a", "b", "c"] }, { id: "quest", uuids: ["q"] }], events: [] };
+        widget.saved.dates = parentId ? [{ id: parentId, events: [row] }] : [row];
+        const bounds = () => ({ left: 0, width: 100 });
+        const drop = (payload, groupId, uuid, clientX = 75) => widget.onDrop({
+            clientX,
+            dataTransfer: { getData: () => JSON.stringify({ type: "WttTimelineLinkOrder", widgetId: widget.widgetId, documentUuid: widget.document.uuid, id: "row", parentId, ...payload }) },
+            target: { closest: selector => ({
+                "[data-row-id]": { dataset: { rowId: "row", parentId } },
+                ".wtt-timeline-links": { dataset: { groupId }, getBoundingClientRect: bounds },
+                "[data-link-uuid]": { dataset: { linkUuid: uuid }, getBoundingClientRect: bounds }
+            })[selector] }
+        });
+        await drop({ kind: "link", groupId: "npc", uuid: "a" }, "npc", "c");
+        await drop({ kind: "group", groupId: "quest" }, "npc", null, 0);
+        const expected = [{ id: "quest", uuids: ["q"] }, { id: "npc", uuids: ["b", "c", "a"] }];
+        assert.deepEqual(widget.locate(await widget.data(), "row", parentId).row.linkGroups, expected);
+        await drop({ kind: "link", groupId: "npc", uuid: "a" }, "quest", "q");
+        await drop({ kind: "group", groupId: "npc", id: "other" }, "quest", null, 0);
+        await drop({ kind: "group", groupId: "npc", documentUuid: "other" }, "quest", null, 0);
+        assert.deepEqual(widget.locate(await widget.data(), "row", parentId).row.linkGroups, expected);
+        const reloaded = new Widget();
+        reloaded.saved = structuredClone(widget.saved);
+        assert.deepEqual(reloaded.locate(await reloaded.data(), "row", parentId).row.linkGroups, expected);
+    }
+});
+
+test("migration classifies mixed legacy entries, deduplicates, and preserves missing links", async () => {
+    const original = globalThis.fromUuid;
+    globalThis.fromUuid = async uuid => uuid === "missing" ? null : ({ getFlag: (_scope, key) => key === "type" ? (uuid === "npc" ? "npc" : "quest") : null });
+    try {
+        const widget = new Widget();
+        widget.saved.dates = [{ id: "row", npcs: ["npc"], entries: ["npc", "quest", "missing"], events: [] }];
+        const row = (await widget.data()).dates[0];
+        assert.deepEqual(row.linkGroups, [{ id: "npc", uuids: ["npc"] }, { id: "quest", uuids: ["quest"] }, { id: "journal", uuids: ["missing"] }]);
+        assert.equal(widget.saved.dates[0].linkGroups, undefined);
+    } finally { globalThis.fromUuid = original; }
+});
+
+test("non-Codex drops are rejected and faction NPC sheets classify as factions", async () => {
+    const original = globalThis.fromUuid;
+    const originalWarn = ui.notifications.warn;
+    let warnings = 0;
+    ui.notifications.warn = () => warnings++;
+    try {
+        const widget = new Widget();
+        widget._editing = true;
+        widget.saved.dates = [{ id: "row", linkGroups: [] }];
+        const drop = () => widget.onDrop({ dataTransfer: { getData: () => JSON.stringify({ uuid: "sheet" }) },
+            target: { closest: selector => selector === "[data-row-id]" ? { dataset: { rowId: "row", parentId: "" } } : {} } });
+        globalThis.fromUuid = async () => ({ uuid: "sheet", documentName: "Actor" });
+        await drop();
+        assert.equal(warnings, 1);
+        globalThis.fromUuid = async () => ({ uuid: "sheet", documentName: "JournalEntry", getFlag: (_scope, key) => key === "type" ? "npc" : { tagMode: true } });
+        await drop();
+        assert.deepEqual(widget.saved.dates[0].linkGroups, [{ id: "tag", uuids: ["sheet"] }]);
+    } finally { globalThis.fromUuid = original; ui.notifications.warn = originalWarn; }
 });
 
 test("view mode and players cannot mutate", async () => {
