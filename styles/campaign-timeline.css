@@ -125,11 +125,13 @@
 .wtt-timeline-description > :first-child { margin-top: 0; }
 .wtt-timeline-description > :last-child { margin-bottom: 0; }
 .wtt-timeline-related { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 8px 16px; }
-.wtt-timeline-links { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 8px; margin: 0; min-width: 0; }
+.wtt-timeline-links { display: grid; grid-template-columns: 20px minmax(0, 1fr); align-items: start; gap: 8px; margin: 0; min-width: 0; }
 .wtt-timeline-links[data-link-field="npcs"] { grid-column: 1; grid-row: 1; }
 .wtt-timeline-links[data-link-field="entries"] { grid-column: 2; grid-row: 1; }
+.wtt-timeline-links[data-link-field="locations"] { grid-column: 1; }
+.wtt-timeline-links[data-link-field="regions"] { grid-column: 2; }
 .wtt-timeline-links:empty { display: none; }
-.wtt-timeline-links-label { display: inline-flex; align-items: center; min-height: 30px; font-size: .85em; cursor: help; }
+.wtt-timeline-links-label { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 30px; font-size: .85em; cursor: help; }
 .wtt-timeline-links-label i { color: var(--timeline-accent); }
 .wtt-timeline-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
 .wtt-timeline-link {

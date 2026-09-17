@@ -1,5 +1,11 @@
 const escape = value => foundry.utils.escapeHTML(String(value ?? ""));
 const button = (action, label, extra = "") => `<button type="button" data-timeline-action="${action}" ${extra}>${label}</button>`;
+const LINK_GROUPS = {
+    npcs: { label: "Related NPCs", icon: "fa-users", type: "npc", dropLabel: "Codex NPCs" },
+    entries: { label: "Related entries", icon: "fa-book-open", dropLabel: "Codex entries" },
+    locations: { label: "Related locations", icon: "fa-map-marker-alt", type: "location", dropLabel: "Codex Locations" },
+    regions: { label: "Related regions", icon: "fa-map", type: "region", dropLabel: "Codex Regions" }
+};
 
 export function moveTimelineItem(items, sourceId, targetId, after = false) {
     const source = items.findIndex(item => item.id === sourceId);
@@ -30,6 +36,8 @@ export function createCampaignTimelineWidget(Base) {
             for (const row of data.dates.flatMap(date => [date, ...(date.events || [])])) {
                 row.entries = [...new Set(Array.isArray(row.entries) ? row.entries : (row.entry ? [row.entry] : []))];
                 row.npcs ??= [];
+                row.locations ??= [];
+                row.regions ??= [];
                 delete row.entry;
             }
             return data;
@@ -62,10 +70,10 @@ export function createCampaignTimelineWidget(Base) {
             }));
             const tags = links.join("");
             if (!tags && !this.editing) return "";
-            const isNpc = field === "npcs";
+            const group = LINK_GROUPS[field];
             return `<div class="wtt-timeline-links" data-link-field="${field}" ${this.editing ? `data-drop-field="${field}"` : ""}>
-                <span class="wtt-timeline-links-label" title="${isNpc ? "Related NPCs" : "Related entries"}" aria-label="${isNpc ? "Related NPCs" : "Related entries"}" role="img" tabindex="0"><i class="fas ${isNpc ? "fa-users" : "fa-book-open"}" aria-hidden="true"></i></span>
-                <div class="wtt-timeline-tags">${tags}${this.editing ? `<span class="wtt-timeline-hint">Drop ${isNpc ? "Codex NPCs" : "Codex entries"} here</span>` : ""}</div>
+                <span class="wtt-timeline-links-label" title="${group.label}" aria-label="${group.label}" role="img" tabindex="0"><i class="fas ${group.icon}" aria-hidden="true"></i></span>
+                <div class="wtt-timeline-tags">${tags}${this.editing ? `<span class="wtt-timeline-hint">Drop ${group.dropLabel} here</span>` : ""}</div>
             </div>`;
         }
 
@@ -76,7 +84,7 @@ export function createCampaignTimelineWidget(Base) {
             });
             const controls = editing ? `<span class="wtt-timeline-handle" draggable="true" title="Drag to reorder" aria-label="Drag to reorder">⠿</span>` : "";
             const actions = editing ? `<div class="wtt-timeline-actions">${button("edit", "Edit")}${button("up", "↑", 'aria-label="Move up"')}${button("down", "↓", 'aria-label="Move down"')}${button("delete", "Delete")}</div>` : "";
-            const related = `${await this.links(row, "npcs")}${await this.links(row, "entries")}`;
+            const related = (await Promise.all(Object.keys(LINK_GROUPS).map(field => this.links(row, field)))).join("");
             const children = !parentId ? await Promise.all((row.events || []).map(event => this.row(event, row.id))) : [];
             return `<section class="wtt-timeline-row ${parentId ? "wtt-timeline-event" : "wtt-timeline-date"}" data-row-id="${escape(row.id)}" data-parent-id="${escape(parentId)}">
                 <div class="wtt-timeline-row-header">
@@ -179,7 +187,7 @@ export function createCampaignTimelineWidget(Base) {
                     } else {
                         const items = action === "add-date" ? data.dates : data.dates.find(date => date.id === id)?.events;
                         if (!items) return false;
-                        items.push({ id: foundry.utils.randomID(), ...value, entries: [], npcs: [], events: [] });
+                        items.push({ id: foundry.utils.randomID(), ...value, entries: [], npcs: [], locations: [], regions: [], events: [] });
                     }
                 }, root);
             }
@@ -191,7 +199,7 @@ export function createCampaignTimelineWidget(Base) {
                 if (action === "delete") items.splice(index, 1);
                 else if (action === "unlink") {
                     const field = control.dataset.field;
-                    if (!["entries", "npcs"].includes(field)) return false;
+                    if (!Object.hasOwn(LINK_GROUPS, field)) return false;
                     row[field] = row[field].filter(uuid => uuid !== control.dataset.uuid);
                 } else if (action === "up" || action === "down") {
                     const target = items[index + (action === "up" ? -1 : 1)];
@@ -218,11 +226,12 @@ export function createCampaignTimelineWidget(Base) {
                 }, root);
             }
             const field = event.target.closest("[data-drop-field]")?.dataset.dropField;
-            if (!["entries", "npcs"].includes(field) || !payload.uuid) return;
+            if (!Object.hasOwn(LINK_GROUPS, field) || !payload.uuid) return;
+            const group = LINK_GROUPS[field];
             let doc = await fromUuid(payload.uuid);
             if (doc?.documentName === "JournalEntryPage") doc = doc.parent;
-            if (doc?.documentName !== "JournalEntry" || !codexType(doc) || (field === "npcs" && codexType(doc) !== "npc")) {
-                return ui.notifications.warn(field === "npcs" ? "Drop a Campaign Codex NPC sheet here." : "Drop a Campaign Codex entry here.");
+            if (doc?.documentName !== "JournalEntry" || !codexType(doc) || (group.type && codexType(doc) !== group.type)) {
+                return ui.notifications.warn(`Drop ${group.dropLabel} here.`);
             }
             return this.mutate(data => {
                 const { row } = this.locate(data, id, parentId);
