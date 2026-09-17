@@ -13,6 +13,8 @@ import { registerSettings } from "./lib/setup/settings.js";
 import { registerArgonCombatHudIntegration } from "./lib/integrations/argonCombatHud.js";
 import { wrapCustomSkillCheck, wrapProfessionSkillCheck, wrapSkillCheck } from "./lib/flows/skillCheckFlow.js";
 import { wrapCastSpell } from "./lib/flows/spellAttackFlow.js";
+import { registerCampaignTimeline } from "./lib/integrations/campaignTimeline.js";
+Hooks.once('ready', registerCampaignTimeline);
 Hooks.once('init', function () {
     console.log('The Witcher TRPG Enhancements | Initializing module')
     registerItemTypes()
