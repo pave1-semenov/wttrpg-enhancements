@@ -1,5 +1,14 @@
 # WTTRPG Enhancements release notes
 
+## 0.0.21 — Grouped Timeline Attachments
+
+- Attach all Campaign Codex sheet types through one drop area per date or event, including NPCs, locations, regions, quests, factions, shops, and groups. Attachments group automatically by type.
+- Groups flow inline instead of occupying fixed columns. Each group has its own border that encloses all its tags, including when they wrap onto multiple lines.
+- Reorder groups by dragging their icons, and reorder attachments within a group using tag handles. Arrow-key reordering is also available when a handle has focus.
+- Existing attachments migrate automatically into typed groups. Duplicate links are ignored, unavailable links remain removable by GMs, and saved group/link orders persist after reopening the timeline.
+
+Reload Foundry after updating, then select **Edit timeline** to use the shared drop area and reorder handles.
+
 ## 0.0.20 — Timeline Locations and Regions
 
 - Attach multiple Campaign Codex Location and Region sheets to dates and events using dedicated drop areas.

@@ -140,16 +140,17 @@ The attack picker shows the weapon's normal attack alongside its skills. Skill c
 
 ### Optional Campaign Codex timeline widget
 
-When Campaign Codex module is enabled, its widget picker includes **Campaign Timeline**. Reload Foundry after installing this update, then add the widget to a Codex entry.
+When Campaign Codex is enabled, its widget picker includes **Campaign Timeline**.
 
 - GMs with ownership can select **Edit timeline**; players see the reading view.
 - **Add date** creates a group with any date text. **Add event** adds a required time or free-text label within that date.
-- Each date and event can have a rich-text description, multiple linked Codex entries, and multiple linked Codex NPC sheets. Drag sheets from the directory or Codex into the drop areas; duplicate links are ignored. NPCs and entries appear in two columns with icon tooltips. Existing single-entry links are preserved automatically.
+- Each date and event can have a rich-text description and multiple linked Codex sheets. Drop NPCs, locations, regions, quests, factions, shops, groups, or other Codex entries into the single attachment area. Sheets group automatically by type; duplicates are ignored and existing links are preserved.
 - Use the left drag handles or arrow buttons to reorder dates and events. Events stay inside their parent date; date text is never parsed or sorted.
-- Dedicated Locations and Regions drop areas also accept multiple matching Campaign Codex sheets, shown as tags with map icons beneath the NPC and entry groups.
+- Attachment groups flow inline and wrap as space permits, with a border around each complete group and icon tooltips. In edit mode, drag a group icon to reorder groups, or a tag's handle to reorder links within its group. Drop on the left/right half of a target to insert before/after it. Focus a handle and use the arrow keys for keyboard reordering. These orders are saved separately for each date or event.
 - Select **Done** to return to the timeline view. Changes save after each action, and each widget stores its own data on its hosting journal. Linked sheets open when clicked, subject to the viewer's document permissions.
 
 The timeline's text is visible to everyone who can view its host entry. GM-only editing does not make that text secret. Campaign Codex remains optional; this integration does nothing when it is disabled.
+
 
 ### Optional Argon Combat HUD integration
 
@@ -176,7 +177,7 @@ The actor-sheet header uses the standard WTTRPG Enhancements icon to open its si
 
 ## Requirements
 
-- Foundry VTT 13 or 14
+- Foundry VTT 14
 - *The Witcher TRPG* system 14.2.1 or newer
 - [libWrapper](https://foundryvtt.com/packages/lib-wrapper)
 
