@@ -4,19 +4,6 @@
 
 ## What the module adds
 
-### Campaign Codex timeline
-
-When Campaign Codex is enabled, its widget picker includes **Campaign Timeline**. Reload Foundry after installing this update, then add the widget to a Codex entry.
-
-- GMs with ownership can select **Edit timeline**; players see the reading view.
-- **Add date** creates a group with any date text. **Add event** adds a required time or free-text label within that date.
-- Each date and event can have a rich-text description, multiple linked Codex entries, and multiple linked Codex NPC sheets. Drag sheets from the directory or Codex into the drop areas; duplicate links are ignored. NPCs and entries appear in two columns with icon tooltips. Existing single-entry links are preserved automatically.
-- Use the left drag handles or arrow buttons to reorder dates and events. Events stay inside their parent date; date text is never parsed or sorted.
-- Dedicated Locations and Regions drop areas also accept multiple matching Campaign Codex sheets, shown as tags with map icons beneath the NPC and entry groups.
-- Select **Done** to return to the timeline view. Changes save after each action, and each widget stores its own data on its hosting journal. Linked sheets open when clicked, subject to the viewer's document permissions.
-
-The timeline's text is visible to everyone who can view its host entry. GM-only editing does not make that text secret. Campaign Codex remains optional; this integration does nothing when it is disabled.
-
 ### Ongoing damage and healing
 
 Active Effects can deal damage or restore health automatically when a character's turn begins.
@@ -150,6 +137,19 @@ Skills can be created directly on a weapon or copied from reusable templates. An
 The attack picker shows the weapon's normal attack alongside its skills. Skill conditions use `actor` (the weapon's owner) and `target` (the first currently targeted actor). Skills whose conditions are not met are hidden by default. The player can show and use every attached skill for the current attack with the Show all skills option; if no skill is available, the standard weapon attack is selected automatically.
 
 **Example:** A *Pommel Strike* may cost 3 Stamina, deal bludgeoning damage, use a different attack skill, and allow the defender an additional defense option. A *Whirl* technique may make a fixed number of attacks with its own accuracy penalty.
+
+### Optional Campaign Codex timeline widget
+
+When Campaign Codex module is enabled, its widget picker includes **Campaign Timeline**. Reload Foundry after installing this update, then add the widget to a Codex entry.
+
+- GMs with ownership can select **Edit timeline**; players see the reading view.
+- **Add date** creates a group with any date text. **Add event** adds a required time or free-text label within that date.
+- Each date and event can have a rich-text description, multiple linked Codex entries, and multiple linked Codex NPC sheets. Drag sheets from the directory or Codex into the drop areas; duplicate links are ignored. NPCs and entries appear in two columns with icon tooltips. Existing single-entry links are preserved automatically.
+- Use the left drag handles or arrow buttons to reorder dates and events. Events stay inside their parent date; date text is never parsed or sorted.
+- Dedicated Locations and Regions drop areas also accept multiple matching Campaign Codex sheets, shown as tags with map icons beneath the NPC and entry groups.
+- Select **Done** to return to the timeline view. Changes save after each action, and each widget stores its own data on its hosting journal. Linked sheets open when clicked, subject to the viewer's document permissions.
+
+The timeline's text is visible to everyone who can view its host entry. GM-only editing does not make that text secret. Campaign Codex remains optional; this integration does nothing when it is disabled.
 
 ### Optional Argon Combat HUD integration
 
