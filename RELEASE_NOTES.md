@@ -1,5 +1,16 @@
 # WTTRPG Enhancements release notes
 
+## Unreleased — Campaign Codex Timeline
+
+- Added **Campaign Timeline** to Campaign Codex's widget picker when both modules are enabled.
+- Organize events under free-text dates, with free-text times and rich-text descriptions for both dates and events.
+- Attach multiple Campaign Codex NPCs and entries to each date or event. Links appear as clickable tags in two columns with icon tooltips; duplicate attachments are ignored.
+- GMs can switch between edit and reading modes. Reorder dates and events using drag handles or arrow buttons, without parsing dates or sorting by time.
+- A connected main timeline links dates, while event branches split off and reconnect. Distinct lines, dots, and separators make the hierarchy easier to follow.
+- Timeline changes persist on the hosting journal, and linked documents respect viewer permissions. Existing single-entry links are preserved automatically.
+
+To get started, reload Foundry, add **Campaign Timeline** from the Campaign Codex widget picker, and select **Edit timeline**.
+
 ## Unreleased — Profession Skill Support
 
 ### Situational bonuses for profession skills

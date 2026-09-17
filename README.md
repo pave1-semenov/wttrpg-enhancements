@@ -4,6 +4,18 @@
 
 ## What the module adds
 
+### Campaign Codex timeline
+
+When Campaign Codex is enabled, its widget picker includes **Campaign Timeline**. Reload Foundry after installing this update, then add the widget to a Codex entry.
+
+- GMs with ownership can select **Edit timeline**; players see the reading view.
+- **Add date** creates a group with any date text. **Add event** adds a required time or free-text label within that date.
+- Each date and event can have a rich-text description, multiple linked Codex entries, and multiple linked Codex NPC sheets. Drag sheets from the directory or Codex into the drop areas; duplicate links are ignored. NPCs and entries appear in two columns with icon tooltips. Existing single-entry links are preserved automatically.
+- Use the left drag handles or arrow buttons to reorder dates and events. Events stay inside their parent date; date text is never parsed or sorted.
+- Select **Done** to return to the timeline view. Changes save after each action, and each widget stores its own data on its hosting journal. Linked sheets open when clicked, subject to the viewer's document permissions.
+
+The timeline's text is visible to everyone who can view its host entry. GM-only editing does not make that text secret. Campaign Codex remains optional; this integration does nothing when it is disabled.
+
 ### Ongoing damage and healing
 
 Active Effects can deal damage or restore health automatically when a character's turn begins.
