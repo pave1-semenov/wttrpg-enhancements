@@ -16,8 +16,6 @@ Reload Foundry after updating, then select **Edit timeline** to use the shared d
 - Each drop area accepts the matching sheet type, ignores duplicate attachments, and allows links to be removed individually.
 - Attachment icons now use equally sized blocks, keeping tags aligned across rows.
 
-Reload Foundry after updating to see the new attachment options in **Edit timeline**.
-
 ## 0.0.19 — Campaign Codex Timeline
 
 - Added **Campaign Timeline** to Campaign Codex's widget picker when both modules are enabled.
