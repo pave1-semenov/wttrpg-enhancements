@@ -19,6 +19,40 @@ class Base {
 }
 const Widget = createCampaignTimelineWidget(Base);
 
+test("locations and regions support typed attachments on dates and events", async () => {
+    const originalFromUuid = globalThis.fromUuid;
+    const originalWarn = ui.notifications.warn;
+    let warnings = 0;
+    ui.notifications.warn = () => warnings++;
+    globalThis.fromUuid = async uuid => ({ uuid, name: uuid, documentName: "JournalEntry", getFlag: () => uuid.includes("location") ? "location" : "region" });
+    try {
+        for (const parentId of ["", "date"]) {
+            const widget = new Widget();
+            widget._editing = true;
+            const row = { id: "row", events: [] };
+            widget.saved.dates = parentId ? [{ id: parentId, events: [row] }] : [row];
+            const element = { dataset: { rowId: "row", parentId } };
+            for (const [field, type] of [["locations", "location"], ["regions", "region"]]) {
+                const drop = uuid => widget.onDrop({ dataTransfer: { getData: () => JSON.stringify({ uuid }) },
+                    target: { closest: selector => selector === "[data-row-id]" ? element : { dataset: { dropField: field } } } });
+                await drop(`JournalEntry.${type}1`);
+                await drop(`JournalEntry.${type}2`);
+                await drop(`JournalEntry.${type}1`);
+                await drop(`JournalEntry.${type === "location" ? "region" : "location"}Wrong`);
+                const saved = widget.locate(await widget.data(), "row", parentId).row;
+                assert.deepEqual(saved[field], [`JournalEntry.${type}1`, `JournalEntry.${type}2`]);
+                assert.match(await widget.links(saved, field), new RegExp(`title="Related ${field}"`));
+                await widget.onAction({ dataset: { timelineAction: "unlink", field, uuid: `JournalEntry.${type}1` }, closest: () => element });
+                assert.deepEqual(widget.locate(await widget.data(), "row", parentId).row[field], [`JournalEntry.${type}2`]);
+            }
+        }
+        assert.equal(warnings, 4);
+    } finally {
+        globalThis.fromUuid = originalFromUuid;
+        ui.notifications.warn = originalWarn;
+    }
+});
+
 test("legacy links survive adding multiple entries, deduplication, removal, and reload", async () => {
     const originalFromUuid = globalThis.fromUuid;
     globalThis.fromUuid = async uuid => ({ uuid, name: uuid, documentName: "JournalEntry", getFlag: () => "location" });

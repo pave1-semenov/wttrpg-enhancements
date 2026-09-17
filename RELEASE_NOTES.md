@@ -1,6 +1,15 @@
 # WTTRPG Enhancements release notes
 
-## Unreleased — Campaign Codex Timeline
+## 0.0.20 — Timeline Locations and Regions
+
+- Attach multiple Campaign Codex Location and Region sheets to dates and events using dedicated drop areas.
+- Locations and Regions appear as clickable tags with map icons and hover hints, alongside NPCs and entries. Empty attachment groups stay hidden in reading mode.
+- Each drop area accepts the matching sheet type, ignores duplicate attachments, and allows links to be removed individually.
+- Attachment icons now use equally sized blocks, keeping tags aligned across rows.
+
+Reload Foundry after updating to see the new attachment options in **Edit timeline**.
+
+## 0.0.19 — Campaign Codex Timeline
 
 - Added **Campaign Timeline** to Campaign Codex's widget picker when both modules are enabled.
 - Organize events under free-text dates, with free-text times and rich-text descriptions for both dates and events.
@@ -11,7 +20,7 @@
 
 To get started, reload Foundry, add **Campaign Timeline** from the Campaign Codex widget picker, and select **Edit timeline**.
 
-## Unreleased — Profession Skill Support
+## 0.0.17 — Profession Skill Support
 
 ### Situational bonuses for profession skills
 
