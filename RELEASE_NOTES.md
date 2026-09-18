@@ -7,8 +7,6 @@
 - **Send to chat** includes the attached journal link in the item card, preserving it in chat history.
 - The field is injected into existing item sheets without replacing system templates. Links respect Foundry's normal journal permissions and do not grant additional access.
 
-Reload Foundry after updating to enable journal attachments on valuable items.
-
 ## 0.0.21 — Grouped Timeline Attachments
 
 - Attach all Campaign Codex sheet types through one drop area per date or event, including NPCs, locations, regions, quests, factions, shops, and groups. Attachments group automatically by type.
@@ -16,7 +14,7 @@ Reload Foundry after updating to enable journal attachments on valuable items.
 - Reorder groups by dragging their icons, and reorder attachments within a group using tag handles. Arrow-key reordering is also available when a handle has focus.
 - Existing attachments migrate automatically into typed groups. Duplicate links are ignored, unavailable links remain removable by GMs, and saved group/link orders persist after reopening the timeline.
 
-Reload Foundry after updating, then select **Edit timeline** to use the shared drop area and reorder handles.
+Select **Edit timeline** to use the shared drop area and reorder handles.
 
 ## 0.0.20 — Timeline Locations and Regions
 
@@ -34,7 +32,7 @@ Reload Foundry after updating, then select **Edit timeline** to use the shared d
 - A connected main timeline links dates, while event branches split off and reconnect. Distinct lines, dots, and separators make the hierarchy easier to follow.
 - Timeline changes persist on the hosting journal, and linked documents respect viewer permissions. Existing single-entry links are preserved automatically.
 
-To get started, reload Foundry, add **Campaign Timeline** from the Campaign Codex widget picker, and select **Edit timeline**.
+To get started, add **Campaign Timeline** from the Campaign Codex widget picker and select **Edit timeline**.
 
 ## 0.0.17 — Profession Skill Support
 
