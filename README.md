@@ -4,6 +4,10 @@
 
 ## What the module adds
 
+### Valuable journal attachments
+
+Valuable item sheets include an **Attached journal** field. Drop a journal entry or a specific journal page into it to attach or replace the link; use the unlink button to remove it. Attachments appear beneath the item name in character inventories and in new **Send to chat** cards. Links use Foundry's normal journal permissions and do not grant access to the journal. The module injects this field without replacing system templates.
+
 ### Ongoing damage and healing
 
 Active Effects can deal damage or restore health automatically when a character's turn begins.

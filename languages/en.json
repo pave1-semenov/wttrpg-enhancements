@@ -1,5 +1,13 @@
 {
     "WTTRPGEnhancements":  {
+                               "ValuableJournal": {
+                                   "Label": "Attached journal",
+                                   "Empty": "No journal attached",
+                                   "Remove": "Remove journal attachment",
+                                   "InvalidDrop": "Select a journal entry or journal page to attach.",
+                                   "SaveError": "Could not save the journal attachment.",
+                                   "ChatError": "Could not send the item to chat."
+                               },
                                "Enhancements":  {
                                                     "lifesteal":  "Lifesteal",
                                                     "dot":  "DOT",

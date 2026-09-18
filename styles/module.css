@@ -1261,3 +1261,10 @@
   border-radius: 4px;
   object-fit: cover;
 }
+.wttrpg-journal-field { margin: 8px 0; }
+.wttrpg-journal-drop { display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 6px 8px; border: 1px dashed var(--color-border-light-primary, #888); border-radius: 4px; }
+.wttrpg-journal-drop.dragover { outline: 2px solid var(--color-border-highlight, #b33); }
+.wttrpg-journal-drop .content-link, .wttrpg-inventory-journal .content-link, .wttrpg-chat-journal .content-link { white-space: normal; overflow-wrap: anywhere; }
+.wttrpg-journal-remove { flex: 0 0 28px; width: 28px; height: 28px; margin-left: auto; }
+.wttrpg-inventory-journal { font-size: 12px; margin-top: 3px; }
+.wttrpg-chat-journal { margin-top: 6px; }

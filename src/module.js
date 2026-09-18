@@ -14,6 +14,7 @@ import { registerArgonCombatHudIntegration } from "./lib/integrations/argonComba
 import { wrapCustomSkillCheck, wrapProfessionSkillCheck, wrapSkillCheck } from "./lib/flows/skillCheckFlow.js";
 import { wrapCastSpell } from "./lib/flows/spellAttackFlow.js";
 import { registerCampaignTimeline } from "./lib/integrations/campaignTimeline.js";
+import { registerValuableJournals } from "./lib/integrations/valuableJournal.js";
 Hooks.once('ready', registerCampaignTimeline);
 Hooks.once('init', function () {
     console.log('The Witcher TRPG Enhancements | Initializing module')
@@ -25,6 +26,7 @@ Hooks.once('init', function () {
     console.log('The Witcher TRPG Enhancements | Module initialized')
 })
 Hooks.once('ready', async function () {
+    registerValuableJournals()
     libWrapper.register(MODULE.ID, "CONFIG.Item.documentClass.prototype.rollDamage", wrapDamageRoll, 'WRAPPER')
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.weaponAttack", wrapWeaponAttack, 'MIXED')
     libWrapper.register(MODULE.ID, "CONFIG.Actor.documentClass.prototype.prepareAndExecuteDefense", wrapPrepareAndExecuteDefense, 'WRAPPER')
