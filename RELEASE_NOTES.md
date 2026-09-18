@@ -1,5 +1,14 @@
 # WTTRPG Enhancements release notes
 
+## 0.0.22 - Valuable Journal Attachments
+
+- Attach a journal entry or a specific journal page to a valuable item by dropping it into the new **Attached journal** field. Drop another journal to replace the attachment, or use the unlink button to remove it.
+- Open attached journals directly from the item's row in character inventories.
+- **Send to chat** includes the attached journal link in the item card, preserving it in chat history.
+- The field is injected into existing item sheets without replacing system templates. Links respect Foundry's normal journal permissions and do not grant additional access.
+
+Reload Foundry after updating to enable journal attachments on valuable items.
+
 ## 0.0.21 — Grouped Timeline Attachments
 
 - Attach all Campaign Codex sheet types through one drop area per date or event, including NPCs, locations, regions, quests, factions, shops, and groups. Attachments group automatically by type.
