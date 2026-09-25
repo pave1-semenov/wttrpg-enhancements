@@ -1,5 +1,12 @@
 # WTTRPG Enhancements release notes
 
+## Unreleased - Situational Bonus Dialog Layout
+
+- Attack, spell, skill-check, and Apply Damage dialogs now scroll their content while keeping confirmation buttons visible, even with many situational bonuses.
+- Situational bonus cards use equal heights and show descriptions in a compact three-line preview. **Show full description** opens a separate, centered, scrollable dialog without changing card alignment or bonus selections.
+- Bonus formulas now appear alongside the top tags with a clear **Bonus** label and a tooltip explaining how the formula applies.
+- Weapon-skill selection and information dialogs also scroll long content while keeping their action buttons accessible.
+
 ## 0.0.22 - Valuable Journal Attachments
 
 - Attach a journal entry or a specific journal page to a valuable item by dropping it into the new **Attached journal** field. Drop another journal to replace the attachment, or use the unlink button to remove it.

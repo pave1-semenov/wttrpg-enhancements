@@ -10,9 +10,12 @@
                 <span class="situational-bonus-card__badges">
                     <span class="situational-bonus-card__badge situational-bonus-card__badge--{{this.scope}}">{{this.scopeLabel}}</span>
                     <span class="situational-bonus-card__badge situational-bonus-card__badge--{{this.origin}}">{{this.originLabel}}</span>
+                    <span class="situational-bonus-card__badge situational-bonus-card__badge--formula" title="{{localize 'WTTRPGEnhancements.SituationalBonus.FormulaHint' scope=this.scopeLabel}}">{{localize "WTTRPGEnhancements.SituationalBonus.BonusLabel"}}: <code>{{this.formula}}</code></span>
                 </span>
+                {{#if this.description}}
                 <span class="situational-bonus-card__description">{{{this.description}}}</span>
-                <code>{{this.formula}}</code>
+                <button type="button" class="situational-bonus-card__description-button" data-bonus-description-open aria-haspopup="dialog">{{localize "WTTRPGEnhancements.SituationalBonus.ShowMore"}}</button>
+                {{/if}}
             </span>
         </label>
         {{/each}}

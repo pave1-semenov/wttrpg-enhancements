@@ -438,6 +438,31 @@
     gap: 0.35rem 0.75rem;
 }
 
+/* Keep the dialog actions outside the scrolling content, including on short screens. */
+.application.dialog:has(.situational-bonuses-dialog, .situational-bonus-description-dialog, .apply-damage-dialog, .weapon-skill-attack-dialog, .weapon-skill-info-dialog) {
+    max-height: calc(100dvh - 2rem);
+}
+
+.application.dialog:has(.situational-bonuses-dialog, .situational-bonus-description-dialog, .apply-damage-dialog, .weapon-skill-attack-dialog, .weapon-skill-info-dialog) .window-content,
+.application.dialog:has(.situational-bonuses-dialog, .situational-bonus-description-dialog, .apply-damage-dialog, .weapon-skill-attack-dialog, .weapon-skill-info-dialog) .dialog-form {
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.application.dialog:has(.situational-bonuses-dialog, .situational-bonus-description-dialog, .apply-damage-dialog, .weapon-skill-attack-dialog, .weapon-skill-info-dialog) .dialog-content {
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+    flex: 1 1 auto;
+}
+
+.application.dialog:has(.situational-bonuses-dialog, .situational-bonus-description-dialog, .apply-damage-dialog, .weapon-skill-attack-dialog, .weapon-skill-info-dialog) .form-footer {
+    flex: 0 0 auto;
+}
+
 .situational-bonuses-dialog {
     margin-top: 1rem;
     padding-top: 0.75rem;
@@ -451,7 +476,9 @@
 
 .situational-bonus-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+    grid-auto-rows: 1fr;
+    align-items: stretch;
     gap: 0.65rem;
 }
 
@@ -553,6 +580,10 @@
 }
 
 .situational-bonus-card__content {
+    box-sizing: border-box;
+    height: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
@@ -585,7 +616,44 @@
 .situational-bonus-card__badge--actor { color: #aee6b1; border-color: rgba(102, 190, 110, 0.55); }
 
 .situational-bonus-card__content strong { font-size: 1.05rem; }
-.situational-bonus-card__description { flex: 1; font-size: 0.88rem; opacity: 0.9; }
+.situational-bonus-card__description {
+    flex: 0 0 auto;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    max-height: 4.2em;
+    overflow: hidden;
+    font-size: 0.88rem;
+    line-height: 1.4;
+    opacity: 0.9;
+}
+.situational-bonus-card__description img { max-width: 100%; height: auto; }
+.situational-bonus-card__description-button {
+    flex: 0 0 auto;
+    margin-top: auto;
+    align-self: flex-start;
+    width: auto;
+    height: auto;
+    min-height: 1.75rem;
+    padding: 0.2rem 0.45rem;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    white-space: normal;
+}
+.situational-bonus-description-dialog {
+    overflow-wrap: anywhere;
+}
+.situational-bonus-description-dialog img {
+    max-width: 100%;
+    height: auto;
+}
+.situational-bonus-card__badge--formula {
+    color: #ffd778;
+    border-color: #ffd778;
+    background: rgba(255, 215, 120, 0.15);
+    font-size: 0.8rem;
+    text-transform: none;
+}
 .situational-bonus-card__description > :first-child { margin-top: 0; }
 .situational-bonus-card__description > :last-child { margin-bottom: 0; }
 .situational-bonus-card code { align-self: flex-start; padding: 0.18rem 0.42rem; border-radius: 5px; background: rgba(0, 0, 0, 0.55); color: #ffd778; }
