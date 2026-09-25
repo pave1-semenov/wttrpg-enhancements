@@ -15,6 +15,8 @@ import { wrapCustomSkillCheck, wrapProfessionSkillCheck, wrapSkillCheck } from "
 import { wrapCastSpell } from "./lib/flows/spellAttackFlow.js";
 import { registerCampaignTimeline } from "./lib/integrations/campaignTimeline.js";
 import { registerValuableJournals } from "./lib/integrations/valuableJournal.js";
+import { renderBonusDialog } from "./lib/hooks/bonusDialog.js";
+Hooks.on('renderDialogV2', renderBonusDialog);
 Hooks.once('ready', registerCampaignTimeline);
 Hooks.once('init', function () {
     console.log('The Witcher TRPG Enhancements | Initializing module')
